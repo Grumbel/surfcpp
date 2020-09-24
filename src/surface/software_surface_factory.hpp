@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_FACTORY_HPP
 #define HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_FACTORY_HPP
 
+#include <span>
 #include <map>
 #include <string>
 
@@ -36,9 +37,7 @@ public:
   ~SoftwareSurfaceFactory();
 
   void add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader);
-#if 0
-  bool has_supported_extension(const URL& url);
-#endif
+  bool has_supported_extension(std::string const& filename);
 
   /** Files are handled in the order of mime-type, extension, magic,
       if one fails, the next in line is tried. Extension is the most
@@ -50,13 +49,9 @@ public:
 
   const SoftwareSurfaceLoader* find_loader_by_filename(const std::string& filename) const;
   const SoftwareSurfaceLoader* find_loader_by_magic(const std::string& data) const;
-#if 0
-  const SoftwareSurfaceLoader* find_loader_by_magic(std::span<uint8_t> data) const;
-#endif
+  const SoftwareSurfaceLoader* find_loader_by_magic(std::span<uint8_t const> data) const;
 
-#if 0
-  SoftwareSurface from_url(const URL& url) const;
-#endif
+  SoftwareSurface from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::string const& filename) const;
   SoftwareSurface from_file(const std::string& filename) const;
   SoftwareSurface from_file(const std::string& filename, const SoftwareSurfaceLoader* loader) const;
 

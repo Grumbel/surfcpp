@@ -52,9 +52,7 @@ public:
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
 
   static void save(SoftwareSurface const& surface, int quality, const std::string& filename);
-#if 0
-  static Blob save(SoftwareSurface const& surface, int quality);
-#endif
+  static std::vector<uint8_t> save(SoftwareSurface const& surface, int quality);
 };
 
 #endif

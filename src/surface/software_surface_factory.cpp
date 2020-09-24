@@ -102,15 +102,13 @@ SoftwareSurfaceFactory::add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader
   m_loader.back()->register_loader(*this);
 }
 
-#if 0
 bool
-SoftwareSurfaceFactory::has_supported_extension(const URL& url)
+SoftwareSurfaceFactory::has_supported_extension(std::string const& filename)
 {
-  std::string extension = Filesystem::get_extension(url.str());
+  std::string extension = Filesystem::get_extension(filename);
   ExtensionMap::iterator i = m_extension_map.find(extension);
   return (i != m_extension_map.end());
 }
-#endif
 
 void
 SoftwareSurfaceFactory::register_by_magic(const SoftwareSurfaceLoader* loader, const std::string& magic)
@@ -182,14 +180,12 @@ SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
   return nullptr;
 }
 
-#if 0
 const SoftwareSurfaceLoader*
-SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t> data) const
+SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) const
 {
   size_t size = std::min(static_cast<size_t>(1024), data.size());
   return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.data()), size));
 }
-#endif
 
 SoftwareSurface
 SoftwareSurfaceFactory::from_file(const std::string& filename, const SoftwareSurfaceLoader* loader) const
@@ -247,66 +243,54 @@ SoftwareSurfaceFactory::from_file(const std::string& filename) const
   }
 }
 
-#if 0
 SoftwareSurface
-SoftwareSurfaceFactory::from_url(const URL& url) const
+SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
+                                 std::string const& mime_type,
+                                 std::string const& filename) const
 {
-  log_debug("{}", url);
+  const SoftwareSurfaceLoader* loader = nullptr;
 
-  if (url.has_stdio_name())
+  // try to find a loader by mime-type
+  if (!mime_type.empty())
   {
-    return from_file(url.get_stdio_name());
+    MimeTypeMap::const_iterator i = m_mime_type_map.find(mime_type);
+    if (i != m_mime_type_map.end())
+    {
+      loader = i->second;
+    }
+  }
+
+  // try to find a loader by file extension
+  if (!loader)
+  {
+    std::string extension = Filesystem::get_extension(filename);
+    ExtensionMap::const_iterator i = m_extension_map.find(extension);
+    if (i != m_extension_map.end())
+    {
+      loader = i->second;
+    }
+  }
+
+  // load the image or fail if no loader is present
+  if (!loader)
+  {
+    std::ostringstream out;
+    out << "SoftwareSurfaceFactory::from_url(): " << filename << ": unknown file type";
+    throw std::runtime_error(out.str());
   }
   else
   {
-    std::string mime_type;
-    Blob blob = url.get_blob(&mime_type);
-
-    const SoftwareSurfaceLoader* loader = nullptr;
-
-    // try to find a loader by mime-type
-    if (!mime_type.empty())
+    if (loader->supports_from_mem())
     {
-      MimeTypeMap::const_iterator i = m_mime_type_map.find(mime_type);
-      if (i != m_mime_type_map.end())
-      {
-        loader = i->second;
-      }
-    }
-
-    // try to find a loader by file extension
-    if (!loader)
-    {
-      std::string extension = Filesystem::get_extension(url.str());
-      ExtensionMap::const_iterator i = m_extension_map.find(extension);
-      if (i != m_extension_map.end())
-      {
-        loader = i->second;
-      }
-    }
-
-    // load the image or fail if no loader is present
-    if (!loader)
-    {
-      std::ostringstream out;
-      out << "SoftwareSurfaceFactory::from_url(): " << url.str() << ": unknown file type";
-      throw std::runtime_error(out.str());
+      return loader->from_mem(data);
     }
     else
     {
-      if (loader->supports_from_mem())
-      {
-        return loader->from_mem(blob);
-      }
-      else
-      {
-        std::ostringstream out;
-        out << "SoftwareSurfaceFactory::from_url(): " << url.str() << ": loader doesn't support from_mem(), workaround not implemented";
-        throw std::runtime_error(out.str());
-      }
+      std::ostringstream out;
+      out << "SoftwareSurfaceFactory::from_url(): " << filename << ": loader doesn't support from_mem(), workaround not implemented";
+      throw std::runtime_error(out.str());
     }
   }
 }
-#endif
 
 /* EOF */

@@ -126,16 +126,13 @@ JPEG::save(SoftwareSurface const& surface, int quality, const std::string& filen
   compressor.save(surface, quality);
 }
 
-#if 0
-Blob
+std::vector<uint8_t>
 JPEG::save(SoftwareSurface const& surface, int quality)
 {
   std::vector<uint8_t> data;
   MemJPEGCompressor compressor(data);
   compressor.save(surface, quality);
-  // FIXME: Unneeded copy of data
-  return Blob::copy(data);
+  return data;
 }
-#endif
 
 /* EOF */
