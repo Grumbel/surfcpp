@@ -21,6 +21,8 @@
 #include "surface/software_surface_loader.hpp"
 #include "surface/software_surface_factory.hpp"
 
+namespace surf {
+
 class DDSSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -52,6 +54,8 @@ private:
   DDSSoftwareSurfaceLoader(const DDSSoftwareSurfaceLoader&);
   DDSSoftwareSurfaceLoader& operator=(const DDSSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

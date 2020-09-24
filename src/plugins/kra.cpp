@@ -22,6 +22,8 @@
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
+namespace surf {
+
 bool
 KRA::is_available()
 {
@@ -61,5 +63,7 @@ KRA::load_from_file(const std::string& filename)
 
 //   return PNG::load_from_mem((uint8_t*)&*koconverter.get_stdout().begin(), koconverter.get_stdout().size());
 // }
+
+} // namespace surf
 
 /* EOF */

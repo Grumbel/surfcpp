@@ -22,6 +22,8 @@
 #include <sstream>
 #include <stdio.h>
 
+namespace surf {
+
 class FileJPEGDecompressor : public JPEGDecompressor
 {
 public:
@@ -36,6 +38,8 @@ private:
   FileJPEGDecompressor(const FileJPEGDecompressor&);
   FileJPEGDecompressor& operator=(const FileJPEGDecompressor&);
 };
+
+} // namespace surf
 
 #endif
 

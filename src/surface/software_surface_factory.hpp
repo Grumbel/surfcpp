@@ -23,6 +23,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class SoftwareSurfaceLoader;
 
 class SoftwareSurfaceFactory
@@ -66,6 +68,8 @@ private:
   SoftwareSurfaceFactory(const SoftwareSurfaceFactory&);
   SoftwareSurfaceFactory& operator=(const SoftwareSurfaceFactory&);
 };
+
+} // namespace surf
 
 #endif
 

@@ -80,6 +80,8 @@ xcfinfo_get_layer(std::string_view text)
 
 } // namespace
 
+namespace surf {
+
 bool
 XCF::is_available()
 {
@@ -198,5 +200,7 @@ XCF::load_from_mem(std::span<uint8_t const> data)
     return PNG::load_from_mem(xcf2png.get_stdout());
   }
 }
+
+} // namespace surf
 
 /* EOF */

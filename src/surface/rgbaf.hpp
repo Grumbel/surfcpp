@@ -20,6 +20,8 @@
 #include "surface/rgba.hpp"
 #include "surface/rgb.hpp"
 
+namespace surf {
+
 class RGBAf
 {
 public:
@@ -70,6 +72,8 @@ public:
                  static_cast<float>(rgba.a)/255.0f);
   }
 };
+
+} // namespace surf
 
 #endif
 

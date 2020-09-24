@@ -20,6 +20,8 @@
 #include <string>
 #include <vector>
 
+namespace surf {
+
 class Filesystem
 {
 private:
@@ -58,6 +60,8 @@ public:
   static void init();
   static void deinit();
 };
+
+} // namespace surf
 
 #endif
 

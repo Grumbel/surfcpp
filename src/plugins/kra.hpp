@@ -21,12 +21,16 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class KRA
 {
 public:
   static bool is_available();
   static SoftwareSurface load_from_file(const std::string& filename);
 };
+
+} // namespace surf
 
 #endif
 

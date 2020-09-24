@@ -55,6 +55,8 @@ bool has_prefix(const std::string& lhs, const std::string& rhs)
 
 } // namespace
 
+namespace surf {
+
 SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   m_loader(),
   m_extension_map(),
@@ -292,5 +294,7 @@ SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
     }
   }
 }
+
+} // namespace surf
 
 /* EOF */

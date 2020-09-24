@@ -22,6 +22,8 @@
 #include "plugins/ufraw.hpp"
 #include "surface/software_surface_factory.hpp"
 
+namespace surf {
+
 class UFRawSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -88,6 +90,8 @@ private:
   UFRawSoftwareSurfaceLoader(const UFRawSoftwareSurfaceLoader&);
   UFRawSoftwareSurfaceLoader& operator=(const UFRawSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

@@ -24,6 +24,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class XCF
 {
 public:
@@ -37,6 +39,8 @@ public:
   static SoftwareSurface load_from_file(const std::string& filename);
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 };
+
+} // namespace surf
 
 #endif
 

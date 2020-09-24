@@ -20,6 +20,8 @@
 #include "plugins/rsvg.hpp"
 #include "surface/software_surface_loader.hpp"
 
+namespace surf {
+
 class VidThumbSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -54,6 +56,8 @@ private:
   VidThumbSoftwareSurfaceLoader(const VidThumbSoftwareSurfaceLoader&);
   VidThumbSoftwareSurfaceLoader& operator=(const VidThumbSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

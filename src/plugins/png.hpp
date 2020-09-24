@@ -24,6 +24,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class PNG
 {
 public:
@@ -38,6 +40,8 @@ public:
   static void save(SoftwareSurface const& surface, const std::string& filename);
   static std::vector<uint8_t> save(SoftwareSurface const& surface);
 };
+
+} // namespace surf
 
 #endif
 

@@ -19,6 +19,8 @@
 
 #include "plugins/jpeg.hpp"
 
+namespace surf {
+
 class JPEGSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -55,6 +57,8 @@ private:
   JPEGSoftwareSurfaceLoader(const JPEGSoftwareSurfaceLoader&);
   JPEGSoftwareSurfaceLoader& operator=(const JPEGSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

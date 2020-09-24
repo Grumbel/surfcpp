@@ -6,6 +6,8 @@
 #include "surface/software_surface.hpp"
 #include "surface/rgb.hpp"
 
+using namespace surf;
+
 TEST(SoftwareSurfaceTest, default_is_valid)
 {
   SoftwareSurface surface;

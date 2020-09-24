@@ -22,7 +22,11 @@
 #include <stdio.h>
 #include <jpeglib.h>
 
+namespace surf {
+
 void jpeg_memory_dest(j_compress_ptr cinfo, std::vector<uint8_t>* data);
+
+} // namespace surf
 
 #endif
 

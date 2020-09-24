@@ -21,6 +21,8 @@
 
 #include <span>
 
+namespace surf {
+
 class MemJPEGDecompressor : public JPEGDecompressor
 {
 public:
@@ -31,6 +33,8 @@ private:
   MemJPEGDecompressor(const MemJPEGDecompressor&);
   MemJPEGDecompressor& operator=(const MemJPEGDecompressor&);
 };
+
+} // namespace surf
 
 #endif
 

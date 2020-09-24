@@ -20,6 +20,8 @@
 #include <sstream>
 #include <stdexcept>
 
+namespace surf {
+
 void
 JPEGDecompressor::fatal_error_handler(j_common_ptr cinfo)
 {
@@ -199,5 +201,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     return SoftwareSurface(std::move(dst));
   }
 }
+
+} // namespace surf
 
 /* EOF */

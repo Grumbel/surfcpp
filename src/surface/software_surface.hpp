@@ -23,6 +23,8 @@
 
 #include "surface/pixel_data.hpp"
 
+namespace surf {
+
 class RGB;
 class RGBA;
 
@@ -68,6 +70,8 @@ public:
 private:
   std::shared_ptr<const PixelData> m_pixel_data;
 };
+
+} // namespace surf
 
 #endif
 

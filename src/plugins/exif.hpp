@@ -22,6 +22,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class EXIF
 {
 public:
@@ -32,6 +34,8 @@ private:
   EXIF(const EXIF&);
   EXIF& operator=(const EXIF&);
 };
+
+} // namespace surf
 
 #endif
 

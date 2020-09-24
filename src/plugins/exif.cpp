@@ -18,9 +18,11 @@
 
 #include <libexif/exif-data.h>
 
+namespace surf {
+
 namespace {
 
-SoftwareSurface::Modifier get_orientation(ExifData* ed)
+SoftwareSurface::Modifier get_orientation_exif(ExifData* ed)
 {
   if (!ed)
   {
@@ -78,7 +80,7 @@ SoftwareSurface::Modifier
 EXIF::get_orientation(std::span<uint8_t const> data)
 {
   ExifData* ed = exif_data_new_from_data(data.data(), static_cast<unsigned int>(data.size()));
-  SoftwareSurface::Modifier orientation = ::get_orientation(ed);
+  SoftwareSurface::Modifier orientation = get_orientation_exif(ed);
   exif_data_free(ed);
   return orientation;
 }
@@ -87,9 +89,11 @@ SoftwareSurface::Modifier
 EXIF::get_orientation(const std::string& filename)
 {
   ExifData* ed = exif_data_new_from_file(filename.c_str());
-  SoftwareSurface::Modifier orientation = ::get_orientation(ed);
+  SoftwareSurface::Modifier orientation = get_orientation_exif(ed);
   exif_data_free(ed);
   return orientation;
 }
+
+} // namespace surf
 
 /* EOF */

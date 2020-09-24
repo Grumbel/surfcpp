@@ -23,6 +23,8 @@
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
+namespace surf {
+
 bool
 RSVG::is_available()
 {
@@ -58,5 +60,7 @@ RSVG::load_from_file(const std::string& filename)
     throw std::runtime_error("RSVG::load_from_file(): " + std::string(rsvg.get_stderr().begin(), rsvg.get_stderr().end()));
   }
 }
+
+} // namespace surf
 
 /* EOF */

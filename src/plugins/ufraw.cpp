@@ -24,6 +24,8 @@
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
+namespace surf {
+
 bool
 UFRaw::is_available()
 {
@@ -59,5 +61,7 @@ UFRaw::load_from_file(const std::string& filename)
     return PNM::load_from_mem(ufraw.get_stdout());
   }
 }
+
+} // namespace surf
 
 /* EOF */

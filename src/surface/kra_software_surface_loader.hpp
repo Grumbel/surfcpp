@@ -20,6 +20,8 @@
 #include "plugins/kra.hpp"
 #include "surface/software_surface_loader.hpp"
 
+namespace surf {
+
 class KRASoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -52,6 +54,8 @@ private:
   KRASoftwareSurfaceLoader(const KRASoftwareSurfaceLoader&);
   KRASoftwareSurfaceLoader& operator=(const KRASoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

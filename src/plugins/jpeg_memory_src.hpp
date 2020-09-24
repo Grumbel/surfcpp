@@ -22,8 +22,12 @@
 #include <stdio.h>
 #include <jpeglib.h>
 
+namespace surf {
+
 /** Setup IO handling so that a JPEG can be read from memory */
 void jpeg_memory_src(j_decompress_ptr cinfo, std::span<uint8_t const> data);
+
+} // namespace surf
 
 #endif
 

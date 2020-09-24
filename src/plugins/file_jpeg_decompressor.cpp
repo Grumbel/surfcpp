@@ -21,6 +21,8 @@
 #include <string.h>
 #include <errno.h>
 
+namespace surf {
+
 FileJPEGDecompressor::FileJPEGDecompressor(const std::string& filename) :
   m_filename(filename),
   m_in(fopen(filename.c_str(), "rb"))
@@ -41,5 +43,7 @@ FileJPEGDecompressor::~FileJPEGDecompressor()
 {
   fclose(m_in);
 }
+
+} // namespace surf
 
 /* EOF */

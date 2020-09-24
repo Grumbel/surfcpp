@@ -65,6 +65,8 @@ void writePNGMemory(png_structp png_ptr, png_bytep data, png_size_t length)
 
 } // namespace
 
+namespace surf {
+
 bool
 PNG::get_size(void* data, int len, geom::isize& size)
 {
@@ -408,5 +410,6 @@ PNG::save(SoftwareSurface const& surface)
   return std::move(mem.data);
 }
 
+} // namespace surf
 
 /* EOF */

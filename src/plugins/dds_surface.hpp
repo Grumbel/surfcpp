@@ -26,6 +26,8 @@
 //#include "util.hpp"
 //#include "rgb.hpp"
 
+namespace surf {
+
 #define DDPF_ALPHAPIXELS                0x00000001
 #define DDPF_ALPHA                      0x00000002
 #define DDPF_FOURCC                     0x00000004
@@ -248,6 +250,8 @@ private:
   void read_data_dxt1(std::istream& in);
   void read_data_dtx3(std::istream& in);
 };
+
+} // namespace surf
 
 #endif
 

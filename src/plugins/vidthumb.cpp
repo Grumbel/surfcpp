@@ -25,6 +25,8 @@
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
+namespace surf {
+
 bool
 VidThumb::is_available()
 {
@@ -65,5 +67,7 @@ VidThumb::load_from_file(const std::string& filename)
                                                                           vidthumb.get_stderr().end()));
   }
 }
+
+} // namespace surf
 
 /* EOF */

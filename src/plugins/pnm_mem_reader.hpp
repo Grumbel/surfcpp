@@ -19,6 +19,8 @@
 
 #include <geom/size.hpp>
 
+namespace surf {
+
 class PNMMemReader
 {
 public:
@@ -116,6 +118,8 @@ private:
   PNMMemReader(const PNMMemReader&);
   PNMMemReader& operator=(const PNMMemReader&);
 };
+
+} // namespace surf
 
 #endif
 

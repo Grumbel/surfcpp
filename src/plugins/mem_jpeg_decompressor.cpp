@@ -18,6 +18,8 @@
 
 #include "plugins/jpeg_memory_src.hpp"
 
+namespace surf {
+
 MemJPEGDecompressor::MemJPEGDecompressor(std::span<uint8_t const> data)
 {
   jpeg_memory_src(&m_cinfo, data);
@@ -26,5 +28,7 @@ MemJPEGDecompressor::MemJPEGDecompressor(std::span<uint8_t const> data)
 MemJPEGDecompressor::~MemJPEGDecompressor()
 {
 }
+
+} // namespace surf
 
 /* EOF */

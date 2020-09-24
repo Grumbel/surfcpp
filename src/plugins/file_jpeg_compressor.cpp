@@ -21,6 +21,8 @@
 #include <errno.h>
 #include <sstream>
 
+namespace surf {
+
 FileJPEGCompressor::FileJPEGCompressor(const std::string& filename) :
   m_out(fopen(filename.c_str(), "wb"))
 {
@@ -40,5 +42,7 @@ FileJPEGCompressor::~FileJPEGCompressor()
 {
   fclose(m_out);
 }
+
+} // namespace surf
 
 /* EOF */

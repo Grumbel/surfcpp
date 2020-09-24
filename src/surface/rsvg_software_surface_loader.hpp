@@ -20,6 +20,8 @@
 #include "plugins/rsvg.hpp"
 #include "surface/software_surface_loader.hpp"
 
+namespace surf {
+
 class RSVGSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 private:
@@ -58,6 +60,8 @@ private:
   RSVGSoftwareSurfaceLoader(const RSVGSoftwareSurfaceLoader&);
   RSVGSoftwareSurfaceLoader& operator=(const RSVGSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

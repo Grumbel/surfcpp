@@ -21,6 +21,8 @@
 #include "surface/rgb.hpp"
 #include "surface/rgba.hpp"
 
+namespace surf {
+
 // FIXME: Stuff in this file is currently written to just work, not to
 // be fast
 
@@ -231,5 +233,7 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
     assert(false && "Not m_implemented");
   }
 }
+
+} // namespace surf
 
 /* EOF */

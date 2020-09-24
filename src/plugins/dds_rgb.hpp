@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+namespace surf {
+
 struct DDSRGB
 {
 public:
@@ -85,6 +87,7 @@ inline DDSRGB operator+(const DDSRGB& a, const DDSRGB& b)
   return result;
 }
 
+} // namespace surf
 
 #endif
 

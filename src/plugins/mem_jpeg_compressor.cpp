@@ -18,6 +18,8 @@
 
 #include "plugins/jpeg_memory_dest.hpp"
 
+namespace surf {
+
 MemJPEGCompressor::MemJPEGCompressor(std::vector<uint8_t>& data)
 {
   jpeg_memory_dest(&m_cinfo, &data);
@@ -26,5 +28,7 @@ MemJPEGCompressor::MemJPEGCompressor(std::vector<uint8_t>& data)
 MemJPEGCompressor::~MemJPEGCompressor()
 {
 }
+
+} // namespace surf
 
 /* EOF */

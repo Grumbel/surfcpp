@@ -23,6 +23,8 @@
 #include <geom/size.hpp>
 #include <geom/point.hpp>
 
+namespace surf {
+
 class RGB;
 class RGBA;
 
@@ -70,6 +72,8 @@ private:
   int m_pitch;
   std::vector<uint8_t> m_pixels;
 };
+
+} // namespace surf
 
 #endif
 

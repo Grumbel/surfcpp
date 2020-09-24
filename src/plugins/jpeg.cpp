@@ -27,6 +27,8 @@
 #include "plugins/mem_jpeg_compressor.hpp"
 #include "plugins/mem_jpeg_decompressor.hpp"
 
+namespace surf {
+
 namespace {
 
 geom::isize apply_orientation(SoftwareSurface::Modifier modifier, const geom::isize& size)
@@ -49,7 +51,6 @@ geom::isize apply_orientation(SoftwareSurface::Modifier modifier, const geom::is
 }
 
 } // namespace
-
 
 bool
 JPEG::filename_is_jpeg(const std::string& filename)
@@ -134,5 +135,7 @@ JPEG::save(SoftwareSurface const& surface, int quality)
   compressor.save(surface, quality);
   return data;
 }
+
+} // namespace surf
 
 /* EOF */

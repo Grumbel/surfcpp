@@ -20,6 +20,8 @@
 #include "plugins/png.hpp"
 #include "surface/software_surface_loader.hpp"
 
+namespace surf {
+
 class PNGSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -58,6 +60,8 @@ private:
   PNGSoftwareSurfaceLoader(const PNGSoftwareSurfaceLoader&);
   PNGSoftwareSurfaceLoader& operator=(const PNGSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

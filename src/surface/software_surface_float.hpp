@@ -25,6 +25,8 @@
 #include "surface/rgbaf.hpp"
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class SoftwareSurfaceFloat;
 
 typedef std::shared_ptr<SoftwareSurfaceFloat> SoftwareSurfaceFloatPtr;
@@ -55,6 +57,8 @@ private:
   geom::isize m_size;
   std::vector<float> m_pixels;
 };
+
+} // namespace surf
 
 #endif
 

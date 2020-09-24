@@ -66,6 +66,8 @@ void jpeg_memory_term_destination(j_compress_ptr cinfo)
 
 } // namespace
 
+namespace surf {
+
 void jpeg_memory_dest(j_compress_ptr cinfo, std::vector<uint8_t>* data)
 {
   if (cinfo->dest == nullptr)
@@ -81,5 +83,7 @@ void jpeg_memory_dest(j_compress_ptr cinfo, std::vector<uint8_t>* data)
   struct jpeg_memory_destination_mgr* mgr = reinterpret_cast<struct jpeg_memory_destination_mgr*>(cinfo->dest);
   mgr->data = data;
 }
+
+} // namespace surf
 
 /* EOF */

@@ -22,12 +22,16 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class DDS
 {
 public:
   static bool get_size(const std::string& filename, geom::isize& size);
   static SoftwareSurface load_from_file(const std::string& filename);
 };
+
+} // namespace surf
 
 #endif
 

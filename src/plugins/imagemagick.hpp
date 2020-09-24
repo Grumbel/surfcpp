@@ -23,6 +23,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class URL;
 
 class Imagemagick
@@ -33,6 +35,8 @@ public:
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
   static std::vector<std::string> get_supported_extensions();
 };
+
+} // namespace surf
 
 #endif
 

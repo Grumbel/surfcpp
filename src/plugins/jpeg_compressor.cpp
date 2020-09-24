@@ -16,6 +16,8 @@
 
 #include "plugins/jpeg_compressor.hpp"
 
+namespace surf {
+
 JPEGCompressor::JPEGCompressor() :
   m_cinfo(),
   m_jerr()
@@ -63,5 +65,7 @@ JPEGCompressor::save(SoftwareSurface const& surface_in, int quality)
 
   jpeg_finish_compress(&m_cinfo);
 }
+
+} // namespace surf
 
 /* EOF */

@@ -18,6 +18,7 @@
 
 #include <geom/size.hpp>
 
+namespace surf {
 
 SoftwareSurfaceFloatPtr
 SoftwareSurfaceFloat::create(const geom::isize& size)
@@ -130,5 +131,7 @@ SoftwareSurfaceFloat::to_software_surface() const
   }
   return SoftwareSurface(std::move(dst));
 }
+
+} // namespace surf
 
 /* EOF */

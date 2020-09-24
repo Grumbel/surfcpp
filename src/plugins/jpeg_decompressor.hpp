@@ -25,6 +25,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class JPEGDecompressor
 {
 protected:
@@ -55,6 +57,8 @@ private:
   JPEGDecompressor(const JPEGDecompressor&);
   JPEGDecompressor& operator=(const JPEGDecompressor&);
 };
+
+} // namespace surf
 
 #endif
 

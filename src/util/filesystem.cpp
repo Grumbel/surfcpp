@@ -33,6 +33,8 @@
 
 #include "util/filesystem.hpp"
 
+namespace surf {
+
 std::string Filesystem::home_directory;
 
 std::string
@@ -409,5 +411,7 @@ Filesystem::remove(const std::string& filename)
     throw std::runtime_error(str.str());
   }
 }
+
+} // namespace surf
 
 /* EOF */

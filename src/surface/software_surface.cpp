@@ -25,6 +25,8 @@
 #include "surface/rgb.hpp"
 #include "surface/rgba.hpp"
 
+namespace surf {
+
 namespace {
 
 inline
@@ -477,5 +479,7 @@ SoftwareSurface::to_rgb() const
       return {};
   }
 }
+
+} // namespace surf
 
 /* EOF */

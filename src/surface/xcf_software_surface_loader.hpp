@@ -19,6 +19,8 @@
 
 #include "surface/software_surface_factory.hpp"
 
+namespace surf {
+
 class XCFSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 private:
@@ -59,6 +61,8 @@ private:
   XCFSoftwareSurfaceLoader(const XCFSoftwareSurfaceLoader&);
   XCFSoftwareSurfaceLoader& operator=(const XCFSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

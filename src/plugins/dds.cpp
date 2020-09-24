@@ -23,6 +23,8 @@
 
 #include "plugins/dds_surface.hpp"
 
+namespace surf {
+
 bool
 DDS::get_size(const std::string& filename, geom::isize& size)
 {
@@ -69,5 +71,7 @@ DDS::load_from_file(const std::string& filename)
     return SoftwareSurface(std::move(dst));
   }
 }
+
+} // namespace surf
 
 /* EOF */

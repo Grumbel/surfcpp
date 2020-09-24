@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+namespace surf {
+
 class RGBA
 {
 public:
@@ -54,6 +56,8 @@ public:
   float b_f() const { return static_cast<float>(b) / 255.0f; }
   float a_f() const { return static_cast<float>(a) / 255.0f; }
 };
+
+} // namespace surf
 
 #endif
 

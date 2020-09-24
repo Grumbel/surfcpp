@@ -21,6 +21,8 @@
 #include "surface/software_surface_factory.hpp"
 #include "plugins/imagemagick.hpp"
 
+namespace surf {
+
 class ImagemagickSoftwareSurfaceLoader : public SoftwareSurfaceLoader
 {
 public:
@@ -60,6 +62,8 @@ private:
   ImagemagickSoftwareSurfaceLoader(const ImagemagickSoftwareSurfaceLoader&);
   ImagemagickSoftwareSurfaceLoader& operator=(const ImagemagickSoftwareSurfaceLoader&);
 };
+
+} // namespace surf
 
 #endif
 

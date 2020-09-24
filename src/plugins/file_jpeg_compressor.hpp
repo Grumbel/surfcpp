@@ -22,6 +22,8 @@
 
 #include "plugins/jpeg_compressor.hpp"
 
+namespace surf {
+
 class FileJPEGCompressor : public JPEGCompressor
 {
 public:
@@ -35,6 +37,8 @@ private:
   FileJPEGCompressor(const FileJPEGCompressor&);
   FileJPEGCompressor& operator=(const FileJPEGCompressor&);
 };
+
+} // namespace surf
 
 #endif
 

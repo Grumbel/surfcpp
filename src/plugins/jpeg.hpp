@@ -25,6 +25,8 @@
 
 #include "surface/software_surface.hpp"
 
+namespace surf {
+
 class JPEG
 {
 public:
@@ -54,6 +56,8 @@ public:
   static void save(SoftwareSurface const& surface, int quality, const std::string& filename);
   static std::vector<uint8_t> save(SoftwareSurface const& surface, int quality);
 };
+
+} // namespace surf
 
 #endif
 
