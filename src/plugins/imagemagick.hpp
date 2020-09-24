@@ -25,8 +25,6 @@
 
 namespace surf {
 
-class URL;
-
 class Imagemagick
 {
 public:
