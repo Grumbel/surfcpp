@@ -21,10 +21,7 @@
 #include <memory>
 #include <geom/fwd.hpp>
 
-#include "math/vector2i.hpp"
-#include "util/blob.hpp"
 #include "surface/pixel_data.hpp"
-#include "math/rect.hpp"
 
 class RGB;
 class RGBA;
@@ -49,13 +46,13 @@ public:
   SoftwareSurface();
   SoftwareSurface(PixelData data);
 
-  Size get_size() const;
+  geom::isize get_size() const;
   int get_width() const;
   int get_height() const;
 
   SoftwareSurface halve() const;
-  SoftwareSurface scale(Size const& size) const;
-  SoftwareSurface crop(Rect const& rect) const;
+  SoftwareSurface scale(geom::isize const& size) const;
+  SoftwareSurface crop(geom::irect const& rect) const;
 
   SoftwareSurface transform(Modifier mod) const;
   SoftwareSurface rotate90() const;

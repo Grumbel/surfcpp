@@ -18,15 +18,14 @@
 
 #include <geom/size.hpp>
 
-#include "math/math.hpp"
 
 SoftwareSurfaceFloatPtr
-SoftwareSurfaceFloat::create(const Size& size)
+SoftwareSurfaceFloat::create(const geom::isize& size)
 {
   return SoftwareSurfaceFloatPtr(new SoftwareSurfaceFloat(size));
 }
 
-SoftwareSurfaceFloat::SoftwareSurfaceFloat(const Size& size) :
+SoftwareSurfaceFloat::SoftwareSurfaceFloat(const geom::isize& size) :
   m_size(size),
   m_pixels(static_cast<size_t>(geom::area(size) * 4))
 {
@@ -68,7 +67,7 @@ SoftwareSurfaceFloat::apply_gamma(float gamma)
   }
 }
 
-Size
+geom::isize
 SoftwareSurfaceFloat::get_size() const
 {
   return m_size;
@@ -122,10 +121,10 @@ SoftwareSurfaceFloat::to_software_surface() const
       get_pixel(x, y, rgbaf);
 
       RGBA rgba;
-      rgba.r = static_cast<uint8_t>(Math::clamp(0, static_cast<int>(rgbaf.r * 255.0f), 255));
-      rgba.g = static_cast<uint8_t>(Math::clamp(0, static_cast<int>(rgbaf.g * 255.0f), 255));
-      rgba.b = static_cast<uint8_t>(Math::clamp(0, static_cast<int>(rgbaf.b * 255.0f), 255));
-      rgba.a = static_cast<uint8_t>(Math::clamp(0, static_cast<int>(rgbaf.a * 255.0f), 255));
+      rgba.r = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.r * 255.0f), 0, 255));
+      rgba.g = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.g * 255.0f), 0, 255));
+      rgba.b = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.b * 255.0f), 0, 255));
+      rgba.a = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.a * 255.0f), 0, 255));
       dst.put_pixel(x, y, rgba);
     }
   }

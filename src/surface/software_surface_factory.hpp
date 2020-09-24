@@ -20,13 +20,11 @@
 #include <map>
 #include <string>
 
-#include "util/currenton.hpp"
 #include "surface/software_surface.hpp"
 
 class SoftwareSurfaceLoader;
-class URL;
 
-class SoftwareSurfaceFactory : public Currenton<SoftwareSurfaceFactory>
+class SoftwareSurfaceFactory
 {
 private:
   typedef std::map<std::string, const SoftwareSurfaceLoader*> ExtensionMap;
@@ -35,10 +33,12 @@ private:
 
 public:
   SoftwareSurfaceFactory();
-  ~SoftwareSurfaceFactory() override;
+  ~SoftwareSurfaceFactory();
 
   void add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader);
+#if 0
   bool has_supported_extension(const URL& url);
+#endif
 
   /** Files are handled in the order of mime-type, extension, magic,
       if one fails, the next in line is tried. Extension is the most
@@ -50,9 +50,13 @@ public:
 
   const SoftwareSurfaceLoader* find_loader_by_filename(const std::string& filename) const;
   const SoftwareSurfaceLoader* find_loader_by_magic(const std::string& data) const;
-  const SoftwareSurfaceLoader* find_loader_by_magic(Blob const& data) const;
+#if 0
+  const SoftwareSurfaceLoader* find_loader_by_magic(std::span<uint8_t> data) const;
+#endif
 
+#if 0
   SoftwareSurface from_url(const URL& url) const;
+#endif
   SoftwareSurface from_file(const std::string& filename) const;
   SoftwareSurface from_file(const std::string& filename, const SoftwareSurfaceLoader* loader) const;
 

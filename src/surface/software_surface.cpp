@@ -16,10 +16,12 @@
 
 #include "surface/software_surface.hpp"
 
-#include <iostream>
+#include <algorithm>
+#include <assert.h>
 #include <string.h>
 
-#include "math/rect.hpp"
+#include <geom/rect.hpp>
+
 #include "surface/rgb.hpp"
 #include "surface/rgba.hpp"
 
@@ -111,7 +113,7 @@ SoftwareSurface::halve() const
 }
 
 SoftwareSurface
-SoftwareSurface::scale(Size const& size) const
+SoftwareSurface::scale(geom::isize const& size) const
 {
   PixelData const& src = *m_pixel_data;
 
@@ -119,7 +121,7 @@ SoftwareSurface::scale(Size const& size) const
   {
     return *this;
   }
-  else if (src.get_size() == Size(0, 0))
+  else if (src.get_size() == geom::isize(0, 0))
   {
     return SoftwareSurface(PixelData(m_pixel_data->get_format(), size));
   }
@@ -214,7 +216,7 @@ SoftwareSurface
 SoftwareSurface::rotate90() const
 {
   PixelData const& src = *m_pixel_data;
-  PixelData dst(src.get_format(), Size(src.get_size().height(), src.get_size().width()));
+  PixelData dst(src.get_format(), geom::isize(src.get_size().height(), src.get_size().width()));
 
   switch(src.get_format())
   {
@@ -282,7 +284,7 @@ SoftwareSurface
 SoftwareSurface::rotate270() const
 {
   PixelData const& src = *m_pixel_data;
-  PixelData dst(src.get_format(), Size(src.get_height(), src.get_width()));
+  PixelData dst(src.get_format(), geom::isize(src.get_height(), src.get_width()));
 
   switch(src.get_format())
   {
@@ -355,7 +357,7 @@ SoftwareSurface::vflip() const
 }
 
 SoftwareSurface
-SoftwareSurface::crop(Rect const& rect_in) const
+SoftwareSurface::crop(geom::irect const& rect_in) const
 {
   // FIXME: We could do a crop without copying content, sm_imply
   // reference the old SoftwareSurfaceM_Impl and have a different pitch
@@ -363,10 +365,10 @@ SoftwareSurface::crop(Rect const& rect_in) const
   assert(rect_in);
 
   // Clip the rectangle to the image
-  Rect rect(Math::clamp(0, rect_in.left(),   get_width()),
-            Math::clamp(0, rect_in.top(),    get_height()),
-            Math::clamp(0, rect_in.right(),  get_width()),
-            Math::clamp(0, rect_in.bottom(), get_height()));
+  geom::irect rect(std::clamp(rect_in.left(),   0, get_width()),
+                   std::clamp(rect_in.top(),    0, get_height()),
+                   std::clamp(rect_in.right(),  0, get_width()),
+                   std::clamp(rect_in.bottom(), 0, get_height()));
 
   PixelData const& src = *m_pixel_data;
   PixelData dst(src.get_format(), rect.size());
@@ -381,7 +383,7 @@ SoftwareSurface::crop(Rect const& rect_in) const
   return SoftwareSurface(std::move(dst));
 }
 
-Size
+geom::isize
 SoftwareSurface::get_size()  const
 {
   return m_pixel_data->get_size();

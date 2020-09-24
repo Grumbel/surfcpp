@@ -19,7 +19,6 @@
 #include <sstream>
 
 #include "plugins/dds_rgb.hpp"
-#include "util/raise_exception.hpp"
 
 DDSSurface::DDSSurface(std::istream& in) :
   magic(),
@@ -96,7 +95,7 @@ DDSSurface::read_data(std::istream& in)
         break;
 
       case DDS_DXT2:
-        raise_runtime_error("DXT2 Format not supported");
+        throw std::runtime_error("DXT2 Format not supported");
         break;
 
       case DDS_DXT3:
@@ -104,7 +103,7 @@ DDSSurface::read_data(std::istream& in)
         break;
 
       case DDS_DXT4:
-        raise_runtime_error("DXT4 Format not supported");
+        throw std::runtime_error("DXT4 Format not supported");
         break;
 
       case DDS_DXT5:
@@ -120,7 +119,7 @@ DDSSurface::read_data(std::istream& in)
         {
           std::ostringstream str;
           str << "Format unknown: " << pixel_format.dwFourCC << " " << std::string(reinterpret_cast<char*>(&pixel_format.dwFourCC), 4);
-          raise_runtime_error(str.str());
+          throw std::runtime_error(str.str());
         }
     }
   }

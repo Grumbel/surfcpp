@@ -20,9 +20,8 @@
 #include <stdint.h>
 #include <vector>
 
-#include "math/size.hpp"
-#include "math/vector2i.hpp"
-#include "math/rect.hpp"
+#include <geom/size.hpp>
+#include <geom/point.hpp>
 
 class RGB;
 class RGBA;
@@ -39,10 +38,10 @@ public:
 
 public:
   PixelData();
-  PixelData(Format format, const Size& size);
+  PixelData(Format format, const geom::isize& size);
 
   Format get_format() const { return m_format; }
-  Size get_size() const { return m_size; }
+  geom::isize get_size() const { return m_size; }
   int get_width() const { return m_size.width(); }
   int get_height() const { return m_size.height(); }
   int get_pitch() const { return m_pitch; }
@@ -63,11 +62,11 @@ public:
   uint8_t const* get_row_data(int y) const;
 
   /** Performs a simple copy from this to \a test, no blending is performed */
-  void blit(PixelData& dst, const Vector2i& pos) const;
+  void blit(PixelData& dst, const geom::ipoint& pos) const;
 
 private:
   Format m_format;
-  Size m_size;
+  geom::isize m_size;
   int m_pitch;
   std::vector<uint8_t> m_pixels;
 };

@@ -17,11 +17,8 @@
 #include "plugins/jpeg_decompressor.hpp"
 
 #include <assert.h>
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
-
-#include "util/raise_exception.hpp"
 
 void
 JPEGDecompressor::fatal_error_handler(j_common_ptr cinfo)
@@ -47,7 +44,7 @@ JPEGDecompressor::~JPEGDecompressor()
   jpeg_destroy_decompress(&m_cinfo);
 }
 
-Size
+geom::isize
 JPEGDecompressor::read_size()
 {
   if (setjmp(m_err.setjmp_buffer))
@@ -57,27 +54,26 @@ JPEGDecompressor::read_size()
 
     std::ostringstream out;
     out << "JPEG::read_size(): " /*<< filename << ": "*/ << buffer;
-    raise_runtime_error(out.str());
+    throw std::runtime_error(out.str());
   }
   else
   {
     jpeg_read_header(&m_cinfo, /*require_image*/ FALSE);
 
-    return Size(static_cast<int>(m_cinfo.image_width),
+    return geom::isize(static_cast<int>(m_cinfo.image_width),
                 static_cast<int>(m_cinfo.image_height));
   }
 }
 
 SoftwareSurface
-JPEGDecompressor::read_image(int scale, Size* image_size)
+JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 {
   if (!(scale == 1 ||
         scale == 2 ||
         scale == 4 ||
         scale == 8))
   {
-    std::cout << "JPEGDecompressor::read_image: Invalid scale: " << scale << std::endl;
-    assert(0);
+    throw std::invalid_argument("JPEGDecompressor::read_image: Invalid scale: " + std::to_string(scale));
   }
 
   if (setjmp(m_err.setjmp_buffer))
@@ -87,7 +83,7 @@ JPEGDecompressor::read_image(int scale, Size* image_size)
 
     std::ostringstream out;
     out << "JPEG::read_image(): " /*<< filename << ": "*/ << buffer;
-    raise_runtime_error(out.str());
+    throw std::runtime_error(out.str());
   }
   else
   {
@@ -95,7 +91,7 @@ JPEGDecompressor::read_image(int scale, Size* image_size)
 
     if (image_size)
     {
-      *image_size = Size(static_cast<int>(m_cinfo.image_width),
+      *image_size = geom::isize(static_cast<int>(m_cinfo.image_width),
                          static_cast<int>(m_cinfo.image_height));
     }
 
@@ -112,7 +108,7 @@ JPEGDecompressor::read_image(int scale, Size* image_size)
     jpeg_start_decompress(&m_cinfo);
 
     PixelData dst(PixelData::RGB_FORMAT,
-                      Size(static_cast<int>(m_cinfo.output_width),
+                  geom::isize(static_cast<int>(m_cinfo.output_width),
                            static_cast<int>(m_cinfo.output_height)));
 
     if (m_cinfo.out_color_space == JCS_RGB &&
@@ -197,7 +193,7 @@ JPEGDecompressor::read_image(int scale, Size* image_size)
       std::ostringstream str;
       str << "JPEGDecompressor::read_image(): Unsupported colorspace: "
           << static_cast<int>(m_cinfo.out_color_space) << " components: " << m_cinfo.output_components;
-      raise_runtime_error(str.str());
+      throw std::runtime_error(str.str());
     }
 
     return SoftwareSurface(std::move(dst));

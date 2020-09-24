@@ -30,8 +30,8 @@ class JPEG
 public:
   static bool filename_is_jpeg(const std::string& filename);
 
-  static Size get_size(const std::string& filename);
-  static Size get_size(std::span<uint8_t const> data);
+  static geom::isize get_size(const std::string& filename);
+  static geom::isize get_size(std::span<uint8_t const> data);
 
   /** Load a SoftwareSurface from the filesystem
 
@@ -40,7 +40,7 @@ public:
       @param[out] size     The size of the unscaled image
 
       @return reference counted pointer to a SoftwareSurface object */
-  static SoftwareSurface load_from_file(const std::string& filename, int scale = 1, Size* size = nullptr);
+  static SoftwareSurface load_from_file(const std::string& filename, int scale = 1, geom::isize* size = nullptr);
 
   /** Load a JPEG from memory
 
@@ -49,10 +49,12 @@ public:
       @param[out] size  The size of the unscaled image
 
       @return reference counted pointer to a SoftwareSurface object */
-  static SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale = 1, Size* size = nullptr);
+  static SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
 
   static void save(SoftwareSurface const& surface, int quality, const std::string& filename);
+#if 0
   static Blob save(SoftwareSurface const& surface, int quality);
+#endif
 };
 
 #endif

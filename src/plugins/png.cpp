@@ -18,11 +18,10 @@
 
 #include <string.h>
 #include <assert.h>
-#include <png.h>
 #include <stdexcept>
 #include <logmich/log.hpp>
 
-#include "util/raise_exception.hpp"
+#include <png.h>
 
 namespace {
 
@@ -67,7 +66,7 @@ void writePNGMemory(png_structp png_ptr, png_bytep data, png_size_t length)
 } // namespace
 
 bool
-PNG::get_size(void* data, int len, Size& size)
+PNG::get_size(void* data, int len, geom::isize& size)
 {
   // FIXME: Could install error/warning handling functions here
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -91,7 +90,7 @@ PNG::get_size(void* data, int len, Size& size)
 
     png_read_info(png_ptr, info_ptr);
 
-    size = Size(static_cast<int>(png_get_image_width(png_ptr, info_ptr)),
+    size = geom::isize(static_cast<int>(png_get_image_width(png_ptr, info_ptr)),
                 static_cast<int>(png_get_image_height(png_ptr, info_ptr)));
 
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
@@ -101,7 +100,7 @@ PNG::get_size(void* data, int len, Size& size)
 }
 
 bool
-PNG::get_size(const std::string& filename, Size& size)
+PNG::get_size(const std::string& filename, geom::isize& size)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -126,7 +125,7 @@ PNG::get_size(const std::string& filename, Size& size)
 
       png_read_info(png_ptr, info_ptr);
 
-      size = Size(static_cast<int>(png_get_image_width(png_ptr, info_ptr)),
+      size = geom::isize(static_cast<int>(png_get_image_width(png_ptr, info_ptr)),
                   static_cast<int>(png_get_image_height(png_ptr, info_ptr)));
 
       png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
@@ -173,7 +172,7 @@ PNG::load_from_file(const std::string& filename)
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
   {
-    raise_runtime_error("PNG::load_from_file(): Couldn't open " + filename);
+    throw std::runtime_error("PNG::load_from_file(): Couldn't open " + filename);
   }
   else
   {
@@ -183,7 +182,7 @@ PNG::load_from_file(const std::string& filename)
     if (setjmp(png_jmpbuf(png_ptr)))
     {
       png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-      raise_runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + filename);
+      throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + filename);
     }
 
     png_init_io(png_ptr, in);
@@ -211,7 +210,7 @@ PNG::load_from_file(const std::string& filename)
     {
       case PNG_COLOR_TYPE_RGBA:
       {
-        dst = PixelData(PixelData::RGBA_FORMAT, Size(width, height));
+        dst = PixelData(PixelData::RGBA_FORMAT, geom::isize(width, height));
 
         std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
         for (int y = 0; y < height; ++y) {
@@ -224,7 +223,7 @@ PNG::load_from_file(const std::string& filename)
 
       case PNG_COLOR_TYPE_RGB:
       {
-        dst = PixelData(PixelData::RGB_FORMAT, Size(width, height));
+        dst = PixelData(PixelData::RGB_FORMAT, geom::isize(width, height));
 
         std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
         for (int y = 0; y < height; ++y) {
@@ -259,7 +258,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-    raise_runtime_error("PNG::load_from_mem(): setjmp: Couldn't load from mem");
+    throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load from mem");
   }
 
   png_set_read_fn(png_ptr, &png_memory, &readPNGMemory);
@@ -287,7 +286,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
   {
     case PNG_COLOR_TYPE_RGBA:
     {
-      dst = PixelData(PixelData::RGBA_FORMAT, Size(width, height));
+      dst = PixelData(PixelData::RGBA_FORMAT, geom::isize(width, height));
 
       std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
       for (int y = 0; y < height; ++y) {
@@ -300,7 +299,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
 
     case PNG_COLOR_TYPE_RGB:
     {
-      dst = PixelData(PixelData::RGB_FORMAT, Size(width, height));
+      dst = PixelData(PixelData::RGB_FORMAT, geom::isize(width, height));
 
       std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
       for (int y = 0; y < height; ++y) {
@@ -326,7 +325,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
   if (!out)
   {
     perror(filename.c_str());
-    raise_runtime_error("PNG::save(): Couldn't save " + filename);
+    throw std::runtime_error("PNG::save(): Couldn't save " + filename);
   }
   else
   {
@@ -338,7 +337,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
     {
       fclose(out);
       png_destroy_write_struct(&png_ptr, &info_ptr);
-      raise_runtime_error("PNG::save(): setjmp: Couldn't save " + filename);
+      throw std::runtime_error("PNG::save(): setjmp: Couldn't save " + filename);
     }
 
     // set up the output control if you are using standard C streams
@@ -367,7 +366,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
   }
 }
 
-Blob
+std::vector<uint8_t>
 PNG::save(SoftwareSurface const& surface)
 {
   PixelData const& src = surface.get_pixel_data();
@@ -380,7 +379,7 @@ PNG::save(SoftwareSurface const& surface)
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    raise_runtime_error("PNG::save(): setjmp: Couldn't save to Blob");
+    throw std::runtime_error("PNG::save(): setjmp: Couldn't save to Blob");
   }
 
   PNGWriteMemory mem;
@@ -406,7 +405,7 @@ PNG::save(SoftwareSurface const& surface)
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
-  return Blob::copy(mem.data);
+  return std::move(mem.data);
 }
 
 

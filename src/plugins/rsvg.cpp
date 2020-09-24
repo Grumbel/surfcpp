@@ -22,8 +22,6 @@
 #include "plugins/png.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
-#include "util/url.hpp"
-#include "util/raise_exception.hpp"
 
 bool
 RSVG::is_available()
@@ -52,13 +50,12 @@ RSVG::load_from_file(const std::string& filename)
 
   if (rsvg.exec() == 0)
   {
-    Blob blob = Blob::copy(rsvg.get_stdout());
-    SoftwareSurface surface = PNG::load_from_mem(blob);
+    SoftwareSurface surface = PNG::load_from_mem(rsvg.get_stdout());
     return surface;
   }
   else
   {
-    raise_runtime_error("RSVG::load_from_file(): " + std::string(rsvg.get_stderr().begin(), rsvg.get_stderr().end()));
+    throw std::runtime_error("RSVG::load_from_file(): " + std::string(rsvg.get_stderr().begin(), rsvg.get_stderr().end()));
   }
 }
 

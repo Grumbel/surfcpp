@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
 #include <sstream>
 #include <setjmp.h>
 
-#include "math/size.hpp"
+#include <geom/size.hpp>
+
+#include "util/filesystem.hpp"
 #include "plugins/exif.hpp"
 #include "plugins/file_jpeg_compressor.hpp"
 #include "plugins/file_jpeg_decompressor.hpp"
 #include "plugins/jpeg.hpp"
 #include "plugins/mem_jpeg_compressor.hpp"
 #include "plugins/mem_jpeg_decompressor.hpp"
-#include "util/filesystem.hpp"
 
 namespace {
 
-Size apply_orientation(SoftwareSurface::Modifier modifier, const Size& size)
+geom::isize apply_orientation(SoftwareSurface::Modifier modifier, const geom::isize& size)
 {
   switch(modifier)
   {
@@ -61,26 +61,26 @@ JPEG::filename_is_jpeg(const std::string& filename)
           Filesystem::get_extension(filename) == "jpeg");
 }
 
-Size
+geom::isize
 JPEG::get_size(const std::string& filename)
 {
   FileJPEGDecompressor loader(filename);
-  Size size = loader.read_size();
+  geom::isize size = loader.read_size();
   return apply_orientation(EXIF::get_orientation(filename), size);
 }
 
 
-Size
+geom::isize
 JPEG::get_size(std::span<uint8_t const> data)
 {
   MemJPEGDecompressor loader(data);
-  Size size = loader.read_size();
+  geom::isize size = loader.read_size();
   return apply_orientation(EXIF::get_orientation(data), size);
 }
 
 
 SoftwareSurface
-JPEG::load_from_file(const std::string& filename, int scale, Size* image_size)
+JPEG::load_from_file(const std::string& filename, int scale, geom::isize* image_size)
 {
   FileJPEGDecompressor loader(filename);
   SoftwareSurface surface = loader.read_image(scale, image_size);
@@ -100,7 +100,7 @@ JPEG::load_from_file(const std::string& filename, int scale, Size* image_size)
 
 
 SoftwareSurface
-JPEG::load_from_mem(std::span<uint8_t const> data, int scale, Size* image_size)
+JPEG::load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
 {
   MemJPEGDecompressor loader(data);
   SoftwareSurface surface = loader.read_image(scale, image_size);
@@ -126,7 +126,7 @@ JPEG::save(SoftwareSurface const& surface, int quality, const std::string& filen
   compressor.save(surface, quality);
 }
 
-
+#if 0
 Blob
 JPEG::save(SoftwareSurface const& surface, int quality)
 {
@@ -136,5 +136,6 @@ JPEG::save(SoftwareSurface const& surface, int quality)
   // FIXME: Unneeded copy of data
   return Blob::copy(data);
 }
+#endif
 
 /* EOF */

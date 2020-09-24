@@ -21,8 +21,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "util/raise_exception.hpp"
-
 FileJPEGDecompressor::FileJPEGDecompressor(const std::string& filename) :
   m_filename(filename),
   m_in(fopen(filename.c_str(), "rb"))
@@ -31,7 +29,7 @@ FileJPEGDecompressor::FileJPEGDecompressor(const std::string& filename) :
   {
     std::ostringstream out;
     out << "FileJPEGDecompressor(): " << filename << ": " << strerror(errno);
-    raise_runtime_error(out.str());
+    throw std::runtime_error(out.str());
   }
   else
   {

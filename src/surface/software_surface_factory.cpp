@@ -18,12 +18,11 @@
 
 #include <sstream>
 #include <stdexcept>
+
 #include <logmich/log.hpp>
 
 #include "util/filesystem.hpp"
-#include "util/raise_exception.hpp"
 #include "surface/software_surface_loader.hpp"
-#include "util/url.hpp"
 
 #include "plugins/imagemagick.hpp"
 #include "plugins/jpeg.hpp"
@@ -103,6 +102,7 @@ SoftwareSurfaceFactory::add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader
   m_loader.back()->register_loader(*this);
 }
 
+#if 0
 bool
 SoftwareSurfaceFactory::has_supported_extension(const URL& url)
 {
@@ -110,6 +110,7 @@ SoftwareSurfaceFactory::has_supported_extension(const URL& url)
   ExtensionMap::iterator i = m_extension_map.find(extension);
   return (i != m_extension_map.end());
 }
+#endif
 
 void
 SoftwareSurfaceFactory::register_by_magic(const SoftwareSurfaceLoader* loader, const std::string& magic)
@@ -181,12 +182,14 @@ SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
   return nullptr;
 }
 
+#if 0
 const SoftwareSurfaceLoader*
-SoftwareSurfaceFactory::find_loader_by_magic(Blob const& data) const
+SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t> data) const
 {
   size_t size = std::min(static_cast<size_t>(1024), data.size());
-  return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.get_data()), size));
+  return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.data()), size));
 }
+#endif
 
 SoftwareSurface
 SoftwareSurfaceFactory::from_file(const std::string& filename, const SoftwareSurfaceLoader* loader) const
@@ -197,14 +200,16 @@ SoftwareSurfaceFactory::from_file(const std::string& filename, const SoftwareSur
   {
     return loader->from_file(filename);
   }
+#if 0
   else if (loader->supports_from_mem())
   {
     Blob blob = Blob::from_file(filename);
     return loader->from_mem(blob);
   }
+#endif
   else
   {
-    raise_exception(std::runtime_error, "'" << loader->get_name() << "' loader does not support loading");
+    throw std::runtime_error("'" + loader->get_name() + "' loader does not support loading");
   }
 }
 
@@ -216,7 +221,7 @@ SoftwareSurfaceFactory::from_file(const std::string& filename) const
   {
     std::ostringstream out;
     out << "SoftwareSurfaceFactory::from_file(): " << filename << ": unknown file type";
-    raise_runtime_error(out.str());
+    throw std::runtime_error(out.str());
   }
   else
   {
@@ -242,6 +247,7 @@ SoftwareSurfaceFactory::from_file(const std::string& filename) const
   }
 }
 
+#if 0
 SoftwareSurface
 SoftwareSurfaceFactory::from_url(const URL& url) const
 {
@@ -284,7 +290,7 @@ SoftwareSurfaceFactory::from_url(const URL& url) const
     {
       std::ostringstream out;
       out << "SoftwareSurfaceFactory::from_url(): " << url.str() << ": unknown file type";
-      raise_runtime_error(out.str());
+      throw std::runtime_error(out.str());
     }
     else
     {
@@ -296,10 +302,11 @@ SoftwareSurfaceFactory::from_url(const URL& url) const
       {
         std::ostringstream out;
         out << "SoftwareSurfaceFactory::from_url(): " << url.str() << ": loader doesn't support from_mem(), workaround not implemented";
-        raise_runtime_error(out.str());
+        throw std::runtime_error(out.str());
       }
     }
   }
 }
+#endif
 
 /* EOF */

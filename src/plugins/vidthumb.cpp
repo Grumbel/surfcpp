@@ -18,12 +18,12 @@
 
 #include <stdexcept>
 #include <sstream>
+
 #include <logmich/log.hpp>
 
 #include "plugins/png.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
-#include "util/raise_exception.hpp"
 
 bool
 VidThumb::is_available()
@@ -55,14 +55,13 @@ VidThumb::load_from_file(const std::string& filename)
 
   if (vidthumb.exec() == 0)
   {
-    std::cout << vidthumb.get_stdout_txt();
     SoftwareSurface surface = PNG::load_from_file(out.str());
     remove(out.str().c_str());
     return surface;
   }
   else
   {
-    raise_runtime_error("VidThumb::load_from_file(): " + std::string(vidthumb.get_stderr().begin(),
+    throw std::runtime_error("VidThumb::load_from_file(): " + std::string(vidthumb.get_stderr().begin(),
                                                                           vidthumb.get_stderr().end()));
   }
 }

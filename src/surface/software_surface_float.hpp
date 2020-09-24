@@ -20,7 +20,8 @@
 #include <memory>
 #include <vector>
 
-#include "math/size.hpp"
+#include <geom/size.hpp>
+
 #include "surface/rgbaf.hpp"
 #include "surface/software_surface.hpp"
 
@@ -31,18 +32,18 @@ typedef std::shared_ptr<SoftwareSurfaceFloat> SoftwareSurfaceFloatPtr;
 class SoftwareSurfaceFloat
 {
 public:
-  static SoftwareSurfaceFloatPtr create(const Size& size);
+  static SoftwareSurfaceFloatPtr create(const geom::isize& size);
   static SoftwareSurfaceFloatPtr from_software_surface(SoftwareSurface const& surface);
 
 private:
-  SoftwareSurfaceFloat(const Size& size);
+  SoftwareSurfaceFloat(const geom::isize& size);
 
 public:
   SoftwareSurface to_software_surface() const;
 
   void apply_gamma(float gamma);
 
-  Size get_size()   const;
+  geom::isize get_size()   const;
   int  get_width()  const;
   int  get_height() const;
   int  get_pitch()  const;
@@ -51,7 +52,7 @@ public:
   void get_pixel(int x, int y, RGBAf& rgba) const;
 
 private:
-  Size m_size;
+  geom::isize m_size;
   std::vector<float> m_pixels;
 };
 

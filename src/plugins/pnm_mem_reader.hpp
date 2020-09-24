@@ -17,7 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_PNM_MEM_READER_HPP
 #define HEADER_GALAPIX_PLUGINS_PNM_MEM_READER_HPP
 
-#include "math/size.hpp"
+#include <geom/size.hpp>
 
 class PNMMemReader
 {
@@ -36,7 +36,7 @@ public:
 
   std::string get_magic() const { return m_magic; }
   uint8_t const* get_pixel_data() const { return m_pixel_data; }
-  Size get_size() const { return m_size; }
+  geom::isize get_size() const { return m_size; }
   int  get_maxval() const { return m_maxval; }
 
 private:
@@ -82,11 +82,11 @@ private:
             break;
 
           case 1:
-            m_size = Size(atoi(token.c_str()), m_size.height());
+            m_size = geom::isize(atoi(token.c_str()), m_size.height());
             break;
 
           case 2:
-            m_size = Size(m_size.width(), atoi(token.c_str()));
+            m_size = geom::isize(m_size.width(), atoi(token.c_str()));
             break;
 
           case 3:
@@ -108,7 +108,7 @@ private:
   int m_token_count;
 
   std::string m_magic;
-  Size m_size;
+  geom::isize m_size;
   int m_maxval;
   uint8_t const* m_pixel_data;
 

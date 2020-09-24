@@ -16,31 +16,32 @@
 
 #include "plugins/imagemagick.hpp"
 
-#include <assert.h>
-#include <stdexcept>
-#include <Magick++.h>
-#include <iostream>
-#include <algorithm>
-#include <list>
 
-#include "util/url.hpp"
-#include "math/size.hpp"
+#include <algorithm>
+#include <assert.h>
+#include <list>
+#include <stdexcept>
+
+#include <logmich/log.hpp>
+#include <Magick++.h>
+
+#include <geom/size.hpp>
 
 bool
-Imagemagick::get_size(const std::string& filename, Size& size)
+Imagemagick::get_size(const std::string& filename, geom::isize& size)
 {
   try
   {
     Magick::Image image(filename);
 
-    size = Size(static_cast<int>(image.columns()),
+    size = geom::isize(static_cast<int>(image.columns()),
                 static_cast<int>(image.rows()));
 
     return true;
   }
   catch(std::exception& err)
   {
-    std::cout << "Imagemagick: " << filename << ": " << err.what() << std::endl;
+    log_error("Imagemagick: {}: {}", filename, err.what());
     return false;
   }
 }
@@ -102,7 +103,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
 
   if (image.matte())
   {
-    PixelData dst(PixelData::RGBA_FORMAT, Size(width, height));
+    PixelData dst(PixelData::RGBA_FORMAT, geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {
@@ -122,7 +123,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
   }
   else
   {
-    PixelData dst(PixelData::RGB_FORMAT, Size(width, height));
+    PixelData dst(PixelData::RGB_FORMAT, geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {

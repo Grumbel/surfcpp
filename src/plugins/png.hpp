@@ -20,14 +20,15 @@
 #include <span>
 #include <string>
 
-#include "math/size.hpp"
+#include <geom/size.hpp>
+
 #include "surface/software_surface.hpp"
 
 class PNG
 {
 public:
-  static bool get_size(void* data, int len, Size& size);
-  static bool get_size(const std::string& filename, Size& size);
+  static bool get_size(void* data, int len, geom::isize& size);
+  static bool get_size(const std::string& filename, geom::isize& size);
 
   static bool is_png(const std::string& filename);
 
@@ -35,7 +36,7 @@ public:
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
   static void save(SoftwareSurface const& surface, const std::string& filename);
-  static Blob save(SoftwareSurface const& surface);
+  static std::vector<uint8_t> save(SoftwareSurface const& surface);
 };
 
 #endif

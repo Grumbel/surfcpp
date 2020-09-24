@@ -18,14 +18,14 @@
 #define HEADER_GALAPIX_PLUGINS_DDS_HPP
 
 #include <string>
+#include <geom/size.hpp>
 
 #include "surface/software_surface.hpp"
-#include "math/size.hpp"
 
 class DDS
 {
 public:
-  static bool get_size(const std::string& filename, Size& size);
+  static bool get_size(const std::string& filename, geom::isize& size);
   static SoftwareSurface load_from_file(const std::string& filename);
 };
 

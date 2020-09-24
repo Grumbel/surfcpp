@@ -28,7 +28,7 @@ class URL;
 class Imagemagick
 {
 public:
-  static bool get_size(const std::string& filename, Size& size);
+  static bool get_size(const std::string& filename, geom::isize& size);
   static SoftwareSurface load_from_file(const std::string& filename);
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
   static std::vector<std::string> get_supported_extensions();

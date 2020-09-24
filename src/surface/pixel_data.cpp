@@ -32,7 +32,7 @@ PixelData::PixelData() :
 {
 }
 
-PixelData::PixelData(Format format, Size const& size) :
+PixelData::PixelData(Format format, geom::isize const& size) :
   m_format(format),
   m_size(size),
   m_pitch(),
@@ -168,7 +168,7 @@ PixelData::get_row_data(int y) const
 }
 
 void
-PixelData::blit(PixelData& dst, const Vector2i& pos) const
+PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
 {
   int start_x = std::max(0, -pos.x());
   int start_y = std::max(0, -pos.y());

@@ -19,9 +19,9 @@
 #include <assert.h>
 #include <stdexcept>
 
+#include <geom/size.hpp>
+
 #include "plugins/pnm_mem_reader.hpp"
-#include "math/size.hpp"
-#include "util/raise_exception.hpp"
 
 SoftwareSurface
 PNM::load_from_mem(std::span<uint8_t const> data)
@@ -40,7 +40,7 @@ PNM::load_from_mem(std::span<uint8_t const> data)
   {
     if (dst.get_width() * dst.get_height() * 3 > pixel_data_len)
     {
-      raise_runtime_error("PNM::load_from_mem(): premature end of pixel data");
+      throw std::runtime_error("PNM::load_from_mem(): premature end of pixel data");
     }
 
     for(int i = 0; i < dst.get_width() * dst.get_height(); ++i)
@@ -54,7 +54,7 @@ PNM::load_from_mem(std::span<uint8_t const> data)
   {
     if (dst.get_width() * dst.get_height()  > pixel_data_len)
     {
-      raise_runtime_error("PNM::load_from_mem(): premature end of pixel data");
+      throw std::runtime_error("PNM::load_from_mem(): premature end of pixel data");
     }
 
     for(int i = 0; i < dst.get_width() * dst.get_height(); ++i)
@@ -66,7 +66,7 @@ PNM::load_from_mem(std::span<uint8_t const> data)
   }
   else
   {
-    raise_runtime_error("PNM::load_from_mem(): Unhandled PNM format: '" + pnm.get_magic() + "'");
+    throw std::runtime_error("PNM::load_from_mem(): Unhandled PNM format: '" + pnm.get_magic() + "'");
   }
 
   return SoftwareSurface(std::move(dst));

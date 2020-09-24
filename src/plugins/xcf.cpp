@@ -17,17 +17,15 @@
 #include "plugins/xcf.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <stdexcept>
 #include <stdio.h>
-#include <logmich/log.hpp>
 
-#include "math/size.hpp"
+#include <logmich/log.hpp>
+#include <geom/size.hpp>
+
 #include "plugins/png.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
-#include "util/url.hpp"
-#include "util/raise_exception.hpp"
 
 // Example xcfinfo output:
 // Version 0, 800x800 RGB color, 6 layers, compressed RLE
@@ -71,7 +69,7 @@ xcfinfo_get_layer(std::string_view text)
                &visible, &width, &height, &x_sign, &x, &y_sign, &y,
                color, mode, layer_name) != 10)
     {
-      raise_runtime_error("XCF::get_layer(): Couldn't parse output line:\n" + line);
+      throw std::runtime_error("XCF::get_layer(): Couldn't parse output line:\n" + line);
     }
 
     layer_names.push_back(layer_name);
@@ -99,6 +97,7 @@ XCF::is_available()
   }
 }
 
+#if 0
 std::vector<std::string>
 XCF::get_layers(const URL& url)
 {
@@ -116,7 +115,7 @@ XCF::get_layers(const URL& url)
     const auto *line_end = std::find(stdout_lst.begin(), stdout_lst.end(), '\n');
     if (line_end == stdout_lst.end())
     {
-      raise_runtime_error("XCF::get_layers(): Couldn't parse output");
+      throw std::runtime_error("XCF::get_layers(): Couldn't parse output");
       return std::vector<std::string>();
     }
     else
@@ -126,13 +125,14 @@ XCF::get_layers(const URL& url)
   }
   else
   {
-    raise_runtime_error("XCF::get_layers(): " + std::string(xcfinfo.get_stderr().begin(), xcfinfo.get_stderr().end()));
+    throw std::runtime_error("XCF::get_layers(): " + std::string(xcfinfo.get_stderr().begin(), xcfinfo.get_stderr().end()));
     return std::vector<std::string>();
   }
 }
+#endif
 
 bool
-XCF::get_size(const std::string& filename, Size& size)
+XCF::get_size(const std::string& filename, geom::isize& size)
 {
   Exec xcfinfo("xcfinfo");
   xcfinfo.arg(filename);
@@ -151,12 +151,12 @@ XCF::get_size(const std::string& filename, Size& size)
       int version, width, height;
       if (sscanf(line.c_str(), "Version %d, %dx%d", &version, &width, &height) == 3)
       {
-        size = Size(width, height);
+        size = geom::isize(width, height);
         return true;
       }
       else
       {
-        std::cout << "Error: XCF: couldn't parse xcfinfo output: \"" << line << "\"" << std::endl;
+        log_error("XCF: couldn't parse xcfinfo output: \"" + line + "\"");
         return false;
       }
     }
@@ -175,7 +175,7 @@ XCF::load_from_file(const std::string& filename)
   xcf2png.arg(filename);
   if (xcf2png.exec() != 0)
   {
-    raise_runtime_error("XCF::load_from_file(): " + std::string(xcf2png.get_stderr().begin(), xcf2png.get_stderr().end()));
+    throw std::runtime_error("XCF::load_from_file(): " + std::string(xcf2png.get_stderr().begin(), xcf2png.get_stderr().end()));
   }
   else
   {
@@ -188,10 +188,10 @@ XCF::load_from_mem(std::span<uint8_t const> data)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg("-"); // Read from stdin
-  xcf2png.set_stdin(Blob::copy(data));
+  xcf2png.set_stdin(std::vector<uint8_t>(data.begin(), data.end()));
   if (xcf2png.exec() != 0)
   {
-    raise_runtime_error("XCF::load_from_mem(): " + std::string(xcf2png.get_stderr().begin(), xcf2png.get_stderr().end()));
+    throw std::runtime_error("XCF::load_from_mem(): " + std::string(xcf2png.get_stderr().begin(), xcf2png.get_stderr().end()));
   }
   else
   {

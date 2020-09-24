@@ -21,7 +21,8 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-#include "math/size.hpp"
+#include <geom/size.hpp>
+
 #include "surface/software_surface.hpp"
 
 class JPEGDecompressor
@@ -43,8 +44,8 @@ protected:
 public:
   virtual ~JPEGDecompressor();
 
-  Size read_size();
-  SoftwareSurface read_image(int scale, Size* image_size);
+  geom::isize read_size();
+  SoftwareSurface read_image(int scale, geom::isize* image_size);
 
 private:
   [[noreturn]]

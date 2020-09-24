@@ -17,13 +17,12 @@
 #include "plugins/ufraw.hpp"
 
 #include <stdexcept>
+
 #include <logmich/log.hpp>
 
 #include "plugins/pnm.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
-#include "util/url.hpp"
-#include "util/raise_exception.hpp"
 
 bool
 UFRaw::is_available()
@@ -53,7 +52,7 @@ UFRaw::load_from_file(const std::string& filename)
 
   if (ufraw.exec())
   {
-    raise_runtime_error("UFRaw::load_from_file(): " + std::string(ufraw.get_stderr().begin(), ufraw.get_stderr().end()));
+    throw std::runtime_error("UFRaw::load_from_file(): " + std::string(ufraw.get_stderr().begin(), ufraw.get_stderr().end()));
   }
   else
   {
