@@ -14,23 +14,41 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
-#define HEADER_GALAPIX_PLUGINS_EXIF_HPP
+#ifndef HEADER_GALAPIX_MATH_RGB_HPP
+#define HEADER_GALAPIX_MATH_RGB_HPP
 
-#include <string>
-#include <span>
+#include <stdint.h>
 
-#include "surface/software_surface.hpp"
-
-class EXIF
+class RGB
 {
 public:
-  static SoftwareSurface::Modifier get_orientation(const std::string& filename);
-  static SoftwareSurface::Modifier get_orientation(std::span<uint8_t const> data);
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
 
-private:
-  EXIF(const EXIF&);
-  EXIF& operator=(const EXIF&);
+  RGB()
+    : r(0), g(0), b(0)
+  {}
+
+  RGB(uint8_t r_, uint8_t g_, uint8_t b_)
+    : r(r_), g(g_), b(b_)
+  {}
+
+  RGB(uint32_t c)
+    : r(static_cast<uint8_t>((c>> 0) & 0xFF)),
+      g(static_cast<uint8_t>((c>> 8) & 0xFF)),
+      b(static_cast<uint8_t>((c>>16) & 0xFF))
+  {}
+
+  uint32_t get_uint32() const {
+    return ((static_cast<uint32_t>(r) << 0) |
+            (static_cast<uint32_t>(g) << 8) |
+            (static_cast<uint32_t>(b) << 16));
+  }
+
+  float r_f() const { return static_cast<float>(r) / 255.0f; }
+  float g_f() const { return static_cast<float>(g) / 255.0f; }
+  float b_f() const { return static_cast<float>(b) / 255.0f; }
 };
 
 #endif

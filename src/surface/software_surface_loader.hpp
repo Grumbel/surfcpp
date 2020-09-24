@@ -14,23 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
-#define HEADER_GALAPIX_PLUGINS_EXIF_HPP
+#ifndef HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_LOADER_HPP
+#define HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_LOADER_HPP
 
-#include <string>
 #include <span>
 
 #include "surface/software_surface.hpp"
 
-class EXIF
+class SoftwareSurfaceFactory;
+
+class SoftwareSurfaceLoader
 {
 public:
-  static SoftwareSurface::Modifier get_orientation(const std::string& filename);
-  static SoftwareSurface::Modifier get_orientation(std::span<uint8_t const> data);
+  SoftwareSurfaceLoader() {}
+  virtual ~SoftwareSurfaceLoader() {}
+
+  virtual std::string get_name() const =0;
+
+  virtual void register_loader(SoftwareSurfaceFactory& factory) const =0;
+
+  virtual bool supports_from_file() const =0;
+  virtual SoftwareSurface from_file(const std::string& filename) const =0;
+
+  virtual bool supports_from_mem() const =0;
+  virtual SoftwareSurface from_mem(std::span<uint8_t const>) const =0;
 
 private:
-  EXIF(const EXIF&);
-  EXIF& operator=(const EXIF&);
+  SoftwareSurfaceLoader(const SoftwareSurfaceLoader&);
+  SoftwareSurfaceLoader& operator=(const SoftwareSurfaceLoader&);
 };
 
 #endif

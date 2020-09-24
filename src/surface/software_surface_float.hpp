@@ -14,45 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_PLUGINS_JPEG_DECOMPRESSOR_HPP
-#define HEADER_GALAPIX_PLUGINS_JPEG_DECOMPRESSOR_HPP
+#ifndef HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_FLOAT_HPP
+#define HEADER_GALAPIX_UTIL_SOFTWARE_SURFACE_FLOAT_HPP
 
-#include <stdio.h>
-#include <jpeglib.h>
-#include <setjmp.h>
+#include <memory>
+#include <vector>
 
 #include "math/size.hpp"
+#include "surface/rgbaf.hpp"
 #include "surface/software_surface.hpp"
 
-class JPEGDecompressor
+class SoftwareSurfaceFloat;
+
+typedef std::shared_ptr<SoftwareSurfaceFloat> SoftwareSurfaceFloatPtr;
+
+class SoftwareSurfaceFloat
 {
-protected:
-  struct ErrorMgr
-  {
-    struct jpeg_error_mgr pub;
-    jmp_buf setjmp_buffer;
-  };
+public:
+  static SoftwareSurfaceFloatPtr create(const Size& size);
+  static SoftwareSurfaceFloatPtr from_software_surface(SoftwareSurface const& surface);
 
-protected:
-  struct jpeg_decompress_struct  m_cinfo;
-  struct ErrorMgr m_err;
-
-protected:
-  JPEGDecompressor();
+private:
+  SoftwareSurfaceFloat(const Size& size);
 
 public:
-  virtual ~JPEGDecompressor();
+  SoftwareSurface to_software_surface() const;
 
-  Size read_size();
-  SoftwareSurface read_image(int scale, Size* image_size);
+  void apply_gamma(float gamma);
+
+  Size get_size()   const;
+  int  get_width()  const;
+  int  get_height() const;
+  int  get_pitch()  const;
+
+  void put_pixel(int x, int y, const RGBAf& rgba);
+  void get_pixel(int x, int y, RGBAf& rgba) const;
 
 private:
-  [[noreturn]]
-  static void fatal_error_handler(j_common_ptr cinfo);
-
-private:
-  JPEGDecompressor(const JPEGDecompressor&);
-  JPEGDecompressor& operator=(const JPEGDecompressor&);
+  Size m_size;
+  std::vector<float> m_pixels;
 };
 
 #endif

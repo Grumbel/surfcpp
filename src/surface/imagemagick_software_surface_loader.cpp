@@ -14,25 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
-#define HEADER_GALAPIX_PLUGINS_EXIF_HPP
+#include "surface/imagemagick_software_surface_loader.hpp"
 
-#include <string>
-#include <span>
 
-#include "surface/software_surface.hpp"
-
-class EXIF
-{
-public:
-  static SoftwareSurface::Modifier get_orientation(const std::string& filename);
-  static SoftwareSurface::Modifier get_orientation(std::span<uint8_t const> data);
-
-private:
-  EXIF(const EXIF&);
-  EXIF& operator=(const EXIF&);
-};
-
-#endif
 
 /* EOF */
