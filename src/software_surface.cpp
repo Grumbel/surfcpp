@@ -117,11 +117,11 @@ SoftwareSurface::scale(geom::isize const& size) const
         {
           for(int x = 0; x < dst.get_width(); ++x)
           {
-            src.get_pixel(x * src.get_size().width()  / dst.get_size().width(),
-                          y * src.get_size().height() / dst.get_size().height(),
+            src.get_pixel({x * src.get_size().width()  / dst.get_size().width(),
+                           y * src.get_size().height() / dst.get_size().height()},
                           rgb);
 
-            dst.put_pixel(x, y, rgb);
+            dst.put_pixel({x, y}, rgb);
           }
         }
       }
@@ -134,11 +134,11 @@ SoftwareSurface::scale(geom::isize const& size) const
         {
           for(int x = 0; x < dst.get_width(); ++x)
           {
-            src.get_pixel(x * src.get_size().width()  / dst.get_size().width(),
-                          y * src.get_size().height() / dst.get_size().height(),
+            src.get_pixel({x * src.get_size().width()  / dst.get_size().width(),
+                           y * src.get_size().height() / dst.get_size().height()},
                           rgba);
 
-            dst.put_pixel(x, y, rgba);
+            dst.put_pixel({x, y}, rgba);
           }
         }
       }
@@ -222,7 +222,7 @@ SoftwareSurface::get_average_color() const
       for(int x = 0; x < src.get_width(); ++x)
       {
         RGB rgb;
-        src.get_pixel(x, y, rgb);
+        src.get_pixel({x, y}, rgb);
 
         row_r += rgb.r;
         row_g += rgb.g;

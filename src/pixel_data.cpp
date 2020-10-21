@@ -75,10 +75,12 @@ PixelData::get_bytes_per_pixel() const
 }
 
 void
-PixelData::put_pixel(int x, int y, RGBA const& rgba)
+PixelData::put_pixel(geom::ipoint const& pos, RGBA const& rgba)
 {
-  assert(x >= 0 && x < m_size.width() &&
-         y >= 0 && y < m_size.height());
+  assert(geom::contains(m_size, pos));
+
+  int const x = pos.x();
+  int const y = pos.y();
 
   switch(m_format)
   {
@@ -98,11 +100,13 @@ PixelData::put_pixel(int x, int y, RGBA const& rgba)
 }
 
 void
-PixelData::PixelData::put_pixel(int x, int y, RGB const& rgb)
+PixelData::PixelData::put_pixel(geom::ipoint const& pos, RGB const& rgb)
 {
   assert(m_format == PixelFormat::RGB);
-  assert(x >= 0 && x < m_size.width() &&
-         y >= 0 && y < m_size.height());
+  assert(geom::contains(m_size, pos));
+
+  int const x = pos.x();
+  int const y = pos.y();
 
   m_pixels[y * m_pitch + x*3 + 0] = rgb.r;
   m_pixels[y * m_pitch + x*3 + 1] = rgb.g;
@@ -110,10 +114,12 @@ PixelData::PixelData::put_pixel(int x, int y, RGB const& rgb)
 }
 
 void
-PixelData::get_pixel(int x, int y, RGBA& rgb) const
+PixelData::get_pixel(geom::ipoint const& pos, RGBA& rgb) const
 {
-  assert(x >= 0 && x < m_size.width() &&
-         y >= 0 && y < m_size.height());
+  assert(geom::contains(m_size, pos));
+
+  int const x = pos.x();
+  int const y = pos.y();
 
   switch(m_format)
   {
@@ -134,11 +140,13 @@ PixelData::get_pixel(int x, int y, RGBA& rgb) const
 }
 
 void
-PixelData::get_pixel(int x, int y, RGB& rgb) const
+PixelData::get_pixel(geom::ipoint const& pos, RGB& rgb) const
 {
   assert(m_format == PixelFormat::RGB);
-  assert(x >= 0 && x < m_size.width() &&
-         y >= 0 && y < m_size.height());
+  assert(geom::contains(m_size, pos));
+
+  int const x = pos.x();
+  int const y = pos.y();
 
   rgb.r = m_pixels[y * m_pitch + x*3 + 0];
   rgb.g = m_pixels[y * m_pitch + x*3 + 1];

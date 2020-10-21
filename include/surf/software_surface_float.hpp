@@ -50,8 +50,8 @@ public:
   int  get_height() const;
   int  get_pitch()  const;
 
-  void put_pixel(int x, int y, const RGBAf& rgba);
-  void get_pixel(int x, int y, RGBAf& rgba) const;
+  void put_pixel(geom::ipoint const& pos, const RGBAf& rgba);
+  void get_pixel(geom::ipoint const& pos, RGBAf& rgba) const;
 
 private:
   geom::isize m_size;

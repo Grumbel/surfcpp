@@ -42,9 +42,9 @@ SoftwareSurfaceFloat::from_software_surface(SoftwareSurface const& surface)
     for(int x = 0; x < surface.get_width(); ++x)
     {
       RGBA rgba;
-      src.get_pixel(x, y, rgba);
+      src.get_pixel({x, y}, rgba);
 
-      surfacef->put_pixel(x, y, rgba);
+      surfacef->put_pixel({x, y}, rgba);
     }
   }
   return surfacef;
@@ -58,11 +58,11 @@ SoftwareSurfaceFloat::apply_gamma(float gamma)
     for(int x = 0; x < m_size.width(); ++x)
     {
       RGBAf rgba;
-      get_pixel(x, y, rgba);
+      get_pixel({x, y}, rgba);
       rgba.r = powf(rgba.r, gamma);
       rgba.g = powf(rgba.g, gamma);
       rgba.b = powf(rgba.b, gamma);
-      put_pixel(x, y, rgba);
+      put_pixel({x, y}, rgba);
     }
   }
 }
@@ -92,8 +92,11 @@ SoftwareSurfaceFloat::get_pitch() const
 }
 
 void
-SoftwareSurfaceFloat::put_pixel(int x, int y, const RGBAf& rgba)
+SoftwareSurfaceFloat::put_pixel(geom::ipoint const& pos, const RGBAf& rgba)
 {
+  int const x = pos.x();
+  int const y = pos.y();
+
   m_pixels[get_pitch() * y + 4*x + 0] = rgba.r;
   m_pixels[get_pitch() * y + 4*x + 1] = rgba.g;
   m_pixels[get_pitch() * y + 4*x + 2] = rgba.b;
@@ -101,8 +104,11 @@ SoftwareSurfaceFloat::put_pixel(int x, int y, const RGBAf& rgba)
 }
 
 void
-SoftwareSurfaceFloat::get_pixel(int x, int y, RGBAf& rgba) const
+SoftwareSurfaceFloat::get_pixel(geom::ipoint const& pos, RGBAf& rgba) const
 {
+  int const x = pos.x();
+  int const y = pos.y();
+
   rgba.r = m_pixels[get_pitch() * y + 4*x + 0];
   rgba.g = m_pixels[get_pitch() * y + 4*x + 1];
   rgba.b = m_pixels[get_pitch() * y + 4*x + 2];
@@ -118,14 +124,14 @@ SoftwareSurfaceFloat::to_software_surface() const
     for(int x = 0; x < m_size.width(); ++x)
     {
       RGBAf rgbaf;
-      get_pixel(x, y, rgbaf);
+      get_pixel({x, y}, rgbaf);
 
       RGBA rgba;
       rgba.r = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.r * 255.0f), 0, 255));
       rgba.g = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.g * 255.0f), 0, 255));
       rgba.b = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.b * 255.0f), 0, 255));
       rgba.a = static_cast<uint8_t>(std::clamp(static_cast<int>(rgbaf.a * 255.0f), 0, 255));
-      dst.put_pixel(x, y, rgba);
+      dst.put_pixel({x, y}, rgba);
     }
   }
   return SoftwareSurface(std::move(dst));

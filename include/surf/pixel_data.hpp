@@ -46,11 +46,11 @@ public:
 
   bool empty() const { return m_pixels.empty(); }
 
-  void put_pixel(int x, int y, RGB const& rgb);
-  void put_pixel(int x, int y, RGBA const& rgb);
+  void put_pixel(geom::ipoint const& position, RGB const& rgb);
+  void put_pixel(geom::ipoint const& position, RGBA const& rgb);
 
-  void get_pixel(int x, int y, RGB& rgb) const;
-  void get_pixel(int x, int y, RGBA& rgb) const;
+  void get_pixel(geom::ipoint const& position, RGB& rgb) const;
+  void get_pixel(geom::ipoint const& position, RGBA& rgb) const;
 
   uint8_t* get_data();
   uint8_t* get_row_data(int y);
