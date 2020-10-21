@@ -32,15 +32,15 @@
 #include "plugins/vidthumb.hpp"
 #include "plugins/xcf.hpp"
 
-#include "surface/dds_software_surface_loader.hpp"
-#include "surface/imagemagick_software_surface_loader.hpp"
-#include "surface/jpeg_software_surface_loader.hpp"
-#include "surface/kra_software_surface_loader.hpp"
-#include "surface/png_software_surface_loader.hpp"
-#include "surface/rsvg_software_surface_loader.hpp"
-#include "surface/ufraw_software_surface_loader.hpp"
-#include "surface/vidthumb_software_surface_loader.hpp"
-#include "surface/xcf_software_surface_loader.hpp"
+#include "loader/dds_software_surface_loader.hpp"
+#include "loader/imagemagick_software_surface_loader.hpp"
+#include "loader/jpeg_software_surface_loader.hpp"
+#include "loader/kra_software_surface_loader.hpp"
+#include "loader/png_software_surface_loader.hpp"
+#include "loader/rsvg_software_surface_loader.hpp"
+#include "loader/ufraw_software_surface_loader.hpp"
+#include "loader/vidthumb_software_surface_loader.hpp"
+#include "loader/xcf_software_surface_loader.hpp"
 
 namespace {
 

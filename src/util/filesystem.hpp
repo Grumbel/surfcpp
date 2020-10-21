@@ -29,7 +29,6 @@ public:
   static std::string find_exe(const std::string& name);
   static std::string get_extension(const std::string& pathname);
   static std::string get_magic(const std::string& filename);
-  static bool has_extension(const std::string& filename, const std::string& ext);
 };
 
 } // namespace surf
