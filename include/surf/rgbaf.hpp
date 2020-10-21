@@ -25,13 +25,22 @@ namespace surf {
 class RGBAf
 {
 public:
-  float r;
-  float g;
-  float b;
-  float a;
-
   RGBAf() :
     r(0.0f), g(0.0f), b(0.0f), a(0.0f)
+  {}
+
+  RGBAf(RGB const& rgb) :
+    r(static_cast<float>(rgb.r)/255.0f),
+    g(static_cast<float>(rgb.g)/255.0f),
+    b(static_cast<float>(rgb.b)/255.0f),
+    a(1.0f)
+  {}
+
+  RGBAf(RGBA const& rgba) :
+    r(static_cast<float>(rgba.r)/255.0f),
+    g(static_cast<float>(rgba.g)/255.0f),
+    b(static_cast<float>(rgba.b)/255.0f),
+    a(static_cast<float>(rgba.a)/255.0f)
   {}
 
   RGBAf(float r_,
@@ -41,37 +50,26 @@ public:
     r(r_), g(g_), b(b_), a(a_)
   {}
 
-  void clamp()
-  {
-    if (r < 0.0f) { r = 0; }
-    else if (r > 1.0f) { r = 1.0f; }
+  inline uint8_t r8() const { return static_cast<uint8_t>(255.0f * r); }
+  inline uint8_t g8() const { return static_cast<uint8_t>(255.0f * g); }
+  inline uint8_t b8() const { return static_cast<uint8_t>(255.0f * b); }
+  inline uint8_t a8() const { return static_cast<uint8_t>(255.0f * a); }
 
-    if (g < 0.0f) { g = 0; }
-    else if (g > 1.0f) { g = 1.0f; }
-
-    if (b < 0.0f) { b = 0; }
-    else if (b > 1.0f) { b = 1.0f; }
-
-    if (a < 0.0f) { a = 0; }
-    else if (a > 1.0f) { a = 1.0f; }
-  }
-
-  static RGBAf from_rgb(const RGB& rgb)
-  {
-    return RGBAf(static_cast<float>(rgb.r)/255.0f,
-                 static_cast<float>(rgb.g)/255.0f,
-                 static_cast<float>(rgb.b)/255.0f,
-                 1.0f);
-  }
-
-  static RGBAf from_rgba(const RGBA& rgba)
-  {
-    return RGBAf(static_cast<float>(rgba.r)/255.0f,
-                 static_cast<float>(rgba.g)/255.0f,
-                 static_cast<float>(rgba.b)/255.0f,
-                 static_cast<float>(rgba.a)/255.0f);
-  }
+public:
+  float r;
+  float g;
+  float b;
+  float a;
 };
+
+inline
+RGBAf clamp(RGBAf const& color)
+{
+  return RGBAf(std::clamp(color.r, 0.0f, 1.0f),
+               std::clamp(color.g, 0.0f, 1.0f),
+               std::clamp(color.b, 0.0f, 1.0f),
+               std::clamp(color.a, 0.0f, 1.0f));
+}
 
 } // namespace surf
 

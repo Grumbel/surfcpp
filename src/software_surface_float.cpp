@@ -44,8 +44,7 @@ SoftwareSurfaceFloat::from_software_surface(SoftwareSurface const& surface)
       RGBA rgba;
       src.get_pixel(x, y, rgba);
 
-      RGBAf rgbaf = RGBAf::from_rgba(rgba);
-      surfacef->put_pixel(x, y, rgbaf);
+      surfacef->put_pixel(x, y, rgba);
     }
   }
   return surfacef;
