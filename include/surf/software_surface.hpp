@@ -22,6 +22,7 @@
 #include <geom/fwd.hpp>
 
 #include "pixel_data.hpp"
+#include "transform.hpp"
 
 namespace surf {
 
@@ -31,19 +32,6 @@ class RGBA;
 /** A non-mutable high-level SoftwareSurface with value semantics */
 class SoftwareSurface
 {
-public:
-  enum Modifier
-  {
-    kRot0,
-    kRot90,
-    kRot180,
-    kRot270,
-    kRot0Flip,   // vflip
-    kRot90Flip,
-    kRot180Flip, // hflip
-    kRot270Flip
-  };
-
 public:
   SoftwareSurface();
   SoftwareSurface(PixelData data);
@@ -56,7 +44,7 @@ public:
   SoftwareSurface scale(geom::isize const& size) const;
   SoftwareSurface crop(geom::irect const& rect) const;
 
-  SoftwareSurface transform(Modifier mod) const;
+  SoftwareSurface transform(Transform mod) const;
   SoftwareSurface rotate90() const;
   SoftwareSurface rotate180() const;
   SoftwareSurface rotate270() const;

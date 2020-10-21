@@ -31,20 +31,20 @@ namespace surf {
 
 namespace {
 
-geom::isize apply_orientation(SoftwareSurface::Modifier modifier, const geom::isize& size)
+geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 {
   switch(modifier)
   {
-    case SoftwareSurface::kRot90:
-    case SoftwareSurface::kRot90Flip:
-    case SoftwareSurface::kRot270:
-    case SoftwareSurface::kRot270Flip:
+    case Transform::ROTATE_90:
+    case Transform::ROTATE_90_FLIP:
+    case Transform::ROTATE_270:
+    case Transform::ROTATE_270_FLIP:
       return geom::transpose(size);
 
-    case SoftwareSurface::kRot0:
-    case SoftwareSurface::kRot0Flip:
-    case SoftwareSurface::kRot180:
-    case SoftwareSurface::kRot180Flip:
+    case Transform::ROTATE_0:
+    case Transform::ROTATE_0_FLIP:
+    case Transform::ROTATE_180:
+    case Transform::ROTATE_180_FLIP:
     default:
       return size;
   }
@@ -86,13 +86,13 @@ JPEG::load_from_file(std::filesystem::path const& filename, int scale, geom::isi
   FileJPEGDecompressor loader(filename);
   SoftwareSurface surface = loader.read_image(scale, image_size);
 
-  SoftwareSurface::Modifier modifier = EXIF::get_orientation(filename);
+  Transform modifier = EXIF::get_orientation(filename);
 
   if (image_size) {
     *image_size = apply_orientation(modifier, *image_size);
   }
 
-  if (modifier == SoftwareSurface::kRot0) {
+  if (modifier == Transform::ROTATE_0) {
     return surface;
   } else {
     return surface.transform(modifier);
@@ -106,13 +106,13 @@ JPEG::load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image
   MemJPEGDecompressor loader(data);
   SoftwareSurface surface = loader.read_image(scale, image_size);
 
-  SoftwareSurface::Modifier modifier = EXIF::get_orientation(data);
+  Transform modifier = EXIF::get_orientation(data);
 
   if (image_size) {
     *image_size = apply_orientation(modifier, *image_size);
   }
 
-  if (modifier == SoftwareSurface::kRot0) {
+  if (modifier == Transform::ROTATE_0) {
     return surface;
   } else {
     return surface.transform(modifier);

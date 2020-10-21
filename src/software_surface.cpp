@@ -178,33 +178,33 @@ SoftwareSurface::scale(geom::isize const& size) const
 }
 
 SoftwareSurface
-SoftwareSurface::transform(Modifier mod) const
+SoftwareSurface::transform(Transform mod) const
 {
-  switch(mod)
+  switch (mod)
   {
-    case kRot0:
+    case Transform::ROTATE_0:
       return *this;
 
-    case kRot90:
+    case Transform::ROTATE_90:
       return rotate90();
 
-    case kRot180:
+    case Transform::ROTATE_180:
       return rotate180();
 
-    case kRot270:
+    case Transform::ROTATE_270:
       return rotate270();
 
-    case kRot0Flip:
+    case Transform::ROTATE_0_FLIP:
       return vflip();
 
-    case kRot90Flip:
+    case Transform::ROTATE_90_FLIP:
       // FIXME: Could be made faster
       return rotate90().vflip();
 
-    case kRot180Flip:
+    case Transform::ROTATE_180_FLIP:
       return hflip();
 
-    case kRot270Flip:
+    case Transform::ROTATE_270_FLIP:
       // FIXME: Could be made faster
       return rotate270().vflip();
 

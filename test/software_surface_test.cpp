@@ -18,7 +18,7 @@ TEST(SoftwareSurfaceTest, default_is_valid)
   EXPECT_EQ(geom::isize(32, 16), surface.scale(geom::isize(32, 16)).get_size());
   EXPECT_EQ(geom::isize(0, 0), surface.crop(geom::irect(0, 0, 16, 16)).get_size());
 
-  surface.transform(SoftwareSurface::kRot0);
+  surface.transform(Transform::ROTATE_0);
   surface.rotate90();
   surface.rotate180();
   surface.rotate270();

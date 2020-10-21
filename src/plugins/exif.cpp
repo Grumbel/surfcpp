@@ -22,11 +22,11 @@ namespace surf {
 
 namespace {
 
-SoftwareSurface::Modifier get_orientation_exif(ExifData* ed)
+Transform get_orientation_exif(ExifData* ed)
 {
   if (!ed)
   {
-    return SoftwareSurface::kRot0;
+    return Transform::ROTATE_0;
   }
   else
   {
@@ -34,7 +34,7 @@ SoftwareSurface::Modifier get_orientation_exif(ExifData* ed)
 
     if (!entry)
     {
-      return SoftwareSurface::kRot0;
+      return Transform::ROTATE_0;
     }
     else
     {
@@ -44,31 +44,31 @@ SoftwareSurface::Modifier get_orientation_exif(ExifData* ed)
       switch(orientation)
       {
         case 1: // The 0th row is at the visual top    of the image, and the 0th column is the visual left-hand side.
-          return SoftwareSurface::kRot0;
+          return Transform::ROTATE_0;
 
         case 2: // The 0th row is at the visual top    of the image, and the 0th column is the visual right-hand side.
-          return SoftwareSurface::kRot180Flip;
+          return Transform::ROTATE_180_FLIP;
 
         case 3: // The 0th row is at the visual bottom of the image, and the 0th column is the visual right-hand side.
-          return SoftwareSurface::kRot180;
+          return Transform::ROTATE_180;
 
         case 4: // The 0th row is at the visual bottom of the image, and the 0th column is the visual left-hand side.
-          return SoftwareSurface::kRot0Flip;
+          return Transform::ROTATE_0_FLIP;
 
         case 5: // The 0th row is the visual left-hand  side of the image, and the 0th column is the visual top.
-          return SoftwareSurface::kRot270Flip;
+          return Transform::ROTATE_270_FLIP;
 
         case 6: // The 0th row is the visual right-hand side of the image, and the 0th column is the visual top.
-          return SoftwareSurface::kRot90;
+          return Transform::ROTATE_90;
 
         case 7: // The 0th row is the visual right-hand side of the image, and the 0th column is the visual bottom.
-          return SoftwareSurface::kRot90Flip;
+          return Transform::ROTATE_90_FLIP;
 
         case 8: // The 0th row is the visual left-hand  side of the image, and the 0th column is the visual bottom.
-          return SoftwareSurface::kRot270;
+          return Transform::ROTATE_270;
 
         default:
-          return SoftwareSurface::kRot0;
+          return Transform::ROTATE_0;
       }
     }
   }
@@ -76,20 +76,20 @@ SoftwareSurface::Modifier get_orientation_exif(ExifData* ed)
 
 } // namespace
 
-SoftwareSurface::Modifier
+Transform
 EXIF::get_orientation(std::span<uint8_t const> data)
 {
   ExifData* ed = exif_data_new_from_data(data.data(), static_cast<unsigned int>(data.size()));
-  SoftwareSurface::Modifier orientation = get_orientation_exif(ed);
+  Transform orientation = get_orientation_exif(ed);
   exif_data_free(ed);
   return orientation;
 }
 
-SoftwareSurface::Modifier
+Transform
 EXIF::get_orientation(std::filesystem::path const& filename)
 {
   ExifData* ed = exif_data_new_from_file(filename.c_str());
-  SoftwareSurface::Modifier orientation = get_orientation_exif(ed);
+  Transform orientation = get_orientation_exif(ed);
   exif_data_free(ed);
   return orientation;
 }

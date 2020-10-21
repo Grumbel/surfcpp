@@ -1,5 +1,5 @@
 // Galapix - an image viewer for large image collections
-// Copyright (C) 2008-2019 Ingo Ruhnke <grumbel@gmail.com>
+// Copyright (C) 2008-2020 Ingo Ruhnke <grumbel@gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,27 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
-#define HEADER_GALAPIX_PLUGINS_EXIF_HPP
-
-#include <filesystem>
-#include <string>
-#include <span>
-
-#include "software_surface.hpp"
-#include "transform.hpp"
+#ifndef HEADER_SURF_TRANSFORM_HPP
+#define HEADER_SURF_TRANSFORM_HPP
 
 namespace surf {
 
-class EXIF
+enum class Transform
 {
-public:
-  static Transform get_orientation(std::filesystem::path const& filename);
-  static Transform get_orientation(std::span<uint8_t const> data);
+  ROTATE_0,
+  ROTATE_90,
+  ROTATE_180,
+  ROTATE_270,
+  ROTATE_0_FLIP,
+  ROTATE_90_FLIP,
+  ROTATE_180_FLIP,
+  ROTATE_270_FLIP,
 
-private:
-  EXIF(const EXIF&);
-  EXIF& operator=(const EXIF&);
+  FLIP_VERTICAL = ROTATE_0_FLIP,
+  FLIP_HORIZONTAL = ROTATE_180_FLIP,
 };
 
 } // namespace surf
