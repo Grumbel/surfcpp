@@ -95,7 +95,7 @@ JPEG::load_from_file(std::filesystem::path const& filename, int scale, geom::isi
   if (modifier == Transform::ROTATE_0) {
     return surface;
   } else {
-    return surface.transform(modifier);
+    return transform(surface, modifier);
   }
 }
 
@@ -115,7 +115,7 @@ JPEG::load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image
   if (modifier == Transform::ROTATE_0) {
     return surface;
   } else {
-    return surface.transform(modifier);
+    return transform(surface, modifier);
   }
 }
 

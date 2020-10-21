@@ -44,12 +44,6 @@ public:
   SoftwareSurface scale(geom::isize const& size) const;
   SoftwareSurface crop(geom::irect const& rect) const;
 
-  SoftwareSurface transform(Transform mod) const;
-  SoftwareSurface rotate90() const;
-  SoftwareSurface rotate180() const;
-  SoftwareSurface rotate270() const;
-  SoftwareSurface vflip() const;
-  SoftwareSurface hflip() const;
   SoftwareSurface to_rgb() const;
   RGB get_average_color() const;
 

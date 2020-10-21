@@ -19,6 +19,8 @@
 
 namespace surf {
 
+class SoftwareSurface;
+
 enum class Transform
 {
   ROTATE_0,
@@ -33,6 +35,13 @@ enum class Transform
   FLIP_VERTICAL = ROTATE_0_FLIP,
   FLIP_HORIZONTAL = ROTATE_180_FLIP,
 };
+
+SoftwareSurface transform(SoftwareSurface const& surface, Transform mod);
+SoftwareSurface rotate90(SoftwareSurface const& surface);
+SoftwareSurface rotate180(SoftwareSurface const& surface);
+SoftwareSurface rotate270(SoftwareSurface const& surface);
+SoftwareSurface flip_vertical(SoftwareSurface const& surface);
+SoftwareSurface flip_horizontal(SoftwareSurface const& surface);
 
 } // namespace surf
 
