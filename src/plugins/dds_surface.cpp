@@ -50,7 +50,7 @@ DDSSurface::DDSSurface(std::istream& in) :
     dwReserved1[i] = read_uint32(in);
   }
 
-  pixel_format = PixelFormat(in);
+  pixel_format = DDSPixelFormat(in);
 
   ddsCaps = DDSCapabilities(in);
 

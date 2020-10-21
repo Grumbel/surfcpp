@@ -63,7 +63,7 @@ target_link_libraries(surf PUBLIC
   geomcpp
   logmich
   PkgConfig::MAGICKXX)
-target_include_directories(surf INTERFACE src/) # include/
+target_include_directories(surf INTERFACE src/ include/surf/ include/)
 target_include_directories(surf PRIVATE src/ include/surf/)
 set_target_properties(surf PROPERTIES PUBLIC_HEADER "${SURF_HEADERS}")
 

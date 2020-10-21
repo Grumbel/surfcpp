@@ -23,6 +23,8 @@
 #include <geom/size.hpp>
 #include <geom/point.hpp>
 
+#include "pixel_format.hpp"
+
 namespace surf {
 
 class RGB;
@@ -32,17 +34,10 @@ class RGBA;
 class PixelData
 {
 public:
-  enum Format
-  {
-    RGB_FORMAT,
-    RGBA_FORMAT
-  };
-
-public:
   PixelData();
-  PixelData(Format format, const geom::isize& size);
+  PixelData(PixelFormat format, const geom::isize& size);
 
-  Format get_format() const { return m_format; }
+  PixelFormat get_format() const { return m_format; }
   geom::isize get_size() const { return m_size; }
   int get_width() const { return m_size.width(); }
   int get_height() const { return m_size.height(); }
@@ -67,7 +62,7 @@ public:
   void blit(PixelData& dst, const geom::ipoint& pos) const;
 
 private:
-  Format m_format;
+  PixelFormat m_format;
   geom::isize m_size;
   int m_pitch;
   std::vector<uint8_t> m_pixels;

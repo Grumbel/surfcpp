@@ -109,7 +109,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 
     jpeg_start_decompress(&m_cinfo);
 
-    PixelData dst(PixelData::RGB_FORMAT,
+    PixelData dst(PixelFormat::RGB,
                   geom::isize(static_cast<int>(m_cinfo.output_width),
                            static_cast<int>(m_cinfo.output_height)));
 

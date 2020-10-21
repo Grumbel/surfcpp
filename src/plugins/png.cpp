@@ -212,7 +212,7 @@ PNG::load_from_file(const std::string& filename)
     {
       case PNG_COLOR_TYPE_RGBA:
       {
-        dst = PixelData(PixelData::RGBA_FORMAT, geom::isize(width, height));
+        dst = PixelData(PixelFormat::RGBA, geom::isize(width, height));
 
         std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
         for (int y = 0; y < height; ++y) {
@@ -225,7 +225,7 @@ PNG::load_from_file(const std::string& filename)
 
       case PNG_COLOR_TYPE_RGB:
       {
-        dst = PixelData(PixelData::RGB_FORMAT, geom::isize(width, height));
+        dst = PixelData(PixelFormat::RGB, geom::isize(width, height));
 
         std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
         for (int y = 0; y < height; ++y) {
@@ -288,7 +288,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
   {
     case PNG_COLOR_TYPE_RGBA:
     {
-      dst = PixelData(PixelData::RGBA_FORMAT, geom::isize(width, height));
+      dst = PixelData(PixelFormat::RGBA, geom::isize(width, height));
 
       std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
       for (int y = 0; y < height; ++y) {
@@ -301,7 +301,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
 
     case PNG_COLOR_TYPE_RGB:
     {
-      dst = PixelData(PixelData::RGB_FORMAT, geom::isize(width, height));
+      dst = PixelData(PixelFormat::RGB, geom::isize(width, height));
 
       std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
       for (int y = 0; y < height; ++y) {
@@ -349,7 +349,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
                  static_cast<png_uint_32>(src.get_width()),
                  static_cast<png_uint_32>(src.get_height()),
                  8,
-                 (src.get_format() == PixelData::RGB_FORMAT) ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA,
+                 (src.get_format() == PixelFormat::RGB) ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA,
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
                  PNG_FILTER_TYPE_DEFAULT);
@@ -391,7 +391,7 @@ PNG::save(SoftwareSurface const& surface)
                static_cast<png_uint_32>(src.get_width()),
                static_cast<png_uint_32>(src.get_height()),
                8,
-               (src.get_format() == PixelData::RGB_FORMAT) ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA,
+               (src.get_format() == PixelFormat::RGB) ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA,
                PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT,
                PNG_FILTER_TYPE_DEFAULT);

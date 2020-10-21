@@ -27,14 +27,14 @@ namespace surf {
 // be fast
 
 PixelData::PixelData() :
-  m_format(RGB_FORMAT),
+  m_format(PixelFormat::RGB),
   m_size(0, 0),
   m_pitch(0),
   m_pixels()
 {
 }
 
-PixelData::PixelData(Format format, geom::isize const& size) :
+PixelData::PixelData(PixelFormat format, geom::isize const& size) :
   m_format(format),
   m_size(size),
   m_pitch(),
@@ -42,12 +42,12 @@ PixelData::PixelData(Format format, geom::isize const& size) :
 {
   switch(format)
   {
-    case RGB_FORMAT:
+    case PixelFormat::RGB:
       m_pitch  = m_size.width() * 3;
       m_pixels.resize(m_pitch * m_size.height());
       break;
 
-    case RGBA_FORMAT:
+    case PixelFormat::RGBA:
       m_pitch  = size.width() * 4;
       m_pixels.resize(m_pitch * m_size.height());
       break;
@@ -62,10 +62,10 @@ PixelData::get_bytes_per_pixel() const
 {
   switch(m_format)
   {
-    case RGB_FORMAT:
+    case PixelFormat::RGB:
       return 3;
 
-    case RGBA_FORMAT:
+    case PixelFormat::RGBA:
       return 4;
 
     default:
@@ -82,14 +82,14 @@ PixelData::put_pixel(int x, int y, RGBA const& rgba)
 
   switch(m_format)
   {
-    case RGBA_FORMAT:
+    case PixelFormat::RGBA:
       m_pixels[y * m_pitch + x*4 + 0] = rgba.r;
       m_pixels[y * m_pitch + x*4 + 1] = rgba.g;
       m_pixels[y * m_pitch + x*4 + 2] = rgba.b;
       m_pixels[y * m_pitch + x*4 + 3] = rgba.a;
       break;
 
-    case RGB_FORMAT:
+    case PixelFormat::RGB:
       m_pixels[y * m_pitch + x*3 + 0] = rgba.r;
       m_pixels[y * m_pitch + x*3 + 1] = rgba.g;
       m_pixels[y * m_pitch + x*3 + 2] = rgba.b;
@@ -100,7 +100,7 @@ PixelData::put_pixel(int x, int y, RGBA const& rgba)
 void
 PixelData::PixelData::put_pixel(int x, int y, RGB const& rgb)
 {
-  assert(m_format == RGB_FORMAT);
+  assert(m_format == PixelFormat::RGB);
   assert(x >= 0 && x < m_size.width() &&
          y >= 0 && y < m_size.height());
 
@@ -117,14 +117,14 @@ PixelData::get_pixel(int x, int y, RGBA& rgb) const
 
   switch(m_format)
   {
-    case RGBA_FORMAT:
+    case PixelFormat::RGBA:
       rgb.r = m_pixels[y * m_pitch + x*4 + 0];
       rgb.g = m_pixels[y * m_pitch + x*4 + 1];
       rgb.b = m_pixels[y * m_pitch + x*4 + 2];
       rgb.a = m_pixels[y * m_pitch + x*4 + 3];
       break;
 
-    case RGB_FORMAT:
+    case PixelFormat::RGB:
       rgb.r = m_pixels[y * m_pitch + x*3 + 0];
       rgb.g = m_pixels[y * m_pitch + x*3 + 1];
       rgb.b = m_pixels[y * m_pitch + x*3 + 2];
@@ -136,7 +136,7 @@ PixelData::get_pixel(int x, int y, RGBA& rgb) const
 void
 PixelData::get_pixel(int x, int y, RGB& rgb) const
 {
-  assert(m_format == RGB_FORMAT);
+  assert(m_format == PixelFormat::RGB);
   assert(x >= 0 && x < m_size.width() &&
          y >= 0 && y < m_size.height());
 
@@ -178,7 +178,7 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
   int end_x = std::min(m_size.width(),  dst.m_size.width()  - pos.x());
   int end_y = std::min(m_size.height(), dst.m_size.height() - pos.y());
 
-  if (dst.m_format == RGB_FORMAT && m_format == RGB_FORMAT)
+  if (dst.m_format == PixelFormat::RGB && m_format == PixelFormat::RGB)
   {
     for(int y = start_y; y < end_y; ++y)
     {
@@ -187,7 +187,7 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
              (end_x - start_x) * 3);
     }
   }
-  else if (dst.m_format == RGBA_FORMAT && m_format == RGBA_FORMAT)
+  else if (dst.m_format == PixelFormat::RGBA && m_format == PixelFormat::RGBA)
   {
     for(int y = start_y; y < end_y; ++y)
     {
@@ -196,7 +196,7 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
              (end_x - start_x) * 4);
     }
   }
-  else if (dst.m_format == RGBA_FORMAT && m_format == RGB_FORMAT)
+  else if (dst.m_format == PixelFormat::RGBA && m_format == PixelFormat::RGB)
   {
     for(int y = start_y; y < end_y; ++y)
     {
@@ -212,7 +212,7 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
       }
     }
   }
-  else if (dst.m_format == RGB_FORMAT && m_format == RGBA_FORMAT)
+  else if (dst.m_format == PixelFormat::RGB && m_format == PixelFormat::RGBA)
   {
     for(int y = start_y; y < end_y; ++y)
     {

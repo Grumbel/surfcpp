@@ -30,7 +30,7 @@ PNM::load_from_mem(std::span<uint8_t const> data)
 {
   PNMMemReader pnm(data);
 
-  PixelData dst(PixelData::RGB_FORMAT, pnm.get_size());
+  PixelData dst(PixelFormat::RGB, pnm.get_size());
   uint8_t const* src_pixels = pnm.get_pixel_data();
   uint8_t* dst_pixels = dst.get_data();
   //std::cout << "MaxVal: " << pnm.get_maxval() << std::endl;

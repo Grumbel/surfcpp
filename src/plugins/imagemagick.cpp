@@ -105,7 +105,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
 
   if (image.matte())
   {
-    PixelData dst(PixelData::RGBA_FORMAT, geom::isize(width, height));
+    PixelData dst(PixelFormat::RGBA, geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {
@@ -125,7 +125,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
   }
   else
   {
-    PixelData dst(PixelData::RGB_FORMAT, geom::isize(width, height));
+    PixelData dst(PixelFormat::RGB, geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <sstream>
 
+#include "pixel_format.hpp"
 #include "plugins/dds_surface.hpp"
 
 namespace surf {
@@ -56,7 +57,7 @@ DDS::load_from_file(const std::string& filename)
   {
     DDSSurface dds(in);
 
-    PixelData dst(PixelData::RGBA_FORMAT, geom::isize(dds.get_width(), dds.get_height()));
+    PixelData dst(PixelFormat::RGBA, geom::isize(dds.get_width(), dds.get_height()));
 
     if (static_cast<int>(dds.get_length()) != dst.get_width() * dst.get_height() * 4)
     {

@@ -32,8 +32,8 @@ TEST(SoftwareSurfaceTest, default_is_valid)
 
 TEST(SoftwareSurfaceTest, assignment)
 {
-  SoftwareSurface lhs(PixelData(PixelData::RGB_FORMAT, geom::isize(32, 16)));
-  SoftwareSurface rhs(PixelData(PixelData::RGB_FORMAT, geom::isize(64, 32)));
+  SoftwareSurface lhs(PixelData(PixelFormat::RGB, geom::isize(32, 16)));
+  SoftwareSurface rhs(PixelData(PixelFormat::RGB, geom::isize(64, 32)));
   SoftwareSurface tmp;
 
   tmp = lhs;
@@ -47,8 +47,8 @@ TEST(SoftwareSurfaceTest, assignment)
 
 TEST(SoftwareSurfaceTest, move)
 {
-  SoftwareSurface lhs(PixelData(PixelData::RGB_FORMAT, geom::isize(32, 16)));
-  SoftwareSurface rhs(PixelData(PixelData::RGB_FORMAT, geom::isize(64, 32)));
+  SoftwareSurface lhs(PixelData(PixelFormat::RGB, geom::isize(32, 16)));
+  SoftwareSurface rhs(PixelData(PixelFormat::RGB, geom::isize(64, 32)));
   SoftwareSurface tmp;
 
   tmp = std::move(lhs);

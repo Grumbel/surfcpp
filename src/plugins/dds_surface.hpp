@@ -86,7 +86,7 @@ public:
   }
 };
 
-class PixelFormat
+class DDSPixelFormat
 {
 public:
   // Size of structure. This member must be set to 32.
@@ -119,7 +119,7 @@ public:
   // A8R8G8B8, this value would be 0xff000000.
   uint32_t dwRGBAlphaBitMask;
 
-  PixelFormat() :
+  DDSPixelFormat() :
     dwSize(),
     dwFlags(),
     dwFourCC(),
@@ -131,7 +131,7 @@ public:
   {
   }
 
-  PixelFormat(std::istream& in) :
+  DDSPixelFormat(std::istream& in) :
     dwSize(),
     dwFlags(),
     dwFourCC(),
@@ -221,7 +221,7 @@ public:
   uint32_t dwReserved1[11];
 
   // 32-byte value that specifies the pixel format structure.
-  PixelFormat pixel_format;
+  DDSPixelFormat pixel_format;
 
   // 16-byte value that specifies the capabilities structure.
   DDSCapabilities ddsCaps;

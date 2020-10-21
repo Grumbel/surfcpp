@@ -113,7 +113,7 @@ SoftwareSurfaceFloat::get_pixel(int x, int y, RGBAf& rgba) const
 SoftwareSurface
 SoftwareSurfaceFloat::to_software_surface() const
 {
-  PixelData dst(PixelData::RGBA_FORMAT, m_size);
+  PixelData dst(PixelFormat::RGBA, m_size);
   for(int y = 0; y < m_size.height(); ++y)
   {
     for(int x = 0; x < m_size.width(); ++x)
