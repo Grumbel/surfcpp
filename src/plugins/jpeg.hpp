@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_JPEG_HPP
 #define HEADER_GALAPIX_PLUGINS_JPEG_HPP
 
+#include <filesystem>
 #include <functional>
 #include <span>
 #include <string>
