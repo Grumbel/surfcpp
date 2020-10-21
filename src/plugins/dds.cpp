@@ -25,9 +25,9 @@
 #include "plugins/dds_surface.hpp"
 
 namespace surf {
+namespace dds {
 
-bool
-DDS::get_size(std::filesystem::path const& filename, geom::isize& size)
+bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   std::ifstream in(filename.c_str(), std::ios::binary);
   if (!in)
@@ -44,8 +44,7 @@ DDS::get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-SoftwareSurface
-DDS::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   std::ifstream in(filename.c_str(), std::ios::binary);
   if (!in)
@@ -73,6 +72,7 @@ DDS::load_from_file(std::filesystem::path const& filename)
   }
 }
 
+} // namespace dds
 } // namespace surf
 
 /* EOF */

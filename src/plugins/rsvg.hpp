@@ -23,16 +23,12 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace rsvg {
 
-class URL;
+ bool is_available();
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
 
-class RSVG
-{
-public:
-  static bool is_available();
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-};
-
+} // namespace rsvg
 } // namespace surf
 
 #endif

@@ -24,9 +24,9 @@
 #include "util/filesystem.hpp"
 
 namespace surf {
+namespace rsvg {
 
-bool
-RSVG::is_available()
+bool is_available()
 {
   try
   {
@@ -41,8 +41,7 @@ RSVG::is_available()
   }
 }
 
-SoftwareSurface
-RSVG::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec rsvg("rsvg");
 
@@ -52,7 +51,7 @@ RSVG::load_from_file(std::filesystem::path const& filename)
 
   if (rsvg.exec() == 0)
   {
-    SoftwareSurface surface = PNG::load_from_mem(rsvg.get_stdout());
+    SoftwareSurface surface = png::load_from_mem(rsvg.get_stdout());
     return surface;
   }
   else
@@ -61,6 +60,7 @@ RSVG::load_from_file(std::filesystem::path const& filename)
   }
 }
 
+} // namespace rsvg
 } // namespace surf
 
 /* EOF */

@@ -44,7 +44,7 @@ public:
   bool supports_from_mem()  const override { return false; }
 
   SoftwareSurface from_file(std::filesystem::path const& filename) const override {
-    return VidThumb::load_from_file(filename);
+    return vidthumb::load_from_file(filename);
   }
 
   SoftwareSurface from_mem(std::span<uint8_t const> data) const override {

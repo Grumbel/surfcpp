@@ -25,14 +25,12 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace dds {
 
-class DDS
-{
-public:
-  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-};
+bool get_size(std::filesystem::path const& filename, geom::isize& size);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
 
+} // namespace dds
 } // namespace surf
 
 #endif

@@ -47,7 +47,7 @@ public:
 
   SoftwareSurface from_file(std::filesystem::path const& filename) const override
   {
-    return RSVG::load_from_file(filename);
+    return rsvg::load_from_file(filename);
   }
 
   SoftwareSurface from_mem(std::span<uint8_t const> data) const override

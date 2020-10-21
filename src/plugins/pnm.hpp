@@ -22,13 +22,11 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace pnm {
 
-class PNM
-{
-public:
-  static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
-};
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
+} // namespace pnm
 } // namespace surf
 
 #endif

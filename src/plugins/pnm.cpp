@@ -24,9 +24,9 @@
 #include "plugins/pnm_mem_reader.hpp"
 
 namespace surf {
+namespace pnm {
 
-SoftwareSurface
-PNM::load_from_mem(std::span<uint8_t const> data)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   PNMMemReader pnm(data);
 
@@ -74,6 +74,7 @@ PNM::load_from_mem(std::span<uint8_t const> data)
   return SoftwareSurface(std::move(dst));
 }
 
+} // namespace pnm
 } // namespace surf
 
 /* EOF */

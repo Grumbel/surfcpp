@@ -28,71 +28,7 @@
 #include <geom/size.hpp>
 
 namespace surf {
-
-bool
-Imagemagick::get_size(std::filesystem::path const& filename, geom::isize& size)
-{
-  try
-  {
-    Magick::Image image(filename);
-
-    size = geom::isize(static_cast<int>(image.columns()),
-                static_cast<int>(image.rows()));
-
-    return true;
-  }
-  catch(std::exception& err)
-  {
-    log_error("Imagemagick: {}: {}", filename, err.what());
-    return false;
-  }
-}
-
-std::vector<std::string>
-Imagemagick::get_supported_extensions()
-{
-  if ((false)) // FIXME: disabled for reasons
-  {
-    /* Generating the list automatic doesn't work, as there ends up to
-       be to much weird stuff in it (txt, avi, mpeg, etc.) that causes
-       trouble */
-    std::list<Magick::CoderInfo> coderList;
-
-    Magick::coderInfoList(&coderList,
-                          Magick::CoderInfo::TrueMatch, // Match readable formats
-                          Magick::CoderInfo::AnyMatch,  // Don't care about writable formats
-                          Magick::CoderInfo::AnyMatch); // Don't care about multi-frame support
-
-    std::vector<std::string> lst;
-
-    for(std::list<Magick::CoderInfo>::iterator entry = coderList.begin();
-        entry != coderList.end();
-        ++entry)
-    {
-      std::string data = entry->name();
-      std::transform(data.begin(), data.end(), data.begin(), ::tolower);
-      lst.push_back(data);
-    }
-
-    return lst;
-  }
-  else
-  {
-    std::vector<std::string> lst;
-
-    lst.push_back("gif");
-    lst.push_back("tga");
-    lst.push_back("rgb");
-    lst.push_back("bmp");
-    lst.push_back("tiff");
-    lst.push_back("tif");
-    lst.push_back("pbm");
-    lst.push_back("ppm");
-    lst.push_back("pgm");
-
-    return lst;
-  }
-}
+namespace imagemagick {
 
 namespace {
 
@@ -146,19 +82,81 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
 
 } // namespace
 
-SoftwareSurface
-Imagemagick::load_from_mem(std::span<uint8_t const> data)
+bool get_size(std::filesystem::path const& filename, geom::isize& size)
+{
+  try
+  {
+    Magick::Image image(filename);
+
+    size = geom::isize(static_cast<int>(image.columns()),
+                static_cast<int>(image.rows()));
+
+    return true;
+  }
+  catch(std::exception& err)
+  {
+    log_error("Imagemagick: {}: {}", filename, err.what());
+    return false;
+  }
+}
+
+std::vector<std::string> get_supported_extensions()
+{
+  if ((false)) // FIXME: disabled for reasons
+  {
+    /* Generating the list automatic doesn't work, as there ends up to
+       be to much weird stuff in it (txt, avi, mpeg, etc.) that causes
+       trouble */
+    std::list<Magick::CoderInfo> coderList;
+
+    Magick::coderInfoList(&coderList,
+                          Magick::CoderInfo::TrueMatch, // Match readable formats
+                          Magick::CoderInfo::AnyMatch,  // Don't care about writable formats
+                          Magick::CoderInfo::AnyMatch); // Don't care about multi-frame support
+
+    std::vector<std::string> lst;
+
+    for(std::list<Magick::CoderInfo>::iterator entry = coderList.begin();
+        entry != coderList.end();
+        ++entry)
+    {
+      std::string data = entry->name();
+      std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+      lst.push_back(data);
+    }
+
+    return lst;
+  }
+  else
+  {
+    std::vector<std::string> lst;
+
+    lst.push_back("gif");
+    lst.push_back("tga");
+    lst.push_back("rgb");
+    lst.push_back("bmp");
+    lst.push_back("tiff");
+    lst.push_back("tif");
+    lst.push_back("pbm");
+    lst.push_back("ppm");
+    lst.push_back("pgm");
+
+    return lst;
+  }
+}
+
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Magick::Blob creates an unneeded copy of the data
   return MagickImage2SoftwareSurface(Magick::Image(Magick::Blob(data.data(), data.size())));
 }
 
-SoftwareSurface
-Imagemagick::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   return MagickImage2SoftwareSurface(Magick::Image(filename));
 }
 
+} // namespace imagemagick
 } // namespace surf
 
 /* EOF */

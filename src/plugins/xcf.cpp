@@ -41,6 +41,9 @@
 // - 760x705+21+32 Indexed-alpha Normal Pasted Layer#1
 // - 800x800+0+0 Indexed-alpha Normal Pasted Layer
 
+namespace surf {
+namespace xcf {
+
 #if 0 // unused
 namespace {
 
@@ -82,10 +85,7 @@ xcfinfo_get_layer(std::string_view text)
 } // namespace
 #endif
 
-namespace surf {
-
-bool
-XCF::is_available()
+bool is_available()
 {
   try
   {
@@ -102,8 +102,7 @@ XCF::is_available()
 }
 
 #if 0
-std::vector<std::string>
-XCF::get_layers(const URL& url)
+std::vector<std::string> get_layers(const URL& url)
 {
   Exec xcfinfo("xcfinfo");
 
@@ -135,8 +134,7 @@ XCF::get_layers(const URL& url)
 }
 #endif
 
-bool
-XCF::get_size(std::filesystem::path const& filename, geom::isize& size)
+bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   Exec xcfinfo("xcfinfo");
   xcfinfo.arg(filename);
@@ -172,8 +170,7 @@ XCF::get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-SoftwareSurface
-XCF::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg(filename);
@@ -183,12 +180,11 @@ XCF::load_from_file(std::filesystem::path const& filename)
   }
   else
   {
-    return PNG::load_from_mem(xcf2png.get_stdout());
+    return png::load_from_mem(xcf2png.get_stdout());
   }
 }
 
-SoftwareSurface
-XCF::load_from_mem(std::span<uint8_t const> data)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg("-"); // Read from stdin
@@ -199,10 +195,11 @@ XCF::load_from_mem(std::span<uint8_t const> data)
   }
   else
   {
-    return PNG::load_from_mem(xcf2png.get_stdout());
+    return png::load_from_mem(xcf2png.get_stdout());
   }
 }
 
+} // namespace xcf
 } // namespace surf
 
 /* EOF */

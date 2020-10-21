@@ -27,6 +27,7 @@
 //#include "rgb.hpp"
 
 namespace surf {
+namespace dds {
 
 #define DDPF_ALPHAPIXELS                0x00000001
 #define DDPF_ALPHA                      0x00000002
@@ -251,6 +252,7 @@ private:
   void read_data_dtx3(std::istream& in);
 };
 
+} // namespace dds
 } // namespace surf
 
 #endif

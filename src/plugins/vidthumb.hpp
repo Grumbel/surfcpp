@@ -23,14 +23,12 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace vidthumb {
 
-class VidThumb
-{
-public:
-  static bool is_available();
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-};
+bool is_available();
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
 
+} // namespace vidthumb
 } // namespace surf
 
 #endif

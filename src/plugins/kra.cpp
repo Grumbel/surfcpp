@@ -23,9 +23,9 @@
 #include "util/filesystem.hpp"
 
 namespace surf {
+namespace kra {
 
-bool
-KRA::is_available()
+bool is_available()
 {
   try
   {
@@ -40,8 +40,7 @@ KRA::is_available()
   }
 }
 
-SoftwareSurface
-KRA::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   // koconverter --batch --mimetype image/png sketch39.kra /dev/stdout  > /tmp/test.png
   Exec koconverter("koconverter");
@@ -49,7 +48,7 @@ KRA::load_from_file(std::filesystem::path const& filename)
   koconverter.arg(filename).arg("/dev/stdout");
   koconverter.exec();
 
-  return PNG::load_from_mem(koconverter.get_stdout());
+  return png::load_from_mem(koconverter.get_stdout());
 }
 
 // SoftwareSurface
@@ -61,9 +60,10 @@ KRA::load_from_file(std::filesystem::path const& filename)
 //   koconverter.set_stdin(Blob(data, len));
 //   koconverter.exec();
 
-//   return PNG::load_from_mem((uint8_t*)&*koconverter.get_stdout().begin(), koconverter.get_stdout().size());
+//   return png::load_from_mem((uint8_t*)&*koconverter.get_stdout().begin(), koconverter.get_stdout().size());
 // }
 
+} // namespace kra
 } // namespace surf
 
 /* EOF */

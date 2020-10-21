@@ -27,21 +27,19 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace xcf {
 
-class XCF
-{
-public:
-  static bool is_available();
+bool is_available();
 
 #if 0
-  static std::vector<std::string> get_layers(const URL& url);
+std::vector<std::string> get_layers(const URL& url);
 #endif
-  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
+bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-  static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
-};
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
+} // namespace xcf
 } // namespace surf
 
 #endif

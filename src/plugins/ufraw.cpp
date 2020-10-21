@@ -25,9 +25,9 @@
 #include "util/filesystem.hpp"
 
 namespace surf {
+namespace ufraw {
 
-bool
-UFRaw::is_available()
+bool is_available()
 {
   try
   {
@@ -42,8 +42,7 @@ UFRaw::is_available()
   }
 }
 
-SoftwareSurface
-UFRaw::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec ufraw("ufraw-batch");
   ufraw
@@ -58,10 +57,11 @@ UFRaw::load_from_file(std::filesystem::path const& filename)
   }
   else
   {
-    return PNM::load_from_mem(ufraw.get_stdout());
+    return pnm::load_from_mem(ufraw.get_stdout());
   }
 }
 
+} // namespace ufraw
 } // namespace surf
 
 /* EOF */

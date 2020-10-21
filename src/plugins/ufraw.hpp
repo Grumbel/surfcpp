@@ -25,16 +25,12 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace ufraw {
 
-class URL;
+bool is_available();
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
 
-class UFRaw
-{
-public:
-  static bool is_available();
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-};
-
+} // namespace ufraw
 } // namespace surf
 
 #endif

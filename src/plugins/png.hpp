@@ -26,22 +26,20 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace png {
 
-class PNG
-{
-public:
-  static bool get_size(void* data, int len, geom::isize& size);
-  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
+bool get_size(void* data, int len, geom::isize& size);
+bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
-  static bool is_png(std::filesystem::path const& filename);
+bool is_png(std::filesystem::path const& filename);
 
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-  static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
-  static void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
-  static std::vector<uint8_t> save(SoftwareSurface const& surface);
-};
+void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
+std::vector<uint8_t> save(SoftwareSurface const& surface);
 
+} // namespace png
 } // namespace surf
 
 #endif

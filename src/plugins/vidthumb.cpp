@@ -26,9 +26,9 @@
 #include "util/filesystem.hpp"
 
 namespace surf {
+namespace vidthumb {
 
-bool
-VidThumb::is_available()
+bool is_available()
 {
   try
   {
@@ -43,8 +43,7 @@ VidThumb::is_available()
   }
 }
 
-SoftwareSurface
-VidThumb::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec vidthumb("vidthumb");
 
@@ -57,7 +56,7 @@ VidThumb::load_from_file(std::filesystem::path const& filename)
 
   if (vidthumb.exec() == 0)
   {
-    SoftwareSurface surface = PNG::load_from_file(out.str());
+    SoftwareSurface surface = png::load_from_file(out.str());
     remove(out.str().c_str());
     return surface;
   }
@@ -68,6 +67,7 @@ VidThumb::load_from_file(std::filesystem::path const& filename)
   }
 }
 
+} // namespace vidthumb
 } // namespace surf
 
 /* EOF */

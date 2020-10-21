@@ -68,23 +68,23 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   add_loader(std::make_unique<JPEGSoftwareSurfaceLoader>());
   add_loader(std::make_unique<PNGSoftwareSurfaceLoader>());
 
-  if (XCF::is_available()) {
+  if (xcf::is_available()) {
     add_loader(std::make_unique<XCFSoftwareSurfaceLoader>());
   }
 
-  if (UFRaw::is_available()) {
+  if (ufraw::is_available()) {
     add_loader(std::make_unique<UFRawSoftwareSurfaceLoader>());
   }
 
-  if (RSVG::is_available()) {
+  if (rsvg::is_available()) {
     add_loader(std::make_unique<RSVGSoftwareSurfaceLoader>());
   }
 
-  if (VidThumb::is_available()) {
+  if (vidthumb::is_available()) {
     add_loader(std::make_unique<VidThumbSoftwareSurfaceLoader>());
   }
 
-  if (KRA::is_available()) {
+  if (kra::is_available()) {
     add_loader(std::make_unique<KRASoftwareSurfaceLoader>());
   }
 

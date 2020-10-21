@@ -25,18 +25,12 @@
 #include "transform.hpp"
 
 namespace surf {
+namespace exif {
 
-class EXIF
-{
-public:
-  static Transform get_orientation(std::filesystem::path const& filename);
-  static Transform get_orientation(std::span<uint8_t const> data);
+Transform get_orientation(std::filesystem::path const& filename);
+Transform get_orientation(std::span<uint8_t const> data);
 
-private:
-  EXIF(const EXIF&);
-  EXIF& operator=(const EXIF&);
-};
-
+} // namespace exif
 } // namespace surf
 
 #endif

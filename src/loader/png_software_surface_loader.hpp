@@ -48,12 +48,12 @@ public:
 
   SoftwareSurface from_file(std::filesystem::path const& filename) const override
   {
-    return PNG::load_from_file(filename);
+    return png::load_from_file(filename);
   }
 
   SoftwareSurface from_mem(std::span<uint8_t const> data) const override
   {
-    return PNG::load_from_mem(data);
+    return png::load_from_mem(data);
   }
 
 private:

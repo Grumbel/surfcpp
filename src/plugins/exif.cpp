@@ -19,7 +19,7 @@
 #include <libexif/exif-data.h>
 
 namespace surf {
-
+namespace exif {
 namespace {
 
 Transform get_orientation_exif(ExifData* ed)
@@ -76,8 +76,7 @@ Transform get_orientation_exif(ExifData* ed)
 
 } // namespace
 
-Transform
-EXIF::get_orientation(std::span<uint8_t const> data)
+Transform get_orientation(std::span<uint8_t const> data)
 {
   ExifData* ed = exif_data_new_from_data(data.data(), static_cast<unsigned int>(data.size()));
   Transform orientation = get_orientation_exif(ed);
@@ -85,8 +84,7 @@ EXIF::get_orientation(std::span<uint8_t const> data)
   return orientation;
 }
 
-Transform
-EXIF::get_orientation(std::filesystem::path const& filename)
+Transform get_orientation(std::filesystem::path const& filename)
 {
   ExifData* ed = exif_data_new_from_file(filename.c_str());
   Transform orientation = get_orientation_exif(ed);
@@ -94,6 +92,7 @@ EXIF::get_orientation(std::filesystem::path const& filename)
   return orientation;
 }
 
+} // namespace exif
 } // namespace surf
 
 /* EOF */

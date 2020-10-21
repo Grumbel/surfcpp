@@ -36,7 +36,7 @@ public:
 
   void register_loader(SoftwareSurfaceFactory& factory) const override
   {
-    std::vector<std::string> lst = Imagemagick::get_supported_extensions();
+    std::vector<std::string> lst = imagemagick::get_supported_extensions();
     for(std::vector<std::string>::const_iterator i = lst.begin();
         i != lst.end(); ++i)
     {
@@ -50,12 +50,12 @@ public:
 
   SoftwareSurface from_file(std::filesystem::path const& filename) const override
   {
-    return Imagemagick::load_from_file(filename);
+    return imagemagick::load_from_file(filename);
   }
 
   SoftwareSurface from_mem(std::span<uint8_t const> data) const override
   {
-    return Imagemagick::load_from_mem(data);
+    return imagemagick::load_from_mem(data);
   }
 
 private:

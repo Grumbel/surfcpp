@@ -26,16 +26,14 @@
 #include "software_surface.hpp"
 
 namespace surf {
+namespace imagemagick {
 
-class Imagemagick
-{
-public:
-  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
-  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
-  static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
-  static std::vector<std::string> get_supported_extensions();
-};
+bool get_size(std::filesystem::path const& filename, geom::isize& size);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
+std::vector<std::string> get_supported_extensions();
 
+} // namespace imagemagick
 } // namespace surf
 
 #endif

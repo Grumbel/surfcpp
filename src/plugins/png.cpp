@@ -25,6 +25,9 @@
 
 #include <logmich/log.hpp>
 
+namespace surf {
+namespace png {
+
 namespace {
 
 struct PNGReadMemory
@@ -67,10 +70,7 @@ void writePNGMemory(png_structp png_ptr, png_bytep data, png_size_t length)
 
 } // namespace
 
-namespace surf {
-
-bool
-PNG::get_size(void* data, int len, geom::isize& size)
+bool get_size(void* data, int len, geom::isize& size)
 {
   // FIXME: Could install error/warning handling functions here
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -103,8 +103,7 @@ PNG::get_size(void* data, int len, geom::isize& size)
   }
 }
 
-bool
-PNG::get_size(std::filesystem::path const& filename, geom::isize& size)
+bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -141,8 +140,7 @@ PNG::get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-bool
-PNG::is_png(std::filesystem::path const& filename)
+bool is_png(std::filesystem::path const& filename)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -170,8 +168,7 @@ PNG::is_png(std::filesystem::path const& filename)
   }
 }
 
-SoftwareSurface
-PNG::load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -247,8 +244,7 @@ PNG::load_from_file(std::filesystem::path const& filename)
   }
 }
 
-SoftwareSurface
-PNG::load_from_mem(std::span<uint8_t const> data)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Merge this with load_from_file
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -320,8 +316,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
   return SoftwareSurface(std::move(dst));
 }
 
-void
-PNG::save(SoftwareSurface const& surface, std::filesystem::path const& filename)
+void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
 {
   PixelData const& src = surface.get_pixel_data();
 
@@ -370,8 +365,7 @@ PNG::save(SoftwareSurface const& surface, std::filesystem::path const& filename)
   }
 }
 
-std::vector<uint8_t>
-PNG::save(SoftwareSurface const& surface)
+std::vector<uint8_t> save(SoftwareSurface const& surface)
 {
   PixelData const& src = surface.get_pixel_data();
 
@@ -412,6 +406,7 @@ PNG::save(SoftwareSurface const& surface)
   return std::move(mem.data);
 }
 
+} // namespace png
 } // namespace surf
 
 /* EOF */

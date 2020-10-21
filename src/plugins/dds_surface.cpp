@@ -21,6 +21,7 @@
 #include "plugins/dds_rgb.hpp"
 
 namespace surf {
+namespace dds {
 
 DDSSurface::DDSSurface(std::istream& in) :
   magic(),
@@ -227,6 +228,7 @@ DDSSurface::read_data_dtx3(std::istream& in)
   }
 }
 
+} // namespace dds
 } // namespace surf
 
 /* EOF */
