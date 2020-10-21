@@ -18,6 +18,7 @@
 #define HEADER_GALAPIX_PLUGINS_FILE_JPEG_COMPRESSOR_HPP
 
 #include <stdio.h>
+#include <filesystem>
 #include <string>
 
 #include "plugins/jpeg_compressor.hpp"
@@ -27,7 +28,7 @@ namespace surf {
 class FileJPEGCompressor : public JPEGCompressor
 {
 public:
-  FileJPEGCompressor(const std::string& filename);
+  FileJPEGCompressor(std::filesystem::path const& filename);
   ~FileJPEGCompressor() override;
 
 private:

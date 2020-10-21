@@ -53,7 +53,7 @@ geom::isize apply_orientation(SoftwareSurface::Modifier modifier, const geom::is
 } // namespace
 
 bool
-JPEG::filename_is_jpeg(const std::string& filename)
+JPEG::filename_is_jpeg(std::filesystem::path const& filename)
 {
   // FIXME: Merge this with util/jpeg_software_surface_loader, maybe
   // store the fileformat/SoftwareSurfaceLoader in the database intead
@@ -63,7 +63,7 @@ JPEG::filename_is_jpeg(const std::string& filename)
 }
 
 geom::isize
-JPEG::get_size(const std::string& filename)
+JPEG::get_size(std::filesystem::path const& filename)
 {
   FileJPEGDecompressor loader(filename);
   geom::isize size = loader.read_size();
@@ -81,7 +81,7 @@ JPEG::get_size(std::span<uint8_t const> data)
 
 
 SoftwareSurface
-JPEG::load_from_file(const std::string& filename, int scale, geom::isize* image_size)
+JPEG::load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
 {
   FileJPEGDecompressor loader(filename);
   SoftwareSurface surface = loader.read_image(scale, image_size);
@@ -121,7 +121,7 @@ JPEG::load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image
 
 
 void
-JPEG::save(SoftwareSurface const& surface, int quality, const std::string& filename)
+JPEG::save(SoftwareSurface const& surface, int quality, std::filesystem::path const& filename)
 {
   FileJPEGCompressor compressor(filename);
   compressor.save(surface, quality);

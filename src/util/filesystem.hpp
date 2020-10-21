@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_UTIL_FILESYSTEM_HPP
 #define HEADER_GALAPIX_UTIL_FILESYSTEM_HPP
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -28,7 +29,7 @@ public:
   static void readlines_from_file(const std::string& pathname, std::vector<std::string>& lst);
   static std::string find_exe(const std::string& name);
   static std::string get_extension(const std::string& pathname);
-  static std::string get_magic(const std::string& filename);
+  static std::string get_magic(std::filesystem::path const& filename);
 };
 
 } // namespace surf

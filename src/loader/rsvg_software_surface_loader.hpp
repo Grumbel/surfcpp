@@ -45,7 +45,7 @@ public:
   bool supports_from_file() const override { return true;  }
   bool supports_from_mem()  const override { return false; }
 
-  SoftwareSurface from_file(const std::string& filename) const override
+  SoftwareSurface from_file(std::filesystem::path const& filename) const override
   {
     return RSVG::load_from_file(filename);
   }

@@ -42,7 +42,7 @@ RSVG::is_available()
 }
 
 SoftwareSurface
-RSVG::load_from_file(const std::string& filename)
+RSVG::load_from_file(std::filesystem::path const& filename)
 {
   Exec rsvg("rsvg");
 

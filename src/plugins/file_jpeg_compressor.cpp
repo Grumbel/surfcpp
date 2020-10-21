@@ -23,7 +23,7 @@
 
 namespace surf {
 
-FileJPEGCompressor::FileJPEGCompressor(const std::string& filename) :
+FileJPEGCompressor::FileJPEGCompressor(std::filesystem::path const& filename) :
   m_out(fopen(filename.c_str(), "wb"))
 {
   if (!m_out)

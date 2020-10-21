@@ -41,6 +41,7 @@
 // - 760x705+21+32 Indexed-alpha Normal Pasted Layer#1
 // - 800x800+0+0 Indexed-alpha Normal Pasted Layer
 
+#if 0 // unused
 namespace {
 
 std::vector<std::string>
@@ -79,6 +80,7 @@ xcfinfo_get_layer(std::string_view text)
 }
 
 } // namespace
+#endif
 
 namespace surf {
 
@@ -134,7 +136,7 @@ XCF::get_layers(const URL& url)
 #endif
 
 bool
-XCF::get_size(const std::string& filename, geom::isize& size)
+XCF::get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   Exec xcfinfo("xcfinfo");
   xcfinfo.arg(filename);
@@ -171,7 +173,7 @@ XCF::get_size(const std::string& filename, geom::isize& size)
 }
 
 SoftwareSurface
-XCF::load_from_file(const std::string& filename)
+XCF::load_from_file(std::filesystem::path const& filename)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg(filename);

@@ -105,7 +105,7 @@ SoftwareSurfaceFactory::add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader
 }
 
 bool
-SoftwareSurfaceFactory::has_supported_extension(std::string const& filename)
+SoftwareSurfaceFactory::has_supported_extension(std::filesystem::path const& filename)
 {
   std::string extension = Filesystem::get_extension(filename);
   ExtensionMap::iterator i = m_extension_map.find(extension);
@@ -155,7 +155,7 @@ SoftwareSurfaceFactory::register_by_extension(const SoftwareSurfaceLoader* loade
 }
 
 const SoftwareSurfaceLoader*
-SoftwareSurfaceFactory::find_loader_by_filename(const std::string& filename) const
+SoftwareSurfaceFactory::find_loader_by_filename(std::filesystem::path const& filename) const
 {
   std::string extension = Filesystem::get_extension(filename);
   const auto& it = m_extension_map.find(extension);
@@ -190,7 +190,7 @@ SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) cons
 }
 
 SoftwareSurface
-SoftwareSurfaceFactory::from_file(const std::string& filename, const SoftwareSurfaceLoader* loader) const
+SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, const SoftwareSurfaceLoader* loader) const
 {
   assert(loader);
 
@@ -212,7 +212,7 @@ SoftwareSurfaceFactory::from_file(const std::string& filename, const SoftwareSur
 }
 
 SoftwareSurface
-SoftwareSurfaceFactory::from_file(const std::string& filename) const
+SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
 {
   const SoftwareSurfaceLoader* loader = find_loader_by_filename(filename);
   if (!loader)
@@ -248,7 +248,7 @@ SoftwareSurfaceFactory::from_file(const std::string& filename) const
 SoftwareSurface
 SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
                                  std::string const& mime_type,
-                                 std::string const& filename) const
+                                 std::filesystem::path const& filename) const
 {
   const SoftwareSurfaceLoader* loader = nullptr;
 

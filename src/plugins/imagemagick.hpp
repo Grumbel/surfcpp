@@ -17,8 +17,10 @@
 #ifndef HEADER_GALAPIX_PLUGINS_IMAGEMAGICK_HPP
 #define HEADER_GALAPIX_PLUGINS_IMAGEMAGICK_HPP
 
+#include <filesystem>
 #include <span>
 #include <string>
+
 #include <geom/fwd.hpp>
 
 #include "software_surface.hpp"
@@ -28,8 +30,8 @@ namespace surf {
 class Imagemagick
 {
 public:
-  static bool get_size(const std::string& filename, geom::isize& size);
-  static SoftwareSurface load_from_file(const std::string& filename);
+  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
+  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
   static std::vector<std::string> get_supported_extensions();
 };

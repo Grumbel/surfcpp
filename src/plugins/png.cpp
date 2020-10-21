@@ -19,9 +19,11 @@
 #include <string.h>
 #include <assert.h>
 #include <stdexcept>
-#include <logmich/log.hpp>
 
+#include <fmt/ostream.h>
 #include <png.h>
+
+#include <logmich/log.hpp>
 
 namespace {
 
@@ -102,7 +104,7 @@ PNG::get_size(void* data, int len, geom::isize& size)
 }
 
 bool
-PNG::get_size(const std::string& filename, geom::isize& size)
+PNG::get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -140,7 +142,7 @@ PNG::get_size(const std::string& filename, geom::isize& size)
 }
 
 bool
-PNG::is_png(const std::string& filename)
+PNG::is_png(std::filesystem::path const& filename)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -169,12 +171,12 @@ PNG::is_png(const std::string& filename)
 }
 
 SoftwareSurface
-PNG::load_from_file(const std::string& filename)
+PNG::load_from_file(std::filesystem::path const& filename)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
   {
-    throw std::runtime_error("PNG::load_from_file(): Couldn't open " + filename);
+    throw std::runtime_error("PNG::load_from_file(): Couldn't open " + filename.string());
   }
   else
   {
@@ -184,7 +186,7 @@ PNG::load_from_file(const std::string& filename)
     if (setjmp(png_jmpbuf(png_ptr)))
     {
       png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-      throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + filename);
+      throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + filename.string());
     }
 
     png_init_io(png_ptr, in);
@@ -319,7 +321,7 @@ PNG::load_from_mem(std::span<uint8_t const> data)
 }
 
 void
-PNG::save(SoftwareSurface const& surface, const std::string& filename)
+PNG::save(SoftwareSurface const& surface, std::filesystem::path const& filename)
 {
   PixelData const& src = surface.get_pixel_data();
 
@@ -327,7 +329,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
   if (!out)
   {
     perror(filename.c_str());
-    throw std::runtime_error("PNG::save(): Couldn't save " + filename);
+    throw std::runtime_error("PNG::save(): Couldn't save " + filename.string());
   }
   else
   {
@@ -339,7 +341,7 @@ PNG::save(SoftwareSurface const& surface, const std::string& filename)
     {
       fclose(out);
       png_destroy_write_struct(&png_ptr, &info_ptr);
-      throw std::runtime_error("PNG::save(): setjmp: Couldn't save " + filename);
+      throw std::runtime_error("PNG::save(): setjmp: Couldn't save " + filename.string());
     }
 
     // set up the output control if you are using standard C streams

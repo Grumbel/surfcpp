@@ -19,6 +19,7 @@
 
 #include "plugins/jpeg_decompressor.hpp"
 
+#include <filesystem>
 #include <sstream>
 #include <stdio.h>
 
@@ -27,7 +28,7 @@ namespace surf {
 class FileJPEGDecompressor : public JPEGDecompressor
 {
 public:
-  FileJPEGDecompressor(const std::string& filename);
+  FileJPEGDecompressor(std::filesystem::path const& filename);
   ~FileJPEGDecompressor() override;
 
 private:

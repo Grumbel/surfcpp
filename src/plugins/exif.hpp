@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
 #define HEADER_GALAPIX_PLUGINS_EXIF_HPP
 
+#include <filesystem>
 #include <string>
 #include <span>
 
@@ -27,7 +28,7 @@ namespace surf {
 class EXIF
 {
 public:
-  static SoftwareSurface::Modifier get_orientation(const std::string& filename);
+  static SoftwareSurface::Modifier get_orientation(std::filesystem::path const& filename);
   static SoftwareSurface::Modifier get_orientation(std::span<uint8_t const> data);
 
 private:

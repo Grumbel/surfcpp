@@ -17,7 +17,9 @@
 #ifndef HEADER_GALAPIX_PLUGINS_DDS_HPP
 #define HEADER_GALAPIX_PLUGINS_DDS_HPP
 
+#include <filesystem>
 #include <string>
+
 #include <geom/size.hpp>
 
 #include "software_surface.hpp"
@@ -27,8 +29,8 @@ namespace surf {
 class DDS
 {
 public:
-  static bool get_size(const std::string& filename, geom::isize& size);
-  static SoftwareSurface load_from_file(const std::string& filename);
+  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
+  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
 };
 
 } // namespace surf

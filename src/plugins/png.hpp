@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_PNG_HPP
 #define HEADER_GALAPIX_PLUGINS_PNG_HPP
 
+#include <filesystem>
 #include <span>
 #include <string>
 
@@ -30,14 +31,14 @@ class PNG
 {
 public:
   static bool get_size(void* data, int len, geom::isize& size);
-  static bool get_size(const std::string& filename, geom::isize& size);
+  static bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
-  static bool is_png(const std::string& filename);
+  static bool is_png(std::filesystem::path const& filename);
 
-  static SoftwareSurface load_from_file(const std::string& filename);
+  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
   static SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
-  static void save(SoftwareSurface const& surface, const std::string& filename);
+  static void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
   static std::vector<uint8_t> save(SoftwareSurface const& surface);
 };
 

@@ -91,20 +91,20 @@ Filesystem::get_extension(const std::string& pathname)
 }
 
 std::string
-Filesystem::get_magic(const std::string& filename)
+Filesystem::get_magic(std::filesystem::path const& filename)
 {
   char buf[512];
   std::ifstream in(filename, std::ios::binary);
   if (!in)
   {
     int err = errno;
-    throw std::runtime_error(filename + ": couldn't open file: " + strerror(err));
+    throw std::runtime_error(filename.string() + ": couldn't open file: " + strerror(err));
   }
   else
   {
     if (in.read(buf, sizeof(buf)).bad())
     {
-      throw std::runtime_error(filename + ": failed to read " + std::to_string( sizeof(buf)) + " bytes");
+      throw std::runtime_error(filename.string() + ": failed to read " + std::to_string( sizeof(buf)) + " bytes");
     }
     else
     {

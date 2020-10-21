@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_KRA_HPP
 #define HEADER_GALAPIX_PLUGINS_KRA_HPP
 
+#include <filesystem>
 #include <string>
 
 #include "software_surface.hpp"
@@ -27,7 +28,7 @@ class KRA
 {
 public:
   static bool is_available();
-  static SoftwareSurface load_from_file(const std::string& filename);
+  static SoftwareSurface load_from_file(std::filesystem::path const& filename);
 };
 
 } // namespace surf

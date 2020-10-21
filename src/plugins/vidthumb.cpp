@@ -44,7 +44,7 @@ VidThumb::is_available()
 }
 
 SoftwareSurface
-VidThumb::load_from_file(const std::string& filename)
+VidThumb::load_from_file(std::filesystem::path const& filename)
 {
   Exec vidthumb("vidthumb");
 

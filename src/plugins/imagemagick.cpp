@@ -30,7 +30,7 @@
 namespace surf {
 
 bool
-Imagemagick::get_size(const std::string& filename, geom::isize& size)
+Imagemagick::get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   try
   {
@@ -154,7 +154,7 @@ Imagemagick::load_from_mem(std::span<uint8_t const> data)
 }
 
 SoftwareSurface
-Imagemagick::load_from_file(const std::string& filename)
+Imagemagick::load_from_file(std::filesystem::path const& filename)
 {
   return MagickImage2SoftwareSurface(Magick::Image(filename));
 }
