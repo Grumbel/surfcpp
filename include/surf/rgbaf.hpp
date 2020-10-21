@@ -17,8 +17,8 @@
 #ifndef HEADER_GALAPIX_MATH_RGBAF_HPP
 #define HEADER_GALAPIX_MATH_RGBAF_HPP
 
-#include "surface/rgba.hpp"
-#include "surface/rgb.hpp"
+#include "rgba.hpp"
+#include "rgb.hpp"
 
 namespace surf {
 

@@ -3,8 +3,8 @@
 
 #include <geom/rect.hpp>
 
-#include "surface/software_surface.hpp"
-#include "surface/rgb.hpp"
+#include <surf/software_surface.hpp>
+#include <surf/rgb.hpp>
 
 using namespace surf;
 

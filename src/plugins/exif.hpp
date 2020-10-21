@@ -20,7 +20,7 @@
 #include <string>
 #include <span>
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

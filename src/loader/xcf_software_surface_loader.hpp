@@ -17,7 +17,7 @@
 #ifndef HEADER_GALAPIX_UTIL_XCF_SOFTWARE_SURFACE_LOADER_HPP
 #define HEADER_GALAPIX_UTIL_XCF_SOFTWARE_SURFACE_LOADER_HPP
 
-#include "surface/software_surface_factory.hpp"
+#include "software_surface_factory.hpp"
 
 namespace surf {
 

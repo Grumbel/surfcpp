@@ -20,7 +20,7 @@
 #include <assert.h>
 
 #include "plugins/ufraw.hpp"
-#include "surface/software_surface_factory.hpp"
+#include "software_surface_factory.hpp"
 
 namespace surf {
 

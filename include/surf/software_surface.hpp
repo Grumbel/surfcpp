@@ -21,7 +21,7 @@
 #include <memory>
 #include <geom/fwd.hpp>
 
-#include "surface/pixel_data.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 

@@ -23,7 +23,7 @@
 
 #include <jpeglib.h>
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

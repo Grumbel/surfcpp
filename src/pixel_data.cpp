@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "surface/pixel_data.hpp"
+#include "pixel_data.hpp"
 
 #include <string.h>
 
-#include "surface/rgb.hpp"
-#include "surface/rgba.hpp"
+#include "rgb.hpp"
+#include "rgba.hpp"
 
 namespace surf {
 

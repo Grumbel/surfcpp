@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "surface/software_surface_factory.hpp"
+#include "software_surface_factory.hpp"
 
 #include <sstream>
 #include <stdexcept>
@@ -22,7 +22,7 @@
 #include <logmich/log.hpp>
 
 #include "util/filesystem.hpp"
-#include "surface/software_surface_loader.hpp"
+#include "software_surface_loader.hpp"
 
 #include "plugins/imagemagick.hpp"
 #include "plugins/jpeg.hpp"

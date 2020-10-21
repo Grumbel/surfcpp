@@ -18,8 +18,8 @@
 #define HEADER_GALAPIX_UTIL_DDS_SOFTWARE_SURFACE_LOADER_HPP
 
 #include "plugins/dds.hpp"
-#include "surface/software_surface_loader.hpp"
-#include "surface/software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
+#include "software_surface_factory.hpp"
 
 namespace surf {
 

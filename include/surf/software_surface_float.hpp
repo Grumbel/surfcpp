@@ -22,8 +22,8 @@
 
 #include <geom/size.hpp>
 
-#include "surface/rgbaf.hpp"
-#include "surface/software_surface.hpp"
+#include "rgbaf.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

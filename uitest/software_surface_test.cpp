@@ -3,8 +3,8 @@
 
 #include "plugins/jpeg.hpp"
 #include "plugins/png.hpp"
-#include "surface/software_surface.hpp"
-#include "surface/software_surface_factory.hpp"
+#include "software_surface.hpp"
+#include "software_surface_factory.hpp"
 #include "util/url.hpp"
 
 UITEST(SoftwareSurface, test, "FILENAME",

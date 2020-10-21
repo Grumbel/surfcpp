@@ -1,3 +1,4 @@
+
 // Galapix - an image viewer for large image collections
 // Copyright (C) 2008-2019 Ingo Ruhnke <grumbel@gmail.com>
 //
@@ -19,7 +20,7 @@
 
 #include <span>
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

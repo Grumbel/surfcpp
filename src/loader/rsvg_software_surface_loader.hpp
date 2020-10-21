@@ -18,7 +18,7 @@
 #define HEADER_GALAPIX_UTIL_RSVG_SOFTWARE_SURFACE_LOADER_HPP
 
 #include "plugins/rsvg.hpp"
-#include "surface/software_surface_loader.hpp"
+#include "software_surface_loader.hpp"
 
 namespace surf {
 

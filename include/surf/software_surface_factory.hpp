@@ -21,7 +21,7 @@
 #include <map>
 #include <string>
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

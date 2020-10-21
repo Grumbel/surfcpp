@@ -18,7 +18,7 @@
 #define HEADER_GALAPIX_UTIL_PNG_SOFTWARE_SURFACE_LOADER_HPP
 
 #include "plugins/png.hpp"
-#include "surface/software_surface_loader.hpp"
+#include "software_surface_loader.hpp"
 
 namespace surf {
 

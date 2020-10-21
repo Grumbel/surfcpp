@@ -22,7 +22,7 @@
 #include <vector>
 #include <geom/fwd.hpp>
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 

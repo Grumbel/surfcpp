@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "surface/software_surface.hpp"
+#include "software_surface.hpp"
 
 #include <algorithm>
 #include <assert.h>
@@ -22,8 +22,8 @@
 
 #include <geom/rect.hpp>
 
-#include "surface/rgb.hpp"
-#include "surface/rgba.hpp"
+#include "rgb.hpp"
+#include "rgba.hpp"
 
 namespace surf {
 
