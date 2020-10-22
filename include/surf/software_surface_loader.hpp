@@ -36,8 +36,8 @@ public:
   virtual bool supports_from_file() const = 0;
   virtual bool supports_from_mem() const = 0;
 
-  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const;
-  virtual SoftwareSurface from_mem(std::span<uint8_t const> data) const;
+  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const = 0;
+  virtual SoftwareSurface from_mem(std::span<uint8_t const> data) const = 0;
 };
 
 template<typename FromFileFunc, typename FromMemFunc>
