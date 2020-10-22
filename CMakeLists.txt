@@ -24,6 +24,14 @@ include(MaximumWarnings)
 include(ClangTidy)
 
 find_package(PkgConfig REQUIRED)
+find_package(JPEG REQUIRED)
+find_package(PNG REQUIRED)
+pkg_search_module(EXIF REQUIRED libexif IMPORTED_TARGET)
+
+# Not using find_package(), see:
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776832
+# find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+pkg_search_module(MAGICKXX REQUIRED Magick++ GraphicsMagick++ IMPORTED_TARGET)
 
 # Not using find_package(), see:
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776832
@@ -62,6 +70,9 @@ set_target_properties(surf PROPERTIES
 target_link_libraries(surf PUBLIC
   geomcpp
   logmich
+  PNG::PNG
+  JPEG::JPEG
+  PkgConfig::EXIF
   PkgConfig::MAGICKXX)
 target_include_directories(surf INTERFACE src/ include/surf/ include/)
 target_include_directories(surf PRIVATE src/ include/surf/)
