@@ -10,24 +10,22 @@ using namespace surf;
 
 TEST(SoftwareSurfaceTest, default_is_valid)
 {
-  SoftwareSurface surface;
+  PixelData pixel_data;
 
-  EXPECT_EQ(geom::isize(0, 0), surface.get_size());
+  EXPECT_EQ(geom::isize(0, 0), pixel_data.get_size());
 
-  EXPECT_EQ(geom::isize(0, 0), surface.halve().get_size());
-  EXPECT_EQ(geom::isize(32, 16), surface.scale(geom::isize(32, 16)).get_size());
-  EXPECT_EQ(geom::isize(0, 0), surface.crop(geom::irect(0, 0, 16, 16)).get_size());
+  EXPECT_EQ(geom::isize(0, 0), halve(pixel_data).get_size());
+  EXPECT_EQ(geom::isize(32, 16), scale(pixel_data, geom::isize(32, 16)).get_size());
+  EXPECT_EQ(geom::isize(0, 0), crop(pixel_data, geom::irect(0, 0, 16, 16)).get_size());
 
-  transform(surface, Transform::ROTATE_0);
-  rotate90(surface);
-  rotate180(surface);
-  rotate270(surface);
-  flip_horizontal(surface);
-  flip_vertical(surface);
-  surface.to_rgb();
-  surface.get_average_color();
-
-  surface.get_pixel_data();
+  transform(pixel_data, Transform::ROTATE_0);
+  rotate90(pixel_data);
+  rotate180(pixel_data);
+  rotate270(pixel_data);
+  flip_horizontal(pixel_data);
+  flip_vertical(pixel_data);
+  to_rgb(pixel_data);
+  average_color(pixel_data);
 }
 
 TEST(SoftwareSurfaceTest, assignment)

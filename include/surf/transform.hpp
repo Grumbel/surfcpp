@@ -22,6 +22,7 @@
 namespace surf {
 
 class PixelData;
+class RGB;
 
 enum class Transform
 {
@@ -50,6 +51,7 @@ PixelData scale(PixelData const& src, geom::isize const& size);
 PixelData crop(PixelData const& src, geom::irect const& rect);
 
 PixelData to_rgb(PixelData const& src);
+RGB average_color(PixelData const& src);
 
 } // namespace surf
 

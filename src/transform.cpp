@@ -382,7 +382,7 @@ PixelData to_rgb(PixelData const& src)
   }
 }
 
-RGB get_average_color(PixelData const& src)
+RGB average_color(PixelData const& src)
 {
   if (src.empty()) {
     return {};
