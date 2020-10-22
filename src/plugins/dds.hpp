@@ -31,7 +31,7 @@ namespace dds {
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
 PixelData load_from_file(std::filesystem::path const& filename);
 
-void register_loader(SoftwareSurfaceFactory& factory);
+void register_loader(PixelDataFactory& factory);
 
 } // namespace dds
 } // namespace surf

@@ -25,8 +25,8 @@
 
 #include <logmich/log.hpp>
 
-#include "software_surface_factory.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 
 namespace surf {
 namespace png {
@@ -319,9 +319,9 @@ PixelData load_from_mem(std::span<uint8_t const> data)
   return dst;
 }
 
-void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
+void save(PixelData const& surface, std::filesystem::path const& filename)
 {
-  PixelData const& src = surface.get_pixel_data();
+  PixelData const& src = surface;
 
   FILE* out = fopen(filename.c_str(), "wb");
   if (!out)
@@ -368,9 +368,9 @@ void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
   }
 }
 
-std::vector<uint8_t> save(SoftwareSurface const& surface)
+std::vector<uint8_t> save(PixelData const& surface)
 {
-  PixelData const& src = surface.get_pixel_data();
+  PixelData const& src = surface;
 
   // FIXME: Merge this with the save to file function
   png_structp png_ptr  = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -409,7 +409,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface)
   return std::move(mem.data);
 }
 
-void register_loader(SoftwareSurfaceFactory& factory)
+void register_loader(PixelDataFactory& factory)
 {
   auto loader = make_loader("png", load_from_file, load_from_mem);
 

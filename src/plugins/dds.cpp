@@ -23,8 +23,8 @@
 
 #include "pixel_format.hpp"
 #include "plugins/dds_surface.hpp"
-#include "software_surface_factory.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 
 namespace surf {
 namespace dds {
@@ -74,7 +74,7 @@ PixelData load_from_file(std::filesystem::path const& filename)
   }
 }
 
-void register_loader(SoftwareSurfaceFactory& factory)
+void register_loader(PixelDataFactory& factory)
 {
   auto loader = make_loader("dds", load_from_file, nullptr);
 

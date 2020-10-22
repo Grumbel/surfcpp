@@ -324,7 +324,7 @@ PixelData scale(PixelData const& src, geom::isize const& size)
       break;
 
       default:
-        assert(false && "SoftwareSurface::scale: Unknown format");
+        assert(false && "PixelData::scale: Unknown format");
         break;
     }
 
@@ -377,7 +377,7 @@ PixelData to_rgb(PixelData const& src)
     }
 
     default:
-      assert(false && "SoftwareSurface::to_rgb: Unknown format");
+      assert(false && "PixelData::to_rgb: Unknown format");
       return {};
   }
 }

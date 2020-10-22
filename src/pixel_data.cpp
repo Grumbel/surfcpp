@@ -20,13 +20,26 @@
 
 #include "rgb.hpp"
 #include "rgba.hpp"
+#include "pixel_data_factory.hpp"
 
 namespace surf {
+
+namespace {
+
+PixelDataFactory g_pixeldata_fatory;
+
+} // namespace
 
 PixelData
 PixelData::from_file(std::filesystem::path const& filename)
 {
-  return PixelData(); //g_pixel_factory.from_file(filename);
+  return g_pixeldata_fatory.from_file(filename);
+}
+
+PixelData
+PixelData::from_file(std::filesystem::path const& filename, std::string_view loader)
+{
+  return g_pixeldata_fatory.from_file(filename, loader);
 }
 
 // FIXME: Stuff in this file is currently written to just work, not to
@@ -75,7 +88,7 @@ PixelData::get_bytes_per_pixel() const
       return 4;
 
     default:
-      assert(false && "SoftwareSurface::get_bytes_per_pixel(): Unknown format");
+      assert(false && "PixelData::get_bytes_per_pixel(): Unknown format");
       return 0;
   }
 }

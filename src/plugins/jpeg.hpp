@@ -26,6 +26,7 @@
 
 #include "fwd.hpp"
 #include "pixel_data.hpp"
+#include "pixel_data_factory.hpp"
 
 namespace surf {
 namespace jpeg {
@@ -35,13 +36,13 @@ bool filename_is_jpeg(std::filesystem::path const& filename);
 geom::isize get_size(std::filesystem::path const& filename);
 geom::isize get_size(std::span<uint8_t const> data);
 
-/** Load a SoftwareSurface from the filesystem
+/** Load a PixelData from the filesystem
 
     @param[in]  filename Filename of the file to load
     @param[in]  scale    Scale the image by 1/scale (only 1,2,4,8 allowed)
     @param[out] size     The size of the unscaled image
 
-    @return reference counted pointer to a SoftwareSurface object */
+    @return reference counted pointer to a PixelData object */
 PixelData load_from_file(std::filesystem::path const& filename, int scale = 1, geom::isize* size = nullptr);
 
 /** Load a JPEG from memory
@@ -50,13 +51,13 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale = 1, g
     @param[in]  len   Length of the JPEG data
     @param[out] size  The size of the unscaled image
 
-    @return reference counted pointer to a SoftwareSurface object */
+    @return reference counted pointer to a PixelData object */
 PixelData load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
 
-void save(SoftwareSurface const& surface, int quality, std::filesystem::path const& filename);
-std::vector<uint8_t> save(SoftwareSurface const& surface, int quality);
+void save(PixelData const& surface, int quality, std::filesystem::path const& filename);
+std::vector<uint8_t> save(PixelData const& surface, int quality);
 
-void register_loader(SoftwareSurfaceFactory& factory);
+void register_loader(PixelDataFactory& factory);
 
 } // namespace jpeg
 } // namespace surf

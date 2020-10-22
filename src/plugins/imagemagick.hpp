@@ -33,7 +33,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size);
 PixelData load_from_file(std::filesystem::path const& filename);
 PixelData load_from_mem(std::span<uint8_t const> data);
 std::vector<std::string> get_supported_extensions();
-void register_loader(SoftwareSurfaceFactory& factory);
+void register_loader(PixelDataFactory& factory);
 
 } // namespace imagemagick
 } // namespace surf

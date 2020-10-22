@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <filesystem>
+#include <string_view>
 #include <vector>
 
 #include <geom/size.hpp>
@@ -36,6 +37,7 @@ class PixelData
 {
 public:
   static PixelData from_file(std::filesystem::path const& filename);
+  static PixelData from_file(std::filesystem::path const& filename, std::string_view loader);
 
 public:
   PixelData();

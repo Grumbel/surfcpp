@@ -25,8 +25,8 @@
 #include "plugins/jpeg.hpp"
 #include "plugins/mem_jpeg_compressor.hpp"
 #include "plugins/mem_jpeg_decompressor.hpp"
-#include "software_surface_factory.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 #include "util/filesystem.hpp"
 
 namespace surf {
@@ -57,8 +57,8 @@ geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 
 bool filename_is_jpeg(std::filesystem::path const& filename)
 {
-  // FIXME: Merge this with util/jpeg_software_surface_loader, maybe
-  // store the fileformat/SoftwareSurfaceLoader in the database intead
+  // FIXME: Merge this with util/jpeg_pixel_data_loader, maybe
+  // store the fileformat/PixelDataLoader in the database intead
   // of figuring out the format each time anew
   return (Filesystem::get_extension(filename) == "jpg" ||
           Filesystem::get_extension(filename) == "jpeg");
@@ -83,7 +83,7 @@ geom::isize get_size(std::span<uint8_t const> data)
 PixelData load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
 {
   FileJPEGDecompressor loader(filename);
-  SoftwareSurface surface = loader.read_image(scale, image_size);
+  PixelData surface = loader.read_image(scale, image_size);
 
   Transform modifier = exif::get_orientation(filename);
 
@@ -92,9 +92,9 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale, geom:
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface.get_pixel_data(); // FIXME: SLOW
+    return surface;
   } else {
-    return transform(surface.get_pixel_data(), modifier); // FIXME: SLOW
+    return transform(surface, modifier); // FIXME: SLOW
   }
 }
 
@@ -102,7 +102,7 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale, geom:
 PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
 {
   MemJPEGDecompressor loader(data);
-  SoftwareSurface surface = loader.read_image(scale, image_size);
+  PixelData surface = loader.read_image(scale, image_size);
 
   Transform modifier = exif::get_orientation(data);
 
@@ -111,9 +111,9 @@ PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* i
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface.get_pixel_data(); // FIXME: SLOW;
+    return surface;
   } else {
-    return transform(surface.get_pixel_data(), modifier); // FIXME: SLOW;
+    return transform(surface, modifier); // FIXME: SLOW;
   }
 }
 
@@ -132,7 +132,7 @@ std::vector<uint8_t> save(PixelData const& pixel_data, int quality)
   return data;
 }
 
-void register_loader(SoftwareSurfaceFactory& factory)
+void register_loader(PixelDataFactory& factory)
 {
   auto loader = make_loader("jpeg",
                             [](std::filesystem::path const& filename){ return load_from_file(filename); },

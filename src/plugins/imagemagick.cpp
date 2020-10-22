@@ -27,16 +27,16 @@
 
 #include <geom/size.hpp>
 
-#include "software_surface_factory.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 
 namespace surf {
 namespace imagemagick {
 
 namespace {
 
-SoftwareSurface
-MagickImage2SoftwareSurface(const Magick::Image& image)
+PixelData
+MagickImage2PixelData(const Magick::Image& image)
 {
   int width  = static_cast<int>(image.columns());
   int height = static_cast<int>(image.rows());
@@ -151,15 +151,15 @@ std::vector<std::string> get_supported_extensions()
 PixelData load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Magick::Blob creates an unneeded copy of the data
-  return MagickImage2SoftwareSurface(Magick::Image(Magick::Blob(data.data(), data.size()))).get_pixel_data(); // FIXME: SLOW
+  return MagickImage2PixelData(Magick::Image(Magick::Blob(data.data(), data.size())));
 }
 
 PixelData load_from_file(std::filesystem::path const& filename)
 {
-  return MagickImage2SoftwareSurface(Magick::Image(filename)).get_pixel_data(); // FIXME: SLOW
+  return MagickImage2PixelData(Magick::Image(filename));
 }
 
-void register_loader(SoftwareSurfaceFactory& factory)
+void register_loader(PixelDataFactory& factory)
 {
   auto loader = make_loader("imagemagick", load_from_file, load_from_mem);
     std::vector<std::string> lst = imagemagick::get_supported_extensions();

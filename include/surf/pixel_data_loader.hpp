@@ -21,16 +21,16 @@
 #include <span>
 #include <string>
 
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 
-class SoftwareSurfaceFactory;
+class PixelDataFactory;
 
-class SoftwareSurfaceLoader
+class PixelDataLoader
 {
 public:
-  virtual ~SoftwareSurfaceLoader() {}
+  virtual ~PixelDataLoader() {}
   virtual std::string get_name() const = 0;
 
   virtual bool supports_from_file() const = 0;
@@ -41,15 +41,15 @@ public:
 };
 
 template<typename FromFileFunc, typename FromMemFunc>
-class SoftwareSurfaceLoaderGeneric : public SoftwareSurfaceLoader
+class PixelDataLoaderGeneric : public PixelDataLoader
 {
 public:
-  SoftwareSurfaceLoaderGeneric(std::string name, FromFileFunc from_file_func, FromMemFunc from_mem_func) :
+  PixelDataLoaderGeneric(std::string name, FromFileFunc from_file_func, FromMemFunc from_mem_func) :
     m_name(std::move(name)),
     m_from_file(from_file_func),
     m_from_mem(from_mem_func)
   {}
-  ~SoftwareSurfaceLoaderGeneric() override {}
+  ~PixelDataLoaderGeneric() override {}
 
   std::string get_name() const override { return m_name; }
 
@@ -78,15 +78,15 @@ private:
   FromMemFunc m_from_mem;
 
 private:
-  SoftwareSurfaceLoaderGeneric(const SoftwareSurfaceLoaderGeneric&);
-  SoftwareSurfaceLoaderGeneric& operator=(const SoftwareSurfaceLoaderGeneric&);
+  PixelDataLoaderGeneric(const PixelDataLoaderGeneric&);
+  PixelDataLoaderGeneric& operator=(const PixelDataLoaderGeneric&);
 };
 
 template<typename FromFileFunc, typename FromMemFunc> inline
-std::unique_ptr<SoftwareSurfaceLoader> make_loader(std::string name, FromFileFunc from_file, FromMemFunc&& from_mem)
+std::unique_ptr<PixelDataLoader> make_loader(std::string name, FromFileFunc from_file, FromMemFunc&& from_mem)
 {
-  std::unique_ptr<SoftwareSurfaceLoader> loader(
-    new SoftwareSurfaceLoaderGeneric<FromFileFunc, FromMemFunc>(std::move(name),
+  std::unique_ptr<PixelDataLoader> loader(
+    new PixelDataLoaderGeneric<FromFileFunc, FromMemFunc>(std::move(name),
                                                                 std::forward<FromFileFunc>(from_file),
                                                                 std::forward<FromMemFunc>(from_mem)));
   return loader;

@@ -21,8 +21,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/pnm.hpp"
-#include "software_surface_factory.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -63,7 +63,7 @@ PixelData load_from_file(std::filesystem::path const& filename)
   }
 }
 
-void register_loader(SoftwareSurfaceFactory& factory)
+void register_loader(PixelDataFactory& factory)
 {
   auto loader = make_loader("ufraw", load_from_file, nullptr);
 

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "software_surface_factory.hpp"
+#include "pixel_data_factory.hpp"
 
 #include <sstream>
 #include <stdexcept>
@@ -22,7 +22,7 @@
 #include <logmich/log.hpp>
 
 #include "util/filesystem.hpp"
-#include "software_surface_loader.hpp"
+#include "pixel_data_loader.hpp"
 
 #include "plugins/dds.hpp"
 #include "plugins/imagemagick.hpp"
@@ -34,22 +34,9 @@
 #include "plugins/vidthumb.hpp"
 #include "plugins/xcf.hpp"
 
-namespace {
-
-bool has_prefix(const std::string& lhs, const std::string& rhs)
-{
-  if (lhs.length() < rhs.length()) {
-    return false;
-  } else {
-    return lhs.compare(0, rhs.length(), rhs) == 0;
-  }
-}
-
-} // namespace
-
 namespace surf {
 
-SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
+PixelDataFactory::PixelDataFactory() :
   m_loader(),
   m_extension_map(),
   m_mime_type_map(),
@@ -58,7 +45,8 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
   jpeg::register_loader(*this);
-  png::register_loader(*this);
+  png::register_loader(
+    *this);
 
   if (xcf::is_available()) {
     xcf::register_loader(*this);
@@ -84,18 +72,18 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   imagemagick::register_loader(*this);
 }
 
-SoftwareSurfaceFactory::~SoftwareSurfaceFactory()
+PixelDataFactory::~PixelDataFactory()
 {
 }
 
 void
-SoftwareSurfaceFactory::add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader)
+PixelDataFactory::add_loader(std::unique_ptr<PixelDataLoader> loader)
 {
   m_loader.push_back(std::move(loader));
 }
 
 bool
-SoftwareSurfaceFactory::has_supported_extension(std::filesystem::path const& filename)
+PixelDataFactory::has_supported_extension(std::filesystem::path const& filename)
 {
   std::string extension = Filesystem::get_extension(filename);
   ExtensionMap::iterator i = m_extension_map.find(extension);
@@ -103,7 +91,7 @@ SoftwareSurfaceFactory::has_supported_extension(std::filesystem::path const& fil
 }
 
 void
-SoftwareSurfaceFactory::register_by_magic(SoftwareSurfaceLoader const& loader, const std::string& magic)
+PixelDataFactory::register_by_magic(PixelDataLoader const& loader, const std::string& magic)
 {
   auto it = m_magic_map.find(magic);
   if (it == m_magic_map.end())
@@ -117,7 +105,7 @@ SoftwareSurfaceFactory::register_by_magic(SoftwareSurfaceLoader const& loader, c
 }
 
 void
-SoftwareSurfaceFactory::register_by_mime_type(SoftwareSurfaceLoader const& loader, const std::string& mime_type)
+PixelDataFactory::register_by_mime_type(PixelDataLoader const& loader, const std::string& mime_type)
 {
   MimeTypeMap::iterator i = m_mime_type_map.find(mime_type);
   if (i == m_mime_type_map.end())
@@ -131,7 +119,7 @@ SoftwareSurfaceFactory::register_by_mime_type(SoftwareSurfaceLoader const& loade
 }
 
 void
-SoftwareSurfaceFactory::register_by_extension(SoftwareSurfaceLoader const& loader, const std::string& extension)
+PixelDataFactory::register_by_extension(PixelDataLoader const& loader, const std::string& extension)
 {
   ExtensionMap::iterator i = m_extension_map.find(extension);
   if (i == m_extension_map.end())
@@ -144,8 +132,8 @@ SoftwareSurfaceFactory::register_by_extension(SoftwareSurfaceLoader const& loade
   }
 }
 
-SoftwareSurfaceLoader const*
-SoftwareSurfaceFactory::find_loader_by_filename(std::filesystem::path const& filename) const
+PixelDataLoader const*
+PixelDataFactory::find_loader_by_filename(std::filesystem::path const& filename) const
 {
   std::string extension = Filesystem::get_extension(filename);
   const auto& it = m_extension_map.find(extension);
@@ -159,12 +147,12 @@ SoftwareSurfaceFactory::find_loader_by_filename(std::filesystem::path const& fil
   }
 }
 
-SoftwareSurfaceLoader const*
-SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
+PixelDataLoader const*
+PixelDataFactory::find_loader_by_magic(const std::string& data) const
 {
   for(const auto& it: m_magic_map)
   {
-    if (has_prefix(data, it.first))
+    if (data.starts_with(it.first))
     {
       return it.second;
     }
@@ -172,15 +160,15 @@ SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
   return nullptr;
 }
 
-SoftwareSurfaceLoader const*
-SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) const
+PixelDataLoader const*
+PixelDataFactory::find_loader_by_magic(std::span<uint8_t const> data) const
 {
   size_t size = std::min(static_cast<size_t>(1024), data.size());
   return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.data()), size));
 }
 
 PixelData
-SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const
+PixelDataFactory::from_file(std::filesystem::path const& filename, PixelDataLoader const& loader) const
 {
   if (loader.supports_from_file())
   {
@@ -200,12 +188,26 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, Softwar
 }
 
 PixelData
-SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
+PixelDataFactory::from_file(std::filesystem::path const& filename, std::string_view loader) const
 {
-  const SoftwareSurfaceLoader* loader = find_loader_by_filename(filename);
+  auto const it = std::find_if(m_loader.begin(), m_loader.end(), [loader](auto&& loader_p) {
+    return loader_p->get_name() == loader;
+  });
+
+  if (it == m_loader.end()) {
+    throw std::runtime_error(fmt::format("non-existing loader specified: {}", loader));
+  }
+
+  return (*it)->from_file(filename);
+}
+
+PixelData
+PixelDataFactory::from_file(std::filesystem::path const& filename) const
+{
+  const PixelDataLoader* loader = find_loader_by_filename(filename);
   if (!loader) {
     std::ostringstream out;
-    out << "SoftwareSurfaceFactory::from_file(): " << filename << ": unknown file type";
+    out << "PixelDataFactory::from_file(): " << filename << ": unknown file type";
     throw std::runtime_error(out.str());
   }
 
@@ -231,11 +233,11 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
 }
 
 PixelData
-SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
+PixelDataFactory::from_mem(std::span<uint8_t const> data,
                                  std::string const& mime_type,
                                  std::filesystem::path const& filename) const
 {
-  const SoftwareSurfaceLoader* loader = nullptr;
+  const PixelDataLoader* loader = nullptr;
 
   // try to find a loader by mime-type
   if (!mime_type.empty())
@@ -262,7 +264,7 @@ SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
   if (!loader)
   {
     std::ostringstream out;
-    out << "SoftwareSurfaceFactory::from_url(): " << filename << ": unknown file type";
+    out << "PixelDataFactory::from_url(): " << filename << ": unknown file type";
     throw std::runtime_error(out.str());
   }
   else
@@ -274,7 +276,7 @@ SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
     else
     {
       std::ostringstream out;
-      out << "SoftwareSurfaceFactory::from_url(): " << filename << ": loader doesn't support from_mem(), workaround not implemented";
+      out << "PixelDataFactory::from_url(): " << filename << ": loader doesn't support from_mem(), workaround not implemented";
       throw std::runtime_error(out.str());
     }
   }

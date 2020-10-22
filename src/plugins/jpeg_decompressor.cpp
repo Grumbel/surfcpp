@@ -132,7 +132,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     }
 
     // Expand the greyscale data to RGB
-    // FIXME: Could be made faster if SoftwareSurface would support
+    // FIXME: Could be made faster if PixelData would support
     // other color formats
     for (int y = 0; y < dst.get_height(); ++y)
     {

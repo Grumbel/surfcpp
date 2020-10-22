@@ -39,7 +39,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
 PixelData load_from_file(std::filesystem::path const& filename);
 PixelData load_from_mem(std::span<uint8_t const> data);
-void register_loader(SoftwareSurfaceFactory& factory);
+void register_loader(PixelDataFactory& factory);
 
 } // namespace xcf
 } // namespace surf

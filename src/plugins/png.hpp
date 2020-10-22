@@ -25,6 +25,7 @@
 
 #include "fwd.hpp"
 #include "pixel_data.hpp"
+#include "pixel_data_factory.hpp"
 
 namespace surf {
 namespace png {
@@ -37,10 +38,10 @@ bool is_png(std::filesystem::path const& filename);
 PixelData load_from_file(std::filesystem::path const& filename);
 PixelData load_from_mem(std::span<uint8_t const> data);
 
-void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
-std::vector<uint8_t> save(SoftwareSurface const& surface);
+void save(PixelData const& surface, std::filesystem::path const& filename);
+std::vector<uint8_t> save(PixelData const& surface);
 
-void register_loader(SoftwareSurfaceFactory& factory);
+void register_loader(PixelDataFactory& factory);
 
 } // namespace png
 } // namespace surf
