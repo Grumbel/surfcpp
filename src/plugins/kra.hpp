@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <string>
 
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -27,6 +28,7 @@ namespace kra {
 
 bool is_available();
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace kra
 } // namespace surf

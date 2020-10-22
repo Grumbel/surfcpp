@@ -25,6 +25,9 @@
 
 #include <logmich/log.hpp>
 
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
+
 namespace surf {
 namespace png {
 
@@ -404,6 +407,20 @@ std::vector<uint8_t> save(SoftwareSurface const& surface)
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
   return std::move(mem.data);
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("png", load_from_file, load_from_mem);
+
+  factory.register_by_extension(*loader, "png");
+
+  factory.register_by_magic(*loader, "\x89PNG");
+
+  factory.register_by_mime_type(*loader, "image/png");
+  factory.register_by_mime_type(*loader, "image/x-png");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace png

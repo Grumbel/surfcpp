@@ -19,13 +19,15 @@
 
 #include <geom/size.hpp>
 
-#include "util/filesystem.hpp"
 #include "plugins/exif.hpp"
 #include "plugins/file_jpeg_compressor.hpp"
 #include "plugins/file_jpeg_decompressor.hpp"
 #include "plugins/jpeg.hpp"
 #include "plugins/mem_jpeg_compressor.hpp"
 #include "plugins/mem_jpeg_decompressor.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
+#include "util/filesystem.hpp"
 
 namespace surf {
 namespace jpeg {
@@ -128,6 +130,22 @@ std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
   MemJPEGCompressor compressor(data);
   compressor.save(surface, quality);
   return data;
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("jpeg",
+                            [](std::filesystem::path const& filename){ return load_from_file(filename); },
+                            [](std::span<uint8_t const> data){ return load_from_mem(data); });
+
+  factory.register_by_magic(*loader, "\xff\xd8");
+
+  factory.register_by_mime_type(*loader, "image/jpeg");
+
+  factory.register_by_extension(*loader, "jpeg");
+  factory.register_by_extension(*loader, "jpg");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace jpeg

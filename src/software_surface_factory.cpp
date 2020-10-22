@@ -24,23 +24,15 @@
 #include "util/filesystem.hpp"
 #include "software_surface_loader.hpp"
 
+#include "plugins/dds.hpp"
 #include "plugins/imagemagick.hpp"
 #include "plugins/jpeg.hpp"
 #include "plugins/kra.hpp"
 #include "plugins/png.hpp"
 #include "plugins/rsvg.hpp"
+#include "plugins/ufraw.hpp"
 #include "plugins/vidthumb.hpp"
 #include "plugins/xcf.hpp"
-
-#include "loader/dds_software_surface_loader.hpp"
-#include "loader/imagemagick_software_surface_loader.hpp"
-#include "loader/jpeg_software_surface_loader.hpp"
-#include "loader/kra_software_surface_loader.hpp"
-#include "loader/png_software_surface_loader.hpp"
-#include "loader/rsvg_software_surface_loader.hpp"
-#include "loader/ufraw_software_surface_loader.hpp"
-#include "loader/vidthumb_software_surface_loader.hpp"
-#include "loader/xcf_software_surface_loader.hpp"
 
 namespace {
 
@@ -65,32 +57,31 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
 {
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
-  add_loader(std::make_unique<JPEGSoftwareSurfaceLoader>());
-  add_loader(std::make_unique<PNGSoftwareSurfaceLoader>());
+  jpeg::register_loader(*this);
+  png::register_loader(*this);
 
   if (xcf::is_available()) {
-    add_loader(std::make_unique<XCFSoftwareSurfaceLoader>());
+    xcf::register_loader(*this);
   }
 
   if (ufraw::is_available()) {
-    add_loader(std::make_unique<UFRawSoftwareSurfaceLoader>());
+    ufraw::register_loader(*this);
   }
 
   if (rsvg::is_available()) {
-    add_loader(std::make_unique<RSVGSoftwareSurfaceLoader>());
+    rsvg::register_loader(*this);
   }
 
   if (vidthumb::is_available()) {
-    add_loader(std::make_unique<VidThumbSoftwareSurfaceLoader>());
+    vidthumb::register_loader(*this);
   }
 
   if (kra::is_available()) {
-    add_loader(std::make_unique<KRASoftwareSurfaceLoader>());
+    kra::register_loader(*this);
   }
 
-  add_loader(std::make_unique<DDSSoftwareSurfaceLoader>());
-
-  add_loader(std::make_unique<ImagemagickSoftwareSurfaceLoader>());
+  dds::register_loader(*this);
+  imagemagick::register_loader(*this);
 }
 
 SoftwareSurfaceFactory::~SoftwareSurfaceFactory()
@@ -101,7 +92,6 @@ void
 SoftwareSurfaceFactory::add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader)
 {
   m_loader.push_back(std::move(loader));
-  m_loader.back()->register_loader(*this);
 }
 
 bool
@@ -113,12 +103,12 @@ SoftwareSurfaceFactory::has_supported_extension(std::filesystem::path const& fil
 }
 
 void
-SoftwareSurfaceFactory::register_by_magic(const SoftwareSurfaceLoader* loader, const std::string& magic)
+SoftwareSurfaceFactory::register_by_magic(SoftwareSurfaceLoader const& loader, const std::string& magic)
 {
   auto it = m_magic_map.find(magic);
   if (it == m_magic_map.end())
   {
-    m_magic_map[magic] = loader;
+    m_magic_map[magic] = &loader;
   }
   else
   {
@@ -127,12 +117,12 @@ SoftwareSurfaceFactory::register_by_magic(const SoftwareSurfaceLoader* loader, c
 }
 
 void
-SoftwareSurfaceFactory::register_by_mime_type(const SoftwareSurfaceLoader* loader, const std::string& mime_type)
+SoftwareSurfaceFactory::register_by_mime_type(SoftwareSurfaceLoader const& loader, const std::string& mime_type)
 {
   MimeTypeMap::iterator i = m_mime_type_map.find(mime_type);
   if (i == m_mime_type_map.end())
   {
-    m_mime_type_map[mime_type] = loader;
+    m_mime_type_map[mime_type] = &loader;
   }
   else
   {
@@ -141,12 +131,12 @@ SoftwareSurfaceFactory::register_by_mime_type(const SoftwareSurfaceLoader* loade
 }
 
 void
-SoftwareSurfaceFactory::register_by_extension(const SoftwareSurfaceLoader* loader, const std::string& extension)
+SoftwareSurfaceFactory::register_by_extension(SoftwareSurfaceLoader const& loader, const std::string& extension)
 {
   ExtensionMap::iterator i = m_extension_map.find(extension);
   if (i == m_extension_map.end())
   {
-    m_extension_map[extension] = loader;
+    m_extension_map[extension] = &loader;
   }
   else
   {
@@ -154,7 +144,7 @@ SoftwareSurfaceFactory::register_by_extension(const SoftwareSurfaceLoader* loade
   }
 }
 
-const SoftwareSurfaceLoader*
+SoftwareSurfaceLoader const*
 SoftwareSurfaceFactory::find_loader_by_filename(std::filesystem::path const& filename) const
 {
   std::string extension = Filesystem::get_extension(filename);
@@ -169,7 +159,7 @@ SoftwareSurfaceFactory::find_loader_by_filename(std::filesystem::path const& fil
   }
 }
 
-const SoftwareSurfaceLoader*
+SoftwareSurfaceLoader const*
 SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
 {
   for(const auto& it: m_magic_map)
@@ -182,7 +172,7 @@ SoftwareSurfaceFactory::find_loader_by_magic(const std::string& data) const
   return nullptr;
 }
 
-const SoftwareSurfaceLoader*
+SoftwareSurfaceLoader const*
 SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) const
 {
   size_t size = std::min(static_cast<size_t>(1024), data.size());
@@ -190,24 +180,22 @@ SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) cons
 }
 
 SoftwareSurface
-SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, const SoftwareSurfaceLoader* loader) const
+SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const
 {
-  assert(loader);
-
-  if (loader->supports_from_file())
+  if (loader.supports_from_file())
   {
-    return loader->from_file(filename);
+    return loader.from_file(filename);
   }
 #if 0
-  else if (loader->supports_from_mem())
+  else if (loader.supports_from_mem())
   {
     Blob blob = Blob::from_file(filename);
-    return loader->from_mem(blob);
+    return loader.from_mem(blob);
   }
 #endif
   else
   {
-    throw std::runtime_error("'" + loader->get_name() + "' loader does not support loading");
+    throw std::runtime_error("'" + loader.get_name() + "' loader does not support loading");
   }
 }
 
@@ -215,32 +203,29 @@ SoftwareSurface
 SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
 {
   const SoftwareSurfaceLoader* loader = find_loader_by_filename(filename);
-  if (!loader)
-  {
+  if (!loader) {
     std::ostringstream out;
     out << "SoftwareSurfaceFactory::from_file(): " << filename << ": unknown file type";
     throw std::runtime_error(out.str());
   }
-  else
+
+  try
   {
-    try
+    return from_file(filename, *loader);
+  }
+  catch (const std::exception& err)
+  {
+    // retry with magic
+    std::string magic = Filesystem::get_magic(filename);
+    const auto* new_loader = find_loader_by_magic(magic);
+    if (new_loader && new_loader != loader)
     {
-      return from_file(filename, loader);
+      log_warn("{}: file extension error, file is a {}", filename, new_loader->get_name());
+      return from_file(filename, *new_loader);
     }
-    catch (const std::exception& err)
+    else
     {
-      // retry with magic
-      std::string magic = Filesystem::get_magic(filename);
-      const auto* new_loader = find_loader_by_magic(magic);
-      if (new_loader && new_loader != loader)
-      {
-        log_warn("{}: file extension error, file is a {}", filename, new_loader->get_name());
-        return from_file(filename, new_loader);
-      }
-      else
-      {
-        throw;
-      }
+      throw;
     }
   }
 }

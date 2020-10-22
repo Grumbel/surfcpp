@@ -20,6 +20,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/png.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -58,6 +60,18 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   {
     throw std::runtime_error("RSVG::load_from_file(): " + std::string(rsvg.get_stderr().begin(), rsvg.get_stderr().end()));
   }
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("rsvg", load_from_file, nullptr);
+
+  factory.register_by_extension(*loader, "svg");
+  factory.register_by_extension(*loader, "svgz");
+
+  factory.register_by_mime_type(*loader, "image/svg+xml");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace rsvg

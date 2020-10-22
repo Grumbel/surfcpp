@@ -27,6 +27,9 @@
 
 #include <geom/size.hpp>
 
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
+
 namespace surf {
 namespace imagemagick {
 
@@ -154,6 +157,18 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   return MagickImage2SoftwareSurface(Magick::Image(filename));
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("imagemagick", load_from_file, load_from_mem);
+    std::vector<std::string> lst = imagemagick::get_supported_extensions();
+    for(std::vector<std::string>::const_iterator i = lst.begin();
+        i != lst.end(); ++i)
+    {
+      factory.register_by_extension(*loader, *i);
+    }
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace imagemagick

@@ -20,8 +20,7 @@
 #include <filesystem>
 #include <string>
 
-#include <geom/fwd.hpp>
-
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -29,6 +28,7 @@ namespace ufraw {
 
 bool is_available();
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace ufraw
 } // namespace surf

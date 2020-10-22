@@ -51,7 +51,6 @@ file(GLOB SURF_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/util/*.cpp
-  src/loader/*.cpp
   src/plugins/*.cpp
   src/*.cpp)
 

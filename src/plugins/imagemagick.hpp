@@ -23,6 +23,7 @@
 
 #include <geom/fwd.hpp>
 
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -32,6 +33,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size);
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
 SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 std::vector<std::string> get_supported_extensions();
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace imagemagick
 } // namespace surf

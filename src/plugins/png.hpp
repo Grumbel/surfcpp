@@ -23,6 +23,7 @@
 
 #include <geom/size.hpp>
 
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -38,6 +39,8 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
 std::vector<uint8_t> save(SoftwareSurface const& surface);
+
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace png
 } // namespace surf

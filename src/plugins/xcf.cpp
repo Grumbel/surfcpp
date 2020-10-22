@@ -24,6 +24,8 @@
 #include <geom/size.hpp>
 
 #include "plugins/png.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -197,6 +199,21 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
   {
     return png::load_from_mem(xcf2png.get_stdout());
   }
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("xcf", load_from_file, load_from_mem);
+
+  factory.register_by_extension(*loader, "xcf");
+  factory.register_by_extension(*loader, "xcf.bz2");
+  factory.register_by_extension(*loader, "xcf.gz");
+
+  factory.register_by_mime_type(*loader, "application/x-gimp-image");
+
+  factory.register_by_magic(*loader, "gimp xcf");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace xcf

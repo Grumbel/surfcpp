@@ -19,6 +19,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/png.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -49,6 +51,17 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   koconverter.exec();
 
   return png::load_from_mem(koconverter.get_stdout());
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("kra", load_from_file, nullptr);
+
+  factory.register_by_extension(*loader, "kra");
+
+  factory.register_by_mime_type(*loader, "application/x-krita");
+
+  factory.add_loader(std::move(loader));
 }
 
 // SoftwareSurface

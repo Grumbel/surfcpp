@@ -22,6 +22,7 @@
 
 #include <geom/size.hpp>
 
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -29,6 +30,8 @@ namespace dds {
 
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
+
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace dds
 } // namespace surf

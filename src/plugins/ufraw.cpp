@@ -21,6 +21,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/pnm.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -59,6 +61,47 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   {
     return pnm::load_from_mem(ufraw.get_stdout());
   }
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("ufraw", load_from_file, nullptr);
+
+  factory.register_by_extension(*loader, "3fr");
+  factory.register_by_extension(*loader, "arw");
+  factory.register_by_extension(*loader, "cr2");
+  factory.register_by_extension(*loader, "crw");
+  factory.register_by_extension(*loader, "dcr");
+  factory.register_by_extension(*loader, "dcs");
+  factory.register_by_extension(*loader, "dng");
+  factory.register_by_extension(*loader, "kdc");
+  factory.register_by_extension(*loader, "mef");
+  factory.register_by_extension(*loader, "mrw");
+  factory.register_by_extension(*loader, "nef");
+  factory.register_by_extension(*loader, "orf");
+  factory.register_by_extension(*loader, "pef");
+  factory.register_by_extension(*loader, "raf");
+  factory.register_by_extension(*loader, "raw");
+  factory.register_by_extension(*loader, "sr2");
+  factory.register_by_extension(*loader, "srf");
+  factory.register_by_extension(*loader, "x3f");
+
+  factory.register_by_mime_type(*loader, "image/x-adobe-dng");
+  factory.register_by_mime_type(*loader, "image/x-canon-cr2 ");
+  factory.register_by_mime_type(*loader, "image/x-canon-crw");
+  factory.register_by_mime_type(*loader, "image/x-fuji-raf ");
+  factory.register_by_mime_type(*loader, "image/x-minolta-mrw");
+  factory.register_by_mime_type(*loader, "image/x-nikon-nef");
+  factory.register_by_mime_type(*loader, "image/x-olympus-orf");
+  factory.register_by_mime_type(*loader, "image/x-panasonic-raw ");
+  factory.register_by_mime_type(*loader, "image/x-panasonic-raw");
+  factory.register_by_mime_type(*loader, "image/x-pentax-pef");
+  factory.register_by_mime_type(*loader, "image/x-raw");
+  factory.register_by_mime_type(*loader, "image/x-sony-arw");
+  factory.register_by_mime_type(*loader, "image/x-sony-sr2");
+  factory.register_by_mime_type(*loader, "image/x-sony-srf");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace ufraw

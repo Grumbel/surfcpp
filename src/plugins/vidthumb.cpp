@@ -22,6 +22,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/png.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -65,6 +67,20 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
     throw std::runtime_error("VidThumb::load_from_file(): " + std::string(vidthumb.get_stderr().begin(),
                                                                           vidthumb.get_stderr().end()));
   }
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("vidthumb", load_from_file, nullptr);
+
+  factory.register_by_extension(*loader, "avi");
+  factory.register_by_extension(*loader, "wmv");
+  factory.register_by_extension(*loader, "flv");
+  factory.register_by_extension(*loader, "ogv");
+  factory.register_by_extension(*loader, "mkv");
+  factory.register_by_extension(*loader, "mp4");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace vidthumb

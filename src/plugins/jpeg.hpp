@@ -24,6 +24,7 @@
 
 #include <jpeglib.h>
 
+#include "fwd.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -54,6 +55,8 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale = 1, geom
 
 void save(SoftwareSurface const& surface, int quality, std::filesystem::path const& filename);
 std::vector<uint8_t> save(SoftwareSurface const& surface, int quality);
+
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace jpeg
 } // namespace surf

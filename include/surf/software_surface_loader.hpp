@@ -19,6 +19,7 @@
 
 #include <filesystem>
 #include <span>
+#include <string>
 
 #include "software_surface.hpp"
 
@@ -29,23 +30,67 @@ class SoftwareSurfaceFactory;
 class SoftwareSurfaceLoader
 {
 public:
-  SoftwareSurfaceLoader() {}
   virtual ~SoftwareSurfaceLoader() {}
+  virtual std::string get_name() const = 0;
 
-  virtual std::string get_name() const =0;
+  virtual bool supports_from_file() const = 0;
+  virtual bool supports_from_mem() const = 0;
 
-  virtual void register_loader(SoftwareSurfaceFactory& factory) const =0;
+  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const;
+  virtual SoftwareSurface from_mem(std::span<uint8_t const> data) const;
+};
 
-  virtual bool supports_from_file() const =0;
-  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const =0;
+template<typename FromFileFunc, typename FromMemFunc>
+class SoftwareSurfaceLoaderGeneric : public SoftwareSurfaceLoader
+{
+public:
+  SoftwareSurfaceLoaderGeneric(std::string name, FromFileFunc from_file_func, FromMemFunc from_mem_func) :
+    m_name(std::move(name)),
+    m_from_file(from_file_func),
+    m_from_mem(from_mem_func)
+  {}
+  ~SoftwareSurfaceLoaderGeneric() override {}
 
-  virtual bool supports_from_mem() const =0;
-  virtual SoftwareSurface from_mem(std::span<uint8_t const>) const =0;
+  std::string get_name() const override { return m_name; }
+
+  bool supports_from_file() const override { return std::is_void<FromFileFunc>::value; }
+  bool supports_from_mem() const override { return std::is_void<FromMemFunc>::value; }
+
+ SoftwareSurface from_file(std::filesystem::path const& filename) const override {
+   if constexpr (std::is_null_pointer<FromFileFunc>::value) {
+     return {};
+   } else {
+     return m_from_file(filename);
+   }
+ }
+
+  SoftwareSurface from_mem(std::span<uint8_t const> data) const override {
+    if constexpr (std::is_null_pointer<FromMemFunc>::value) {
+      return {};
+    } else {
+      return m_from_mem(data);
+    }
+  }
 
 private:
-  SoftwareSurfaceLoader(const SoftwareSurfaceLoader&);
-  SoftwareSurfaceLoader& operator=(const SoftwareSurfaceLoader&);
+  std::string m_name;
+  FromFileFunc m_from_file;
+  FromMemFunc m_from_mem;
+
+private:
+  SoftwareSurfaceLoaderGeneric(const SoftwareSurfaceLoaderGeneric&);
+  SoftwareSurfaceLoaderGeneric& operator=(const SoftwareSurfaceLoaderGeneric&);
 };
+
+template<typename FromFileFunc, typename FromMemFunc> inline
+std::unique_ptr<SoftwareSurfaceLoader> make_loader(std::string name, FromFileFunc from_file, FromMemFunc&& from_mem)
+{
+  std::unique_ptr<SoftwareSurfaceLoader> loader(
+    new SoftwareSurfaceLoaderGeneric<FromFileFunc, FromMemFunc>(std::move(name),
+                                                                std::forward<FromFileFunc>(from_file),
+                                                                std::forward<FromMemFunc>(from_mem)));
+  return loader;
+}
 
 } // namespace surf
 

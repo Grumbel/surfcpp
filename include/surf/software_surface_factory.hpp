@@ -46,17 +46,17 @@ public:
       if one fails, the next in line is tried. Extension is the most
       important one, as it is used to filter valid files when
       generating file lists */
-  void register_by_magic(const SoftwareSurfaceLoader* loader, const std::string& magic);
-  void register_by_mime_type(const SoftwareSurfaceLoader* loader, const std::string& mime_type);
-  void register_by_extension(const SoftwareSurfaceLoader* loader, const std::string& extension);
+  void register_by_magic(SoftwareSurfaceLoader const& loader, const std::string& magic);
+  void register_by_mime_type(SoftwareSurfaceLoader const& loader, const std::string& mime_type);
+  void register_by_extension(SoftwareSurfaceLoader const& loader, const std::string& extension);
 
-  const SoftwareSurfaceLoader* find_loader_by_filename(std::filesystem::path const& filename) const;
-  const SoftwareSurfaceLoader* find_loader_by_magic(const std::string& data) const;
-  const SoftwareSurfaceLoader* find_loader_by_magic(std::span<uint8_t const> data) const;
+  SoftwareSurfaceLoader const* find_loader_by_filename(std::filesystem::path const& filename) const;
+  SoftwareSurfaceLoader const* find_loader_by_magic(const std::string& data) const;
+  SoftwareSurfaceLoader const* find_loader_by_magic(std::span<uint8_t const> data) const;
 
   SoftwareSurface from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
   SoftwareSurface from_file(std::filesystem::path const& filename) const;
-  SoftwareSurface from_file(std::filesystem::path const& filename, const SoftwareSurfaceLoader* loader) const;
+  SoftwareSurface from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const;
 
 private:
   std::vector<std::unique_ptr<SoftwareSurfaceLoader> > m_loader;

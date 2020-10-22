@@ -23,6 +23,8 @@
 
 #include "pixel_format.hpp"
 #include "plugins/dds_surface.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 
 namespace surf {
 namespace dds {
@@ -70,6 +72,16 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
     return SoftwareSurface(std::move(dst));
   }
+}
+
+void register_loader(SoftwareSurfaceFactory& factory)
+{
+  auto loader = make_loader("dds", load_from_file, nullptr);
+
+  factory.register_by_extension(*loader, "dds");
+  factory.register_by_extension(*loader, "tex");
+
+  factory.add_loader(std::move(loader));
 }
 
 } // namespace dds
