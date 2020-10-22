@@ -49,8 +49,7 @@ JPEGDecompressor::~JPEGDecompressor()
 geom::isize
 JPEGDecompressor::read_size()
 {
-  if (setjmp(m_err.setjmp_buffer))
-  {
+  if (setjmp(m_err.setjmp_buffer)) {
     char buffer[JMSG_LENGTH_MAX];
     (m_cinfo.err->format_message)(reinterpret_cast<jpeg_common_struct*>(&m_cinfo), buffer);
 
@@ -58,16 +57,14 @@ JPEGDecompressor::read_size()
     out << "JPEG::read_size(): " /*<< filename << ": "*/ << buffer;
     throw std::runtime_error(out.str());
   }
-  else
-  {
-    jpeg_read_header(&m_cinfo, /*require_image*/ FALSE);
 
-    return geom::isize(static_cast<int>(m_cinfo.image_width),
-                static_cast<int>(m_cinfo.image_height));
-  }
+  jpeg_read_header(&m_cinfo, /*require_image*/ FALSE);
+
+  return geom::isize(static_cast<int>(m_cinfo.image_width),
+                     static_cast<int>(m_cinfo.image_height));
 }
 
-SoftwareSurface
+PixelData
 JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 {
   if (!(scale == 1 ||
@@ -78,8 +75,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     throw std::invalid_argument("JPEGDecompressor::read_image: Invalid scale: " + std::to_string(scale));
   }
 
-  if (setjmp(m_err.setjmp_buffer))
-  {
+  if (setjmp(m_err.setjmp_buffer)) {
     char buffer[JMSG_LENGTH_MAX];
     (m_cinfo.err->format_message)(reinterpret_cast<jpeg_common_struct*>(&m_cinfo), buffer);
 
@@ -87,119 +83,108 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     out << "JPEG::read_image(): " /*<< filename << ": "*/ << buffer;
     throw std::runtime_error(out.str());
   }
-  else
-  {
-    jpeg_read_header(&m_cinfo, /*require_image*/ FALSE);
 
-    if (image_size)
-    {
-      *image_size = geom::isize(static_cast<int>(m_cinfo.image_width),
-                         static_cast<int>(m_cinfo.image_height));
-    }
+  jpeg_read_header(&m_cinfo, /*require_image*/ FALSE);
 
-    if (scale != 1) // scale the image down by \a scale
-    {
-      // by default all those values below are on 1
-      m_cinfo.scale_num = 1;
-      m_cinfo.scale_denom = static_cast<unsigned int>(scale);
-
-      m_cinfo.do_fancy_upsampling = FALSE; /* TRUE=apply fancy upsampling */
-      m_cinfo.do_block_smoothing  = FALSE; /* TRUE=apply interblock smoothing */
-    }
-
-    jpeg_start_decompress(&m_cinfo);
-
-    PixelData dst(PixelFormat::RGB,
-                  geom::isize(static_cast<int>(m_cinfo.output_width),
-                           static_cast<int>(m_cinfo.output_height)));
-
-    if (m_cinfo.out_color_space == JCS_RGB &&
-        m_cinfo.output_components == 3)
-    {
-      std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
-
-      for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
-        scanlines[y] = dst.get_row_data(static_cast<int>(y));
-      }
-
-      while (m_cinfo.output_scanline < m_cinfo.output_height) {
-        jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
-                            m_cinfo.output_height - m_cinfo.output_scanline);
-      }
-    }
-    else if (m_cinfo.out_color_space == JCS_GRAYSCALE &&
-             m_cinfo.output_components == 1)
-    {
-      std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
-
-      for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
-        scanlines[y] = dst.get_row_data(static_cast<int>(y));
-      }
-
-      while (m_cinfo.output_scanline < m_cinfo.output_height) {
-        jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
-                            m_cinfo.output_height - m_cinfo.output_scanline);
-      }
-
-      // Expand the greyscale data to RGB
-      // FIXME: Could be made faster if SoftwareSurface would support
-      // other color formats
-      for (int y = 0; y < dst.get_height(); ++y)
-      {
-        uint8_t* rowptr = dst.get_row_data(y);
-        for (int x = dst.get_width()-1; x >= 0; --x)
-        {
-          rowptr[3*x+0] = rowptr[x];
-          rowptr[3*x+1] = rowptr[x];
-          rowptr[3*x+2] = rowptr[x];
-        }
-      }
-    }
-    else if (m_cinfo.out_color_space == JCS_CMYK &&
-             m_cinfo.output_components == 4)
-    {
-      std::vector<JSAMPLE> output_data(m_cinfo.output_width * m_cinfo.output_height *
-                                       m_cinfo.output_components);
-      std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
-
-      for(JDIMENSION y = 0; y < m_cinfo.output_height; ++y)
-      {
-        scanlines[y] = &output_data[y * m_cinfo.output_width * m_cinfo.output_components];
-      }
-
-      while (m_cinfo.output_scanline < m_cinfo.output_height)
-      {
-        jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
-                            m_cinfo.output_height - m_cinfo.output_scanline);
-      }
-
-      for(int y = 0; y < dst.get_height(); ++y)
-      {
-        uint8_t* jpegptr = &output_data[y * m_cinfo.output_width * m_cinfo.output_components];
-        uint8_t* rowptr = dst.get_row_data(y);
-        for(int x = dst.get_width()-1; x >= 0; --x)
-        {
-          uint8_t const cmyk_c = jpegptr[4*x + 0];
-          uint8_t const cmyk_m = jpegptr[4*x + 1];
-          uint8_t const cmyk_y = jpegptr[4*x + 2];
-          uint8_t const cmyk_k = jpegptr[4*x + 3];
-
-          rowptr[3*x+0] = static_cast<uint8_t>((cmyk_c * cmyk_k) / 255);
-          rowptr[3*x+1] = static_cast<uint8_t>((cmyk_m * cmyk_k) / 255);
-          rowptr[3*x+2] = static_cast<uint8_t>((cmyk_y * cmyk_k) / 255);
-        }
-      }
-    }
-    else
-    {
-      std::ostringstream str;
-      str << "JPEGDecompressor::read_image(): Unsupported colorspace: "
-          << static_cast<int>(m_cinfo.out_color_space) << " components: " << m_cinfo.output_components;
-      throw std::runtime_error(str.str());
-    }
-
-    return SoftwareSurface(std::move(dst));
+  if (image_size) {
+    *image_size = geom::isize(static_cast<int>(m_cinfo.image_width),
+                              static_cast<int>(m_cinfo.image_height));
   }
+
+  if (scale != 1) {// scale the image down by \a scale
+    // by default all those values below are on 1
+    m_cinfo.scale_num = 1;
+    m_cinfo.scale_denom = static_cast<unsigned int>(scale);
+
+    m_cinfo.do_fancy_upsampling = FALSE; /* TRUE=apply fancy upsampling */
+    m_cinfo.do_block_smoothing  = FALSE; /* TRUE=apply interblock smoothing */
+  }
+
+  jpeg_start_decompress(&m_cinfo);
+
+  PixelData dst(PixelFormat::RGB,
+                geom::isize(static_cast<int>(m_cinfo.output_width),
+                            static_cast<int>(m_cinfo.output_height)));
+
+  if (m_cinfo.out_color_space == JCS_RGB &&
+      m_cinfo.output_components == 3) {
+    std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
+
+    for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
+      scanlines[y] = dst.get_row_data(static_cast<int>(y));
+    }
+
+    while (m_cinfo.output_scanline < m_cinfo.output_height) {
+      jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
+                          m_cinfo.output_height - m_cinfo.output_scanline);
+    }
+  } else if (m_cinfo.out_color_space == JCS_GRAYSCALE &&
+             m_cinfo.output_components == 1) {
+    std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
+
+    for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
+      scanlines[y] = dst.get_row_data(static_cast<int>(y));
+    }
+
+    while (m_cinfo.output_scanline < m_cinfo.output_height) {
+      jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
+                          m_cinfo.output_height - m_cinfo.output_scanline);
+    }
+
+    // Expand the greyscale data to RGB
+    // FIXME: Could be made faster if SoftwareSurface would support
+    // other color formats
+    for (int y = 0; y < dst.get_height(); ++y)
+    {
+      uint8_t* rowptr = dst.get_row_data(y);
+      for (int x = dst.get_width()-1; x >= 0; --x)
+      {
+        rowptr[3*x+0] = rowptr[x];
+        rowptr[3*x+1] = rowptr[x];
+        rowptr[3*x+2] = rowptr[x];
+      }
+    }
+  } else if (m_cinfo.out_color_space == JCS_CMYK &&
+             m_cinfo.output_components == 4) {
+    std::vector<JSAMPLE> output_data(m_cinfo.output_width * m_cinfo.output_height *
+                                     m_cinfo.output_components);
+    std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
+
+    for(JDIMENSION y = 0; y < m_cinfo.output_height; ++y)
+    {
+      scanlines[y] = &output_data[y * m_cinfo.output_width * m_cinfo.output_components];
+    }
+
+    while (m_cinfo.output_scanline < m_cinfo.output_height)
+    {
+      jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
+                          m_cinfo.output_height - m_cinfo.output_scanline);
+    }
+
+    for(int y = 0; y < dst.get_height(); ++y)
+    {
+      uint8_t* jpegptr = &output_data[y * m_cinfo.output_width * m_cinfo.output_components];
+      uint8_t* rowptr = dst.get_row_data(y);
+      for(int x = dst.get_width()-1; x >= 0; --x)
+      {
+        uint8_t const cmyk_c = jpegptr[4*x + 0];
+        uint8_t const cmyk_m = jpegptr[4*x + 1];
+        uint8_t const cmyk_y = jpegptr[4*x + 2];
+        uint8_t const cmyk_k = jpegptr[4*x + 3];
+
+        rowptr[3*x+0] = static_cast<uint8_t>((cmyk_c * cmyk_k) / 255);
+        rowptr[3*x+1] = static_cast<uint8_t>((cmyk_m * cmyk_k) / 255);
+        rowptr[3*x+2] = static_cast<uint8_t>((cmyk_y * cmyk_k) / 255);
+      }
+    }
+  } else {
+    std::ostringstream str;
+    str << "JPEGDecompressor::read_image(): Unsupported colorspace: "
+        << static_cast<int>(m_cinfo.out_color_space) << " components: " << m_cinfo.output_components;
+    throw std::runtime_error(str.str());
+  }
+
+  return dst;
 }
 
 } // namespace surf

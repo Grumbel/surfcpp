@@ -23,13 +23,13 @@
 #include <geom/size.hpp>
 
 #include "fwd.hpp"
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 namespace dds {
 
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
-SoftwareSurface load_from_file(std::filesystem::path const& filename);
+PixelData load_from_file(std::filesystem::path const& filename);
 
 void register_loader(SoftwareSurfaceFactory& factory);
 

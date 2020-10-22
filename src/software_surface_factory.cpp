@@ -179,7 +179,7 @@ SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) cons
   return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.data()), size));
 }
 
-SoftwareSurface
+PixelData
 SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const
 {
   if (loader.supports_from_file())
@@ -199,7 +199,7 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, Softwar
   }
 }
 
-SoftwareSurface
+PixelData
 SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
 {
   const SoftwareSurfaceLoader* loader = find_loader_by_filename(filename);
@@ -230,7 +230,7 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
   }
 }
 
-SoftwareSurface
+PixelData
 SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
                                  std::string const& mime_type,
                                  std::filesystem::path const& filename) const

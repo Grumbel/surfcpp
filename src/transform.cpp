@@ -18,6 +18,10 @@
 
 #include <string.h>
 
+#include <geom/rect.hpp>
+
+#include "rgb.hpp"
+#include "rgba.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -46,47 +50,45 @@ void copy_pixel_rgba(PixelData& dst, int dst_x, int dst_y,
 
 } // namespace
 
-SoftwareSurface
-transform(SoftwareSurface const& surface, Transform mod)
+PixelData
+transform(PixelData const& src, Transform mod)
 {
   switch (mod)
   {
     case Transform::ROTATE_0:
-      return surface;
+      return src;
 
     case Transform::ROTATE_90:
-      return rotate90(surface);
+      return rotate90(src);
 
     case Transform::ROTATE_180:
-      return rotate180(surface);
+      return rotate180(src);
 
     case Transform::ROTATE_270:
-      return rotate270(surface);
+      return rotate270(src);
 
     case Transform::ROTATE_0_FLIP:
-      return flip_vertical(surface);
+      return flip_vertical(src);
 
     case Transform::ROTATE_90_FLIP:
       // FIXME: Could be made faster
-      return flip_vertical(rotate90(surface));
+      return flip_vertical(rotate90(src));
 
     case Transform::ROTATE_180_FLIP:
-      return flip_horizontal(surface);
+      return flip_horizontal(src);
 
     case Transform::ROTATE_270_FLIP:
       // FIXME: Could be made faster
-      return flip_vertical(rotate270(surface));
+      return flip_vertical(rotate270(src));
 
     default:
       assert(false && "never reached");
-      return surface;
+      return src;
   }
 }
 
-SoftwareSurface
-rotate90(SoftwareSurface const& surface)
+PixelData rotate90(PixelData const& src)
 {
-  PixelData const& src = surface.get_pixel_data();
   PixelData dst(src.get_format(), geom::isize(src.get_size().height(), src.get_size().width()));
 
   switch(src.get_format())
@@ -114,13 +116,11 @@ rotate90(SoftwareSurface const& surface)
       break;
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
-SoftwareSurface
-rotate180(SoftwareSurface const& surface)
+PixelData rotate180(PixelData const& src)
 {
-  PixelData const& src = surface.get_pixel_data();
   PixelData dst(src.get_format(), src.get_size());
 
   switch(src.get_format())
@@ -148,13 +148,11 @@ rotate180(SoftwareSurface const& surface)
       break;
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
-SoftwareSurface
-rotate270(SoftwareSurface const& surface)
+PixelData rotate270(PixelData const& src)
 {
-  PixelData const& src = surface.get_pixel_data();
   PixelData dst(src.get_format(), geom::isize(src.get_height(), src.get_width()));
 
   switch(src.get_format())
@@ -178,13 +176,11 @@ rotate270(SoftwareSurface const& surface)
       break;
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
-SoftwareSurface
-flip_horizontal(SoftwareSurface const& surface)
+PixelData flip_horizontal(PixelData const& src)
 {
-  PixelData const& src = surface.get_pixel_data();
   PixelData dst(src.get_format(), src.get_size());
 
   switch(src.get_format())
@@ -208,13 +204,11 @@ flip_horizontal(SoftwareSurface const& surface)
       break;
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
-SoftwareSurface
-flip_vertical(SoftwareSurface const& surface)
+PixelData flip_vertical(PixelData const& src)
 {
-  PixelData const& src = surface.get_pixel_data();
   PixelData dst(src.get_format(), src.get_size());
 
   for(int y = 0; y < src.get_size().height(); ++y)
@@ -224,7 +218,205 @@ flip_vertical(SoftwareSurface const& surface)
            static_cast<size_t>(src.get_pitch()));
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
+}
+
+PixelData halve(PixelData const& src)
+{
+  PixelData dst(src.get_format(), src.get_size() / 2);
+
+  int src_p = src.get_pitch();
+
+  int dst_w = dst.get_width();
+  int dst_h = dst.get_height();
+  int dst_p = dst.get_pitch();
+
+  switch(src.get_format())
+  {
+    case PixelFormat::RGB:
+      for(int y = 0; y < dst_h; ++y)
+      {
+        for(int x = 0; x < dst_w; ++x)
+        {
+          uint8_t* d = dst.get_data() + (y*dst_p + 3*x);
+          uint8_t const* s = src.get_data() + (y*src_p + 3*x)*2;
+
+          d[0] = static_cast<uint8_t>((s[0] + s[0+3] + s[0+src_p] + s[0+src_p+3])/4);
+          d[1] = static_cast<uint8_t>((s[1] + s[1+3] + s[1+src_p] + s[1+src_p+3])/4);
+          d[2] = static_cast<uint8_t>((s[2] + s[2+3] + s[2+src_p] + s[2+src_p+3])/4);
+        }
+      }
+      break;
+
+    case PixelFormat::RGBA:
+      for(int y = 0; y < dst_h; ++y)
+      {
+        for(int x = 0; x < dst_w; ++x)
+        {
+          uint8_t* d = dst.get_data() + (y*dst_p + 4*x);
+          uint8_t const* s = src.get_data() + (y*src_p + 4*x)*2;
+
+          d[0] = static_cast<uint8_t>((s[0] + s[0+4] + s[0+src_p] + s[0+src_p+4])/4);
+          d[1] = static_cast<uint8_t>((s[1] + s[1+4] + s[1+src_p] + s[1+src_p+4])/4);
+          d[2] = static_cast<uint8_t>((s[2] + s[2+4] + s[2+src_p] + s[2+src_p+4])/4);
+          d[3] = static_cast<uint8_t>((s[3] + s[3+4] + s[3+src_p] + s[3+src_p+4])/4);
+        }
+      }
+      break;
+
+    default:
+      assert(false && "Not reachable");
+      break;
+  }
+
+  return dst;
+}
+
+PixelData scale(PixelData const& src, geom::isize const& size)
+{
+  if (src.get_size() == size)
+  {
+    return src;
+  }
+  else if (src.get_size() == geom::isize(0, 0))
+  {
+    return PixelData(src.get_format(), size);
+  }
+  else
+  {
+    PixelData dst(src.get_format(), size);
+
+    // FIXME: very much non-fast
+    switch(src.get_format())
+    {
+      case PixelFormat::RGB:
+      {
+        RGB rgb;
+        for(int y = 0; y < dst.get_height(); ++y)
+        {
+          for(int x = 0; x < dst.get_width(); ++x)
+          {
+            src.get_pixel({x * src.get_size().width()  / dst.get_size().width(),
+                           y * src.get_size().height() / dst.get_size().height()},
+                          rgb);
+
+            dst.put_pixel({x, y}, rgb);
+          }
+        }
+      }
+      break;
+
+      case PixelFormat::RGBA:
+      {
+        RGBA rgba;
+        for(int y = 0; y < dst.get_height(); ++y)
+        {
+          for(int x = 0; x < dst.get_width(); ++x)
+          {
+            src.get_pixel({x * src.get_size().width()  / dst.get_size().width(),
+                           y * src.get_size().height() / dst.get_size().height()},
+                          rgba);
+
+            dst.put_pixel({x, y}, rgba);
+          }
+        }
+      }
+      break;
+
+      default:
+        assert(false && "SoftwareSurface::scale: Unknown format");
+        break;
+    }
+
+    return dst;
+  }
+}
+
+PixelData crop(PixelData const& src, geom::irect const& rect)
+{
+  // Clip the rectangle to the image
+  geom::irect clipped(std::clamp(rect.left(), 0, src.get_width()),
+                      std::clamp(rect.top(), 0, src.get_height()),
+                      std::clamp(rect.right(), 0, src.get_width()),
+                      std::clamp(rect.bottom(), 0, src.get_height()));
+
+  PixelData dst(src.get_format(), clipped.size());
+
+  for(int y = clipped.top(); y < clipped.bottom(); ++y)
+  {
+    memcpy(dst.get_row_data(y - clipped.top()),
+           src.get_row_data(y) + clipped.left() * src.get_bytes_per_pixel(),
+           clipped.width() * src.get_bytes_per_pixel());
+  }
+
+  return dst;
+}
+
+PixelData to_rgb(PixelData const& src)
+{
+  switch(src.get_format())
+  {
+    case PixelFormat::RGB:
+      return src;
+
+    case PixelFormat::RGBA: {
+      PixelData dst(PixelFormat::RGB, src.get_size());
+
+      int num_pixels = src.get_width() * src.get_height();
+      uint8_t const* src_pixels = src.get_data();
+      uint8_t* dst_pixels = dst.get_data();
+
+      for(int i = 0; i < num_pixels; ++i)
+      {
+        dst_pixels[3*i+0] = src_pixels[4*i+0];
+        dst_pixels[3*i+1] = src_pixels[4*i+1];
+        dst_pixels[3*i+2] = src_pixels[4*i+2];
+      }
+
+      return dst;
+    }
+
+    default:
+      assert(false && "SoftwareSurface::to_rgb: Unknown format");
+      return {};
+  }
+}
+
+RGB get_average_color(PixelData const& src)
+{
+  if (src.empty()) {
+    return {};
+  }
+
+  unsigned int total_r = 0;
+  unsigned int total_g = 0;
+  unsigned int total_b = 0;
+
+  for(int y = 0; y < src.get_height(); ++y)
+  {
+    unsigned int row_r = 0;
+    unsigned int row_g = 0;
+    unsigned int row_b = 0;
+
+    for(int x = 0; x < src.get_width(); ++x)
+    {
+      RGB rgb;
+      src.get_pixel({x, y}, rgb);
+
+      row_r += rgb.r;
+      row_g += rgb.g;
+      row_b += rgb.b;
+    }
+
+    total_r += row_r / src.get_width();
+    total_g += row_g / src.get_width();
+    total_b += row_b / src.get_width();
+  }
+
+  unsigned int num_rows = static_cast<unsigned int>(src.get_height());
+  return RGB(static_cast<uint8_t>(total_r / num_rows),
+             static_cast<uint8_t>(total_g / num_rows),
+             static_cast<uint8_t>(total_b / num_rows));
 }
 
 } // namespace surf

@@ -18,6 +18,7 @@
 #define HEADER_GALAPIX_UTIL_PIXEL_DATA_HPP
 
 #include <stdint.h>
+#include <filesystem>
 #include <vector>
 
 #include <geom/size.hpp>
@@ -33,6 +34,9 @@ class RGBA;
 /** A mutable low-level container for pixel data */
 class PixelData
 {
+public:
+  static PixelData from_file(std::filesystem::path const& filename);
+
 public:
   PixelData();
   PixelData(PixelFormat format, const geom::isize& size);
@@ -59,7 +63,10 @@ public:
   uint8_t const* get_row_data(int y) const;
 
   /** Performs a simple copy from this to \a test, no blending is performed */
-  void blit(PixelData& dst, const geom::ipoint& pos) const;
+  void blit_to(PixelData& dst, const geom::ipoint& pos) const;
+  void blit_to(PixelData& dst, const geom::ipoint& pos, geom::irect& srcrect) const;
+
+  void fill(geom::irect const& rect, RGBA& rgba);
 
 private:
   PixelFormat m_format;

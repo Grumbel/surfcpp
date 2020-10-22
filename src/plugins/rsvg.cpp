@@ -43,7 +43,7 @@ bool is_available()
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   Exec rsvg("rsvg");
 
@@ -51,15 +51,11 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   rsvg.arg(filename);
   rsvg.arg("/dev/stdout");
 
-  if (rsvg.exec() == 0)
-  {
-    SoftwareSurface surface = png::load_from_mem(rsvg.get_stdout());
-    return surface;
-  }
-  else
-  {
+  if (rsvg.exec() != 0) {
     throw std::runtime_error("RSVG::load_from_file(): " + std::string(rsvg.get_stderr().begin(), rsvg.get_stderr().end()));
   }
+
+  return png::load_from_mem(rsvg.get_stdout());
 }
 
 void register_loader(SoftwareSurfaceFactory& factory)

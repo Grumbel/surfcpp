@@ -60,7 +60,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
       }
     }
 
-    return SoftwareSurface(std::move(dst));
+    return dst;
   }
   else
   {
@@ -79,7 +79,7 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
       }
     }
 
-    return SoftwareSurface(std::move(dst));
+    return dst;
   }
 }
 
@@ -148,15 +148,15 @@ std::vector<std::string> get_supported_extensions()
   }
 }
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data)
+PixelData load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Magick::Blob creates an unneeded copy of the data
-  return MagickImage2SoftwareSurface(Magick::Image(Magick::Blob(data.data(), data.size())));
+  return MagickImage2SoftwareSurface(Magick::Image(Magick::Blob(data.data(), data.size()))).get_pixel_data(); // FIXME: SLOW
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
-  return MagickImage2SoftwareSurface(Magick::Image(filename));
+  return MagickImage2SoftwareSurface(Magick::Image(filename)).get_pixel_data(); // FIXME: SLOW
 }
 
 void register_loader(SoftwareSurfaceFactory& factory)

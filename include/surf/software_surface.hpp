@@ -33,19 +33,28 @@ class RGBA;
 class SoftwareSurface
 {
 public:
+  static SoftwareSurface from_file(std::filesystem::path const& filename);
+
+public:
   SoftwareSurface();
   SoftwareSurface(PixelData data);
 
   geom::isize get_size() const;
   int get_width() const;
   int get_height() const;
-
-  SoftwareSurface halve() const;
-  SoftwareSurface scale(geom::isize const& size) const;
-  SoftwareSurface crop(geom::irect const& rect) const;
+  PixelFormat get_format() const;
 
   SoftwareSurface to_rgb() const;
   RGB get_average_color() const;
+
+  void get_pixel(geom::ipoint const& position, RGB& rgb) const;
+  void get_pixel(geom::ipoint const& position, RGBA& rgba) const;
+
+  int get_bytes_per_pixel() const;
+  int get_bits_per_pixel() const;
+
+  uint8_t const* get_data() const;
+  uint8_t const* get_row_data(int y) const;
 
   PixelData const& get_pixel_data() const { return *m_pixel_data; }
 

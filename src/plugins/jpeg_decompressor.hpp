@@ -23,7 +23,7 @@
 
 #include <geom/size.hpp>
 
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 
@@ -47,7 +47,7 @@ public:
   virtual ~JPEGDecompressor();
 
   geom::isize read_size();
-  SoftwareSurface read_image(int scale, geom::isize* image_size);
+  PixelData read_image(int scale, geom::isize* image_size);
 
 private:
   [[noreturn]]

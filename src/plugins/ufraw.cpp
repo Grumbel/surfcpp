@@ -44,7 +44,7 @@ bool is_available()
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   Exec ufraw("ufraw-batch");
   ufraw

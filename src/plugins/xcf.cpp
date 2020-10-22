@@ -172,7 +172,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg(filename);
@@ -186,7 +186,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   }
 }
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data)
+PixelData load_from_mem(std::span<uint8_t const> data)
 {
   Exec xcf2png("xcf2png");
   xcf2png.arg("-"); // Read from stdin

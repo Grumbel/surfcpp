@@ -46,7 +46,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   std::ifstream in(filename.c_str(), std::ios::binary);
   if (!in)
@@ -70,7 +70,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
     memcpy(dst.get_data(), dds.get_data(), dds.get_length());
 
-    return SoftwareSurface(std::move(dst));
+    return dst;
   }
 }
 

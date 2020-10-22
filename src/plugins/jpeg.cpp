@@ -80,7 +80,7 @@ geom::isize get_size(std::span<uint8_t const> data)
 }
 
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
+PixelData load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
 {
   FileJPEGDecompressor loader(filename);
   SoftwareSurface surface = loader.read_image(scale, image_size);
@@ -92,14 +92,14 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale,
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface;
+    return surface.get_pixel_data(); // FIXME: SLOW
   } else {
-    return transform(surface, modifier);
+    return transform(surface.get_pixel_data(), modifier); // FIXME: SLOW
   }
 }
 
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
+PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
 {
   MemJPEGDecompressor loader(data);
   SoftwareSurface surface = loader.read_image(scale, image_size);
@@ -111,24 +111,24 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale, geom::is
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface;
+    return surface.get_pixel_data(); // FIXME: SLOW;
   } else {
-    return transform(surface, modifier);
+    return transform(surface.get_pixel_data(), modifier); // FIXME: SLOW;
   }
 }
 
 
-void save(SoftwareSurface const& surface, int quality, std::filesystem::path const& filename)
+void save(PixelData& pixel_data, int quality, std::filesystem::path const& filename)
 {
   FileJPEGCompressor compressor(filename);
-  compressor.save(surface, quality);
+  compressor.save(pixel_data, quality);
 }
 
-std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
+std::vector<uint8_t> save(PixelData const& pixel_data, int quality)
 {
   std::vector<uint8_t> data;
   MemJPEGCompressor compressor(data);
-  compressor.save(surface, quality);
+  compressor.save(pixel_data, quality);
   return data;
 }
 

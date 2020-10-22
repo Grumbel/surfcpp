@@ -26,7 +26,7 @@
 namespace surf {
 namespace pnm {
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data)
+PixelData load_from_mem(std::span<uint8_t const> data)
 {
   PNMMemReader pnm(data);
 
@@ -71,7 +71,7 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
     throw std::runtime_error("PNM::load_from_mem(): Unhandled PNM format: '" + pnm.get_magic() + "'");
   }
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
 } // namespace pnm

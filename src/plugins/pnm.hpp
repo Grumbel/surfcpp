@@ -19,12 +19,12 @@
 
 #include <span>
 
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 namespace pnm {
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data);
+PixelData load_from_mem(std::span<uint8_t const> data);
 
 } // namespace pnm
 } // namespace surf

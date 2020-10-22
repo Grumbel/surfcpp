@@ -42,7 +42,7 @@ bool is_available()
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   // koconverter --batch --mimetype image/png sketch39.kra /dev/stdout  > /tmp/test.png
   Exec koconverter("koconverter");

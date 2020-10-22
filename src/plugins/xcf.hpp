@@ -25,7 +25,7 @@
 #include <geom/fwd.hpp>
 
 #include "fwd.hpp"
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 namespace xcf {
@@ -37,8 +37,8 @@ std::vector<std::string> get_layers(const URL& url);
 #endif
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename);
-SoftwareSurface load_from_mem(std::span<uint8_t const> data);
+PixelData load_from_file(std::filesystem::path const& filename);
+PixelData load_from_mem(std::span<uint8_t const> data);
 void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace xcf

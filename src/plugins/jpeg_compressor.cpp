@@ -35,11 +35,8 @@ JPEGCompressor::~JPEGCompressor()
 }
 
 void
-JPEGCompressor::save(SoftwareSurface const& surface_in, int quality)
+JPEGCompressor::save(PixelData const& pixel_data, int quality)
 {
-  SoftwareSurface surface = surface_in.to_rgb();
-  PixelData const& pixel_data = surface.get_pixel_data();
-
   m_cinfo.image_width = static_cast<JDIMENSION>(pixel_data.get_width());
   m_cinfo.image_height = static_cast<JDIMENSION>(pixel_data.get_height());
 

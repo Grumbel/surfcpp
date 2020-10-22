@@ -36,8 +36,8 @@ public:
   virtual bool supports_from_file() const = 0;
   virtual bool supports_from_mem() const = 0;
 
-  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const = 0;
-  virtual SoftwareSurface from_mem(std::span<uint8_t const> data) const = 0;
+  virtual PixelData from_file(std::filesystem::path const& filename) const = 0;
+  virtual PixelData from_mem(std::span<uint8_t const> data) const = 0;
 };
 
 template<typename FromFileFunc, typename FromMemFunc>
@@ -56,7 +56,7 @@ public:
   bool supports_from_file() const override { return std::is_void<FromFileFunc>::value; }
   bool supports_from_mem() const override { return std::is_void<FromMemFunc>::value; }
 
- SoftwareSurface from_file(std::filesystem::path const& filename) const override {
+ PixelData from_file(std::filesystem::path const& filename) const override {
    if constexpr (std::is_null_pointer<FromFileFunc>::value) {
      return {};
    } else {
@@ -64,7 +64,7 @@ public:
    }
  }
 
-  SoftwareSurface from_mem(std::span<uint8_t const> data) const override {
+  PixelData from_mem(std::span<uint8_t const> data) const override {
     if constexpr (std::is_null_pointer<FromMemFunc>::value) {
       return {};
     } else {

@@ -21,7 +21,7 @@
 #include <string>
 #include <span>
 
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 #include "transform.hpp"
 
 namespace surf {

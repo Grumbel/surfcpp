@@ -25,7 +25,7 @@
 #include <jpeglib.h>
 
 #include "fwd.hpp"
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 namespace jpeg {
@@ -42,7 +42,7 @@ geom::isize get_size(std::span<uint8_t const> data);
     @param[out] size     The size of the unscaled image
 
     @return reference counted pointer to a SoftwareSurface object */
-SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale = 1, geom::isize* size = nullptr);
+PixelData load_from_file(std::filesystem::path const& filename, int scale = 1, geom::isize* size = nullptr);
 
 /** Load a JPEG from memory
 
@@ -51,7 +51,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale 
     @param[out] size  The size of the unscaled image
 
     @return reference counted pointer to a SoftwareSurface object */
-SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
+PixelData load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
 
 void save(SoftwareSurface const& surface, int quality, std::filesystem::path const& filename);
 std::vector<uint8_t> save(SoftwareSurface const& surface, int quality);

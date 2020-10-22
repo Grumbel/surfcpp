@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <jpeglib.h>
 
-#include "software_surface.hpp"
+#include "pixel_data.hpp"
 
 namespace surf {
 
@@ -36,7 +36,7 @@ protected:
 public:
   virtual ~JPEGCompressor();
 
-  void save(SoftwareSurface const& surface_in, int quality);
+  void save(PixelData const& pixel_data, int quality);
 
 private:
   JPEGCompressor(const JPEGCompressor&);

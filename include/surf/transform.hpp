@@ -17,9 +17,11 @@
 #ifndef HEADER_SURF_TRANSFORM_HPP
 #define HEADER_SURF_TRANSFORM_HPP
 
+#include <geom/size.hpp>
+
 namespace surf {
 
-class SoftwareSurface;
+class PixelData;
 
 enum class Transform
 {
@@ -36,12 +38,18 @@ enum class Transform
   FLIP_HORIZONTAL = ROTATE_180_FLIP,
 };
 
-SoftwareSurface transform(SoftwareSurface const& surface, Transform mod);
-SoftwareSurface rotate90(SoftwareSurface const& surface);
-SoftwareSurface rotate180(SoftwareSurface const& surface);
-SoftwareSurface rotate270(SoftwareSurface const& surface);
-SoftwareSurface flip_vertical(SoftwareSurface const& surface);
-SoftwareSurface flip_horizontal(SoftwareSurface const& surface);
+PixelData transform(PixelData const& surface, Transform mod);
+PixelData rotate90(PixelData const& surface);
+PixelData rotate180(PixelData const& surface);
+PixelData rotate270(PixelData const& surface);
+PixelData flip_vertical(PixelData const& surface);
+PixelData flip_horizontal(PixelData const& surface);
+
+PixelData halve(PixelData const& src);
+PixelData scale(PixelData const& src, geom::isize const& size);
+PixelData crop(PixelData const& src, geom::irect const& rect);
+
+PixelData to_rgb(PixelData const& src);
 
 } // namespace surf
 

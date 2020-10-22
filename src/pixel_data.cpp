@@ -23,6 +23,12 @@
 
 namespace surf {
 
+PixelData
+PixelData::from_file(std::filesystem::path const& filename)
+{
+  return PixelData(); //g_pixel_factory.from_file(filename);
+}
+
 // FIXME: Stuff in this file is currently written to just work, not to
 // be fast
 
@@ -178,7 +184,7 @@ PixelData::get_row_data(int y) const
 }
 
 void
-PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
+PixelData::blit_to(PixelData& dst, const geom::ipoint& pos) const
 {
   int start_x = std::max(0, -pos.x());
   int start_y = std::max(0, -pos.y());
@@ -240,6 +246,12 @@ PixelData::blit(PixelData& dst, const geom::ipoint& pos) const
   {
     assert(false && "Not m_implemented");
   }
+}
+
+void
+PixelData::fill(geom::irect const& rect, RGBA& rgba)
+{
+  // FIXME: implement me
 }
 
 } // namespace surf

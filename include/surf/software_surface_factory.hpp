@@ -54,9 +54,9 @@ public:
   SoftwareSurfaceLoader const* find_loader_by_magic(const std::string& data) const;
   SoftwareSurfaceLoader const* find_loader_by_magic(std::span<uint8_t const> data) const;
 
-  SoftwareSurface from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
-  SoftwareSurface from_file(std::filesystem::path const& filename) const;
-  SoftwareSurface from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const;
+  PixelData from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
+  PixelData from_file(std::filesystem::path const& filename) const;
+  PixelData from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const;
 
 private:
   std::vector<std::unique_ptr<SoftwareSurfaceLoader> > m_loader;

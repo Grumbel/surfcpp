@@ -171,7 +171,7 @@ bool is_png(std::filesystem::path const& filename)
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+PixelData load_from_file(std::filesystem::path const& filename)
 {
   FILE* in = fopen(filename.c_str(), "rb");
   if (!in)
@@ -243,11 +243,11 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
     fclose(in);
 
-    return SoftwareSurface(std::move(dst));
+    return dst;
   }
 }
 
-SoftwareSurface load_from_mem(std::span<uint8_t const> data)
+PixelData load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Merge this with load_from_file
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -316,7 +316,7 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 
   png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
-  return SoftwareSurface(std::move(dst));
+  return dst;
 }
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
