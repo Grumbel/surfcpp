@@ -16,6 +16,7 @@
 
 #include "pixel_data.hpp"
 
+#include <geom/rect.hpp>
 #include <string.h>
 
 #include "rgb.hpp"
@@ -40,6 +41,14 @@ PixelData
 PixelData::from_file(std::filesystem::path const& filename, std::string_view loader)
 {
   return g_pixeldata_fatory.from_file(filename, loader);
+}
+
+PixelData
+PixelData::create(PixelFormat format, const geom::isize& size, RGBA const& rgba)
+{
+  PixelData pixel_data(format, size);
+  pixel_data.fill(rgba);
+  return pixel_data;
 }
 
 // FIXME: Stuff in this file is currently written to just work, not to
@@ -262,9 +271,61 @@ PixelData::blit_to(PixelData& dst, const geom::ipoint& pos) const
 }
 
 void
-PixelData::fill(geom::irect const& rect, RGBA& rgba)
+PixelData::fill(RGBA const& rgba)
 {
-  // FIXME: implement me
+  if (m_format == PixelFormat::RGBA) {
+    for (int y = 0; y < m_size.height(); ++y) {
+      uint8_t* row = get_row_data(y);
+      for (int x = 0; x < m_size.width(); ++x) {
+        row[4*x + 0] = rgba.r;
+        row[4*x + 1] = rgba.g;
+        row[4*x + 2] = rgba.b;
+        row[4*x + 3] = rgba.a;
+      }
+    }
+  } else if (m_format == PixelFormat::RGB) {
+    for (int y = 0; y < m_size.height(); ++y) {
+      uint8_t* row = get_row_data(y);
+      for (int x = 0; x < m_size.width(); ++x) {
+        row[3*x + 0] = rgba.r;
+        row[3*x + 1] = rgba.g;
+        row[3*x + 2] = rgba.b;
+      }
+    }
+  }
+}
+
+void
+PixelData::blit_to(geom::irect& srcrect, PixelData& dst, const geom::ipoint& pos) const
+{
+  assert(false && "Not m_implemented");
+}
+
+void
+PixelData::fill_rect(geom::irect const& rect, RGBA const& rgba)
+{
+  geom::irect const rect_clipped = geom::intersection(geom::irect(m_size), rect);
+
+  if (m_format == PixelFormat::RGBA) {
+    for (int y = rect_clipped.top(); y < rect_clipped.bottom(); ++y) {
+      uint8_t* const row = get_row_data(y) + rect_clipped.left() * 4;
+      for (int x = 0; x < rect_clipped.width(); ++x) {
+        row[4*x + 0] = rgba.r;
+        row[4*x + 1] = rgba.g;
+        row[4*x + 2] = rgba.b;
+        row[4*x + 3] = rgba.a;
+      }
+    }
+  } else if (m_format == PixelFormat::RGB) {
+    for (int y = rect_clipped.top(); y < rect_clipped.bottom(); ++y) {
+      uint8_t* const row = get_row_data(y) + rect_clipped.left() * 3;
+      for (int x = 0; x < rect_clipped.width(); ++x) {
+        row[4*x + 0] = rgba.r;
+        row[4*x + 1] = rgba.g;
+        row[4*x + 2] = rgba.b;
+      }
+    }
+  }
 }
 
 } // namespace surf

@@ -38,6 +38,7 @@ class PixelData
 public:
   static PixelData from_file(std::filesystem::path const& filename);
   static PixelData from_file(std::filesystem::path const& filename, std::string_view loader);
+  static PixelData create(PixelFormat format, const geom::isize& size, RGBA const& rgba);
 
 public:
   PixelData();
@@ -66,9 +67,10 @@ public:
 
   /** Performs a simple copy from this to \a test, no blending is performed */
   void blit_to(PixelData& dst, const geom::ipoint& pos) const;
-  void blit_to(PixelData& dst, const geom::ipoint& pos, geom::irect& srcrect) const;
+  void blit_to(geom::irect& srcrect, PixelData& dst, const geom::ipoint& pos) const;
 
-  void fill(geom::irect const& rect, RGBA& rgba);
+  void fill(RGBA const& rgba);
+  void fill_rect(geom::irect const& rect, RGBA const& rgba);
 
 private:
   PixelFormat m_format;
