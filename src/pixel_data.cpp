@@ -86,6 +86,12 @@ PixelData::PixelData(PixelFormat format, geom::isize const& size) :
 }
 
 int
+PixelData::get_bits_per_pixel() const
+{
+  return get_bytes_per_pixel() * 8;
+}
+
+int
 PixelData::get_bytes_per_pixel() const
 {
   switch(m_format)

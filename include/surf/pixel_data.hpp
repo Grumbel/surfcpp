@@ -50,6 +50,7 @@ public:
   int get_height() const { return m_size.height(); }
   int get_pitch() const { return m_pitch; }
   int get_bytes_per_pixel() const;
+  int get_bits_per_pixel() const;
 
   bool empty() const { return m_pixels.empty(); }
 
