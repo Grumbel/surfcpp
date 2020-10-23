@@ -17,12 +17,66 @@
 #ifndef HEADER_SURF_PIXEL_FORMAT_HPP
 #define HEADER_SURF_PIXEL_FORMAT_HPP
 
+#include  <bit>
+#include <stdint.h>
+
 namespace surf {
 
-enum class PixelFormat
+namespace detail {
+
+enum class PixelFormatName
 {
   RGB,
   RGBA
+};
+
+struct PixelFormatImpl
+{
+  PixelFormatName const name;
+  int const bits_per_pixel;
+  int const bytes_per_pixel;
+  uint32_t const rmask;
+  uint32_t const gmask;
+  uint32_t const bmask;
+  uint32_t const amask;
+
+  constexpr operator PixelFormatName() const { return name; }
+};
+
+} // namespace detail
+
+class PixelFormat
+{
+public:
+  static constexpr detail::PixelFormatImpl RGB{detail::PixelFormatName::RGB, 24, 3,
+      std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff,
+      std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00,
+      std::endian::native == std::endian::big ? 0x000000ff : 0x00ff0000,
+      std::endian::native == std::endian::big ? 0x00000000 : 0x00000000};
+  static constexpr detail::PixelFormatImpl RGBA{detail::PixelFormatName::RGBA, 32, 4,
+      std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff,
+      std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00,
+      std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000,
+      std::endian::native == std::endian::big ? 0x00000000 : 0xff000000};
+
+public:
+  PixelFormat() : m_desc(nullptr) {}
+  PixelFormat(detail::PixelFormatImpl const& desc) :
+    m_desc(&desc)
+  {}
+
+  constexpr int bits_per_pixel() const { return m_desc->bits_per_pixel; }
+  constexpr int bytes_per_pixel() const { return m_desc->bytes_per_pixel; }
+
+  constexpr uint32_t rmask() const { return m_desc->rmask; }
+  constexpr uint32_t gmask() const { return m_desc->gmask; }
+  constexpr uint32_t bmask() const { return m_desc->bmask; }
+  constexpr uint32_t amask() const { return m_desc->amask; }
+
+  constexpr operator detail::PixelFormatName() const { return m_desc->name; }
+
+private:
+  detail::PixelFormatImpl const* m_desc;
 };
 
 } // namespace surf

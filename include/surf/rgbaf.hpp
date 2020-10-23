@@ -17,6 +17,8 @@
 #ifndef HEADER_GALAPIX_MATH_RGBAF_HPP
 #define HEADER_GALAPIX_MATH_RGBAF_HPP
 
+#include <algorithm>
+
 #include "rgba.hpp"
 #include "rgb.hpp"
 

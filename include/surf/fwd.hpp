@@ -25,7 +25,7 @@ class RGBA;
 class SoftwareSurface;
 class PixelDataFactory;
 class PixelDataLoader;
-enum class PixelFormat;
+class PixelFormat;
 enum class Transform;
 
 } // namespace surf
