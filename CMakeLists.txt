@@ -86,6 +86,8 @@ endif()
 if(BUILD_TESTS)
   find_package(GTest REQUIRED)
 
+  pkg_search_module(SDL2 REQUIRED sdl2 IMPORTED_TARGET)
+
   file(GLOB TEST_SURF_SOURCES test/*_test.cpp)
   add_executable(test_surf ${TEST_SURF_SOURCES})
   set_target_properties(test_surf PROPERTIES
@@ -95,6 +97,7 @@ if(BUILD_TESTS)
   target_compile_options(test_surf PRIVATE ${WARNINGS_CXX_FLAGS})
   target_link_libraries(test_surf
     surf
+    PkgConfig::SDL2
     GTest::GTest
     GTest::Main)
 

@@ -75,6 +75,8 @@ public:
   void fill(RGBA const& rgba);
   void fill_rect(geom::irect const& rect, RGBA const& rgba);
 
+  bool operator==(PixelData const& data) const = default;
+
 private:
   PixelFormat m_format;
   geom::isize m_size;
