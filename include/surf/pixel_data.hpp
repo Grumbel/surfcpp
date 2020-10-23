@@ -25,6 +25,7 @@
 #include <geom/size.hpp>
 #include <geom/point.hpp>
 
+#include "rgba.hpp"
 #include "pixel_format.hpp"
 
 namespace surf {
@@ -38,7 +39,7 @@ class PixelData
 public:
   static PixelData from_file(std::filesystem::path const& filename);
   static PixelData from_file(std::filesystem::path const& filename, std::string_view loader);
-  static PixelData create(PixelFormat format, const geom::isize& size, RGBA const& rgba);
+  static PixelData create(PixelFormat format, const geom::isize& size, RGBA const& rgba = RGBA(0, 0, 0, 0));
 
 public:
   PixelData();
