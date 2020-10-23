@@ -54,7 +54,7 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale = 1, g
     @return reference counted pointer to a PixelData object */
 PixelData load_from_mem(std::span<uint8_t const> data, int scale = 1, geom::isize* size = nullptr);
 
-void save(PixelData const& surface, int quality, std::filesystem::path const& filename);
+void save(PixelData const& surface, std::filesystem::path const& filename, int quality);
 std::vector<uint8_t> save(PixelData const& surface, int quality);
 
 void register_loader(PixelDataFactory& factory);

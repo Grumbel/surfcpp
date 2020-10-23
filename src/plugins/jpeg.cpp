@@ -117,8 +117,7 @@ PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* i
   }
 }
 
-
-void save(PixelData& pixel_data, int quality, std::filesystem::path const& filename)
+void save(PixelData const& pixel_data, std::filesystem::path const& filename, int quality)
 {
   FileJPEGCompressor compressor(filename);
   compressor.save(pixel_data, quality);
