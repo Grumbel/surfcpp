@@ -53,8 +53,8 @@ public:
 
   std::string get_name() const override { return m_name; }
 
-  bool supports_from_file() const override { return std::is_void<FromFileFunc>::value; }
-  bool supports_from_mem() const override { return std::is_void<FromMemFunc>::value; }
+  bool supports_from_file() const override { return !std::is_null_pointer<FromFileFunc>::value; }
+  bool supports_from_mem() const override { return !std::is_null_pointer<FromMemFunc>::value; }
 
  PixelData from_file(std::filesystem::path const& filename) const override {
    if constexpr (std::is_null_pointer<FromFileFunc>::value) {
