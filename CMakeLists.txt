@@ -26,12 +26,12 @@ include(ClangTidy)
 find_package(PkgConfig REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-pkg_search_module(EXIF REQUIRED libexif IMPORTED_TARGET)
+pkg_search_module(EXIF libexif IMPORTED_TARGET)
 
 # Not using find_package(), see:
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776832
 # find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
-pkg_search_module(MAGICKXX REQUIRED Magick++ GraphicsMagick++ IMPORTED_TARGET)
+pkg_search_module(MAGICKXX Magick++ GraphicsMagick++ IMPORTED_TARGET)
 
 function(build_dependencies)
   #if(BUILD_TESTS)
@@ -66,12 +66,22 @@ target_link_libraries(surf PUBLIC
   geomcpp
   logmich
   PNG::PNG
-  JPEG::JPEG
-  PkgConfig::EXIF
-  PkgConfig::MAGICKXX)
+  JPEG::JPEG)
 target_include_directories(surf INTERFACE src/ include/surf/ include/)
 target_include_directories(surf PRIVATE src/ include/surf/)
 set_target_properties(surf PROPERTIES PUBLIC_HEADER "${SURF_HEADERS}")
+
+if(MAGICKXX_FOUND)
+  target_link_libraries(surf PUBLIC
+    PkgConfig::MAGICKXX)
+  target_compile_definitions(surf PUBLIC "HAVE_MAGICKXX")
+endif()
+
+if(EXIF_FOUND)
+  target_link_libraries(surf PUBLIC
+    PkgConfig::EXIF)
+  target_compile_definitions(surf PUBLIC "HAVE_EXIF")
+endif()
 
 if(BUILD_TESTS)
   find_package(GTest REQUIRED)

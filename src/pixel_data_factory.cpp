@@ -69,7 +69,10 @@ PixelDataFactory::PixelDataFactory() :
   }
 
   dds::register_loader(*this);
+
+#ifdef HAVE_MAGICKXX
   imagemagick::register_loader(*this);
+#endif
 }
 
 PixelDataFactory::~PixelDataFactory()

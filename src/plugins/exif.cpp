@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef HAVE_EXIF
+
 #include "plugins/exif.hpp"
 
 #include <libexif/exif-data.h>
@@ -94,5 +96,7 @@ Transform get_orientation(std::filesystem::path const& filename)
 
 } // namespace exif
 } // namespace surf
+
+#endif
 
 /* EOF */

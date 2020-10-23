@@ -17,6 +17,8 @@
 #ifndef HEADER_GALAPIX_PLUGINS_IMAGEMAGICK_HPP
 #define HEADER_GALAPIX_PLUGINS_IMAGEMAGICK_HPP
 
+#ifdef HAVE_MAGICKXX
+
 #include <filesystem>
 #include <span>
 #include <string>
@@ -37,6 +39,8 @@ void register_loader(PixelDataFactory& factory);
 
 } // namespace imagemagick
 } // namespace surf
+
+#endif
 
 #endif
 

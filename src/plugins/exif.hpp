@@ -17,6 +17,8 @@
 #ifndef HEADER_GALAPIX_PLUGINS_EXIF_HPP
 #define HEADER_GALAPIX_PLUGINS_EXIF_HPP
 
+#ifdef HAVE_EXIF
+
 #include <filesystem>
 #include <string>
 #include <span>
@@ -32,6 +34,8 @@ Transform get_orientation(std::span<uint8_t const> data);
 
 } // namespace exif
 } // namespace surf
+
+#endif
 
 #endif
 

@@ -16,6 +16,7 @@
 
 #include "plugins/imagemagick.hpp"
 
+#ifdef HAVE_MAGICKXX
 
 #include <algorithm>
 #include <assert.h>
@@ -173,5 +174,7 @@ void register_loader(PixelDataFactory& factory)
 
 } // namespace imagemagick
 } // namespace surf
+
+#endif
 
 /* EOF */

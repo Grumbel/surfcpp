@@ -19,20 +19,23 @@
 
 #include <geom/size.hpp>
 
+#include "pixel_data_factory.hpp"
+#include "pixel_data_loader.hpp"
 #include "plugins/exif.hpp"
 #include "plugins/file_jpeg_compressor.hpp"
 #include "plugins/file_jpeg_decompressor.hpp"
 #include "plugins/jpeg.hpp"
 #include "plugins/mem_jpeg_compressor.hpp"
 #include "plugins/mem_jpeg_decompressor.hpp"
-#include "pixel_data_factory.hpp"
-#include "pixel_data_loader.hpp"
+#include "transform.hpp"
 #include "util/filesystem.hpp"
 
 namespace surf {
 namespace jpeg {
 
 namespace {
+
+#ifdef HAVE_MAGICKXX
 
 geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 {
@@ -53,6 +56,8 @@ geom::isize apply_orientation(Transform modifier, const geom::isize& size)
   }
 }
 
+#endif
+
 } // namespace
 
 bool filename_is_jpeg(std::filesystem::path const& filename)
@@ -68,7 +73,11 @@ geom::isize get_size(std::filesystem::path const& filename)
 {
   FileJPEGDecompressor loader(filename);
   geom::isize size = loader.read_size();
+#ifdef HAVE_EXIF
   return apply_orientation(exif::get_orientation(filename), size);
+#else
+  return size;
+#endif
 }
 
 
@@ -76,7 +85,11 @@ geom::isize get_size(std::span<uint8_t const> data)
 {
   MemJPEGDecompressor loader(data);
   geom::isize size = loader.read_size();
+#ifdef HAVE_EXIF
   return apply_orientation(exif::get_orientation(data), size);
+#else
+  return size;
+#endif
 }
 
 
@@ -85,6 +98,7 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale, geom:
   FileJPEGDecompressor loader(filename);
   PixelData surface = loader.read_image(scale, image_size);
 
+#ifdef HAVE_EXIF
   Transform modifier = exif::get_orientation(filename);
 
   if (image_size) {
@@ -96,6 +110,9 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale, geom:
   } else {
     return transform(surface, modifier); // FIXME: SLOW
   }
+#else
+  return surface;
+#endif
 }
 
 
@@ -104,6 +121,7 @@ PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* i
   MemJPEGDecompressor loader(data);
   PixelData surface = loader.read_image(scale, image_size);
 
+#ifdef HAVE_EXIF
   Transform modifier = exif::get_orientation(data);
 
   if (image_size) {
@@ -115,6 +133,9 @@ PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* i
   } else {
     return transform(surface, modifier); // FIXME: SLOW;
   }
+#else
+  return surface;
+#endif
 }
 
 void save(PixelData const& pixel_data, std::filesystem::path const& filename, int quality)
