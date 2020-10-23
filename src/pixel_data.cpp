@@ -16,6 +16,7 @@
 
 #include "pixel_data.hpp"
 
+#include <logmich/log.hpp>
 #include <geom/rect.hpp>
 #include <string.h>
 
@@ -304,7 +305,7 @@ PixelData::fill(RGBA const& rgba)
 void
 PixelData::blit_to(geom::irect& srcrect, PixelData& dst, const geom::ipoint& pos) const
 {
-  assert(false && "Not m_implemented");
+  log_not_implemented();
 }
 
 void

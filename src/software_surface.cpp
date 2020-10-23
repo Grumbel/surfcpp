@@ -30,7 +30,7 @@ namespace surf {
 SoftwareSurface
 SoftwareSurface::from_file(std::filesystem::path const& filename)
 {
-  PixelData pixel_data = PixelData::from_file(filename);;
+  PixelData pixel_data = PixelData::from_file(filename);
   return SoftwareSurface(std::move(pixel_data));
 }
 
