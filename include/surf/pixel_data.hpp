@@ -17,6 +17,7 @@
 #ifndef HEADER_GALAPIX_UTIL_PIXEL_DATA_HPP
 #define HEADER_GALAPIX_UTIL_PIXEL_DATA_HPP
 
+#include <iosfwd>
 #include <stdint.h>
 #include <filesystem>
 #include <string_view>
@@ -80,6 +81,8 @@ private:
   int m_pitch;
   std::vector<uint8_t> m_pixels;
 };
+
+std::ostream& operator<<(std::ostream& os, PixelData const& pixeldata);
 
 } // namespace surf
 

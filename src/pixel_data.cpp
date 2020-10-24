@@ -16,6 +16,8 @@
 
 #include "pixel_data.hpp"
 
+#include <ostream>
+
 #include <logmich/log.hpp>
 #include <geom/rect.hpp>
 #include <string.h>
@@ -333,6 +335,34 @@ PixelData::fill_rect(geom::irect const& rect, RGBA const& rgba)
       }
     }
   }
+}
+
+std::ostream& operator<<(std::ostream& os, PixelData const& pixeldata)
+{
+  os << "\n{";
+  for (int y = 0; y < pixeldata.get_height(); ++y) {
+    if (y != 0) {
+      os << " ";
+    }
+    os << " { ";
+    for (int x = 0; x < pixeldata.get_width(); ++x) {
+      RGBA color;
+      pixeldata.get_pixel(geom::ipoint(x, y), color);
+      os << fmt::format("({:d} {:d} {:d} {:d})",
+                        static_cast<int>(color.r),
+                        static_cast<int>(color.g),
+                        static_cast<int>(color.b),
+                        static_cast<int>(color.a));
+      if (x != pixeldata.get_width() - 1) {
+        os << ' ';
+      }
+    }
+    if (y == pixeldata.get_height() - 1) {
+      os << " }";
+    }
+    os << " }\n";
+  }
+  return os;
 }
 
 } // namespace surf
