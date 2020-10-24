@@ -32,6 +32,9 @@ TEST(PixelDataTest, equality)
   EXPECT_EQ(pixeldata, pixeldata);
   EXPECT_EQ(pixeldata, white);
   EXPECT_NE(pixeldata, black);
+
+  PixelData<RGBAPixel> pixeldata_rgba(geom::isize(64, 32), RGBAPixel{255, 128, 64, 255});
+  EXPECT_NE(pixeldata, pixeldata_rgba);
 }
 
 TEST(PixelDataTest, blit_to)
