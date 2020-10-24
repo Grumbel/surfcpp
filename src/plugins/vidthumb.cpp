@@ -45,7 +45,7 @@ bool is_available()
   }
 }
 
-PixelData load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec vidthumb("vidthumb");
 
@@ -58,7 +58,7 @@ PixelData load_from_file(std::filesystem::path const& filename)
 
   if (vidthumb.exec() == 0)
   {
-    PixelData pixeldata = png::load_from_file(out.str());
+    SoftwareSurface pixeldata = png::load_from_file(out.str());
     remove(out.str().c_str());
     return pixeldata;
   }

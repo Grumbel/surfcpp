@@ -43,7 +43,7 @@ bool is_available()
   }
 }
 
-PixelData load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec rsvg("rsvg");
 

@@ -26,13 +26,13 @@
 namespace surf {
 namespace pnm {
 
-PixelData load_from_mem(std::span<uint8_t const> data)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   PNMMemReader pnm(data);
 
-  PixelData dst(PixelFormat::RGB, pnm.get_size());
+  PixelData<RGBPixel> dst(pnm.get_size());
   uint8_t const* src_pixels = pnm.get_pixel_data();
-  uint8_t* dst_pixels = dst.get_data();
+  RGBPixel* dst_pixels = dst.get_data();
   //std::cout << "MaxVal: " << pnm.get_maxval() << std::endl;
   assert(pnm.get_maxval() == 255);
 
@@ -47,9 +47,11 @@ PixelData load_from_mem(std::span<uint8_t const> data)
 
     for(int i = 0; i < dst.get_width() * dst.get_height(); ++i)
     {
-      dst_pixels[3*i+0] = src_pixels[3*i+0];
-      dst_pixels[3*i+1] = src_pixels[3*i+1];
-      dst_pixels[3*i+2] = src_pixels[3*i+2];
+      dst_pixels[i+0] = RGBPixel{
+        src_pixels[3*i+0],
+        src_pixels[3*i+1],
+        src_pixels[3*i+2]
+      };
     }
   }
   else if (pnm.get_magic() == "P5") // Grayscale
@@ -61,9 +63,11 @@ PixelData load_from_mem(std::span<uint8_t const> data)
 
     for(int i = 0; i < dst.get_width() * dst.get_height(); ++i)
     {
-      dst_pixels[3*i+0] = src_pixels[i];
-      dst_pixels[3*i+1] = src_pixels[i];
-      dst_pixels[3*i+2] = src_pixels[i];
+      dst_pixels[i+0] = RGBPixel{
+        src_pixels[i],
+        src_pixels[i],
+        src_pixels[i]
+      };
     }
   }
   else

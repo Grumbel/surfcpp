@@ -36,7 +36,7 @@ namespace imagemagick {
 
 namespace {
 
-PixelData
+SoftwareSurface
 MagickImage2PixelData(const Magick::Image& image)
 {
   int width  = static_cast<int>(image.columns());
@@ -45,19 +45,21 @@ MagickImage2PixelData(const Magick::Image& image)
 
   if (image.matte())
   {
-    PixelData dst(PixelFormat::RGBA, geom::isize(width, height));
+    PixelData<RGBAPixel> dst(geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {
       const Magick::PixelPacket* src_pixels = image.getConstPixels(0, y, static_cast<size_t>(width), 1);
-      uint8_t* dst_pixels = dst.get_row_data(y);
+      RGBAPixel* dst_pixels = dst.get_row(y);
 
       for(int x = 0; x < width; ++x)
       {
-        dst_pixels[4*x + 0] = static_cast<uint8_t>(src_pixels[x].red   >> shift);
-        dst_pixels[4*x + 1] = static_cast<uint8_t>(src_pixels[x].green >> shift);
-        dst_pixels[4*x + 2] = static_cast<uint8_t>(src_pixels[x].blue  >> shift);
-        dst_pixels[4*x + 3] = static_cast<uint8_t>(255 - (src_pixels[x].opacity >> shift));
+        dst_pixels[x] = RGBAPixel{
+          static_cast<uint8_t>(src_pixels[x].red   >> shift),
+          static_cast<uint8_t>(src_pixels[x].green >> shift),
+          static_cast<uint8_t>(src_pixels[x].blue  >> shift),
+          static_cast<uint8_t>(255 - (src_pixels[x].opacity >> shift))
+        };
       }
     }
 
@@ -65,18 +67,20 @@ MagickImage2PixelData(const Magick::Image& image)
   }
   else
   {
-    PixelData dst(PixelFormat::RGB, geom::isize(width, height));
+    PixelData<RGBPixel> dst(geom::isize(width, height));
 
     for(int y = 0; y < height; ++y)
     {
-      uint8_t* dst_pixels = dst.get_row_data(y);
+      RGBPixel* dst_pixels = dst.get_row(y);
       const Magick::PixelPacket* src_pixels = image.getConstPixels(0, y, static_cast<size_t>(width), 1);
 
       for(int x = 0; x < width; ++x)
       {
-        dst_pixels[3*x + 0] = static_cast<uint8_t>(src_pixels[x].red   >> shift);
-        dst_pixels[3*x + 1] = static_cast<uint8_t>(src_pixels[x].green >> shift);
-        dst_pixels[3*x + 2] = static_cast<uint8_t>(src_pixels[x].blue  >> shift);
+        dst_pixels[x] = RGBPixel{
+          static_cast<uint8_t>(src_pixels[x].red   >> shift),
+          static_cast<uint8_t>(src_pixels[x].green >> shift),
+          static_cast<uint8_t>(src_pixels[x].blue  >> shift)
+        };
       }
     }
 
@@ -149,13 +153,13 @@ std::vector<std::string> get_supported_extensions()
   }
 }
 
-PixelData load_from_mem(std::span<uint8_t const> data)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 {
   // FIXME: Magick::Blob creates an unneeded copy of the data
   return MagickImage2PixelData(Magick::Image(Magick::Blob(data.data(), data.size())));
 }
 
-PixelData load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   return MagickImage2PixelData(Magick::Image(filename));
 }

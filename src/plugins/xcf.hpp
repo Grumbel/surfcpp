@@ -37,8 +37,8 @@ std::vector<std::string> get_layers(const URL& url);
 #endif
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
-PixelData load_from_file(std::filesystem::path const& filename);
-PixelData load_from_mem(std::span<uint8_t const> data);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 void register_loader(PixelDataFactory& factory);
 
 } // namespace xcf

@@ -32,8 +32,8 @@ namespace surf {
 namespace imagemagick {
 
 bool get_size(std::filesystem::path const& filename, geom::isize& size);
-PixelData load_from_file(std::filesystem::path const& filename);
-PixelData load_from_mem(std::span<uint8_t const> data);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 std::vector<std::string> get_supported_extensions();
 void register_loader(PixelDataFactory& factory);
 

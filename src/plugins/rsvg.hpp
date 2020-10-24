@@ -27,7 +27,7 @@ namespace surf {
 namespace rsvg {
 
 bool is_available();
-PixelData load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
 void register_loader(PixelDataFactory& factory);
 
 } // namespace rsvg

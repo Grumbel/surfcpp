@@ -46,7 +46,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
   }
 }
 
-PixelData load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   std::ifstream in(filename.c_str(), std::ios::binary);
   if (!in)
@@ -58,7 +58,7 @@ PixelData load_from_file(std::filesystem::path const& filename)
   {
     DDSSurface dds(in);
 
-    PixelData dst(PixelFormat::RGBA, geom::isize(dds.get_width(), dds.get_height()));
+    PixelData<RGBAPixel> dst(geom::isize(dds.get_width(), dds.get_height()));
 
     if (static_cast<int>(dds.get_length()) != dst.get_width() * dst.get_height() * 4)
     {
