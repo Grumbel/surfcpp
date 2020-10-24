@@ -215,12 +215,20 @@ public:
     return m_pixels.data() + (y * m_row_length);
   }
 
+  void* get_row_data(int y) {
+    return get_row(y);
+  }
+
   Pixel const* get_data() const {
     return m_pixels.data();
   }
 
   Pixel const* get_row(int y) const {
     return m_pixels.data() + (y * m_row_length);
+  }
+
+  void const* get_row_data(int y) const {
+    return get_row(y);
   }
 
   /** Performs a simple copy from this to \a test, no blending is performed */
@@ -282,6 +290,19 @@ public:
         row[x + 0] = pixel;
       }
     }
+  }
+
+  template<typename DstPixel>
+  PixelData<DstPixel> convert_to() const
+  {
+    PixelData<DstPixel> dst;
+    for (int y = 0; y < m_size.height(); ++y) {
+      for (int x = 0; x < m_size.width(); ++x) {
+        dst.put_pixel(geom::ipoint(x, y),
+                      convert<Pixel, DstPixel>(get_pixel(geom::ipoint(x, y))));
+      }
+    }
+    return dst;
   }
 
   bool operator==(PixelData<Pixel> const& data) const {

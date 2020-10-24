@@ -55,6 +55,9 @@ file(GLOB SURF_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/util/*.cpp
   # src/plugins/*.cpp
+  # src/plugins/png.cpp
+  src/plugins/*jpeg*.cpp
+  src/plugins/exif.cpp
   src/*.cpp)
 
 add_library(surf STATIC ${SURF_SOURCES})

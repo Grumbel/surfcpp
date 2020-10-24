@@ -35,7 +35,7 @@ namespace jpeg {
 
 namespace {
 
-#ifdef HAVE_MAGICKXX
+#ifdef HAVE_EXIF
 
 geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 {
@@ -63,7 +63,7 @@ geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 bool filename_is_jpeg(std::filesystem::path const& filename)
 {
   // FIXME: Merge this with util/jpeg_pixel_data_loader, maybe
-  // store the fileformat/PixelDataLoader in the database intead
+  // store the fileformat/SoftwareSurfaceLoader in the database intead
   // of figuring out the format each time anew
   return (Filesystem::get_extension(filename) == "jpg" ||
           Filesystem::get_extension(filename) == "jpeg");
@@ -93,10 +93,10 @@ geom::isize get_size(std::span<uint8_t const> data)
 }
 
 
-PixelData load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
+SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale, geom::isize* image_size)
 {
   FileJPEGDecompressor loader(filename);
-  PixelData surface = loader.read_image(scale, image_size);
+  PixelData<RGBPixel> surface = loader.read_image(scale, image_size);
 
 #ifdef HAVE_EXIF
   Transform modifier = exif::get_orientation(filename);
@@ -116,10 +116,10 @@ PixelData load_from_file(std::filesystem::path const& filename, int scale, geom:
 }
 
 
-PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
+SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* image_size)
 {
   MemJPEGDecompressor loader(data);
-  PixelData surface = loader.read_image(scale, image_size);
+  PixelData<RGBPixel> surface = loader.read_image(scale, image_size);
 
 #ifdef HAVE_EXIF
   Transform modifier = exif::get_orientation(data);
@@ -138,17 +138,25 @@ PixelData load_from_mem(std::span<uint8_t const> data, int scale, geom::isize* i
 #endif
 }
 
-void save(PixelData const& pixel_data, std::filesystem::path const& filename, int quality)
+void save(SoftwareSurface const& surface, std::filesystem::path const& filename, int quality)
 {
   FileJPEGCompressor compressor(filename);
-  compressor.save(pixel_data, quality);
+  if (auto optional = surface.as_pixeldata<RGBPixel>()) {
+    compressor.save(*optional, quality);
+  } else {
+    compressor.save(surface.convert_to<RGBPixel>(), quality);
+  }
 }
 
-std::vector<uint8_t> save(PixelData const& pixel_data, int quality)
+std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
 {
   std::vector<uint8_t> data;
   MemJPEGCompressor compressor(data);
-  compressor.save(pixel_data, quality);
+  if (auto optional = surface.as_pixeldata<RGBPixel>()) {
+    compressor.save(*optional, quality);
+  } else {
+    compressor.save(surface.convert_to<RGBPixel>(), quality);
+  }
   return data;
 }
 

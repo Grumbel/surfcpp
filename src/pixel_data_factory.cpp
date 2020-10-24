@@ -24,10 +24,10 @@
 #include "util/filesystem.hpp"
 #include "pixel_data_loader.hpp"
 
+#include "plugins/jpeg.hpp"
 #if 0
 #include "plugins/dds.hpp"
 #include "plugins/imagemagick.hpp"
-#include "plugins/jpeg.hpp"
 #include "plugins/kra.hpp"
 #include "plugins/png.hpp"
 #include "plugins/rsvg.hpp"
@@ -44,10 +44,10 @@ PixelDataFactory::PixelDataFactory() :
   m_mime_type_map(),
   m_magic_map()
 {
-#if 0
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
   jpeg::register_loader(*this);
+#if 0
   png::register_loader(
     *this);
 

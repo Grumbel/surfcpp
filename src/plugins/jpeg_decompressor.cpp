@@ -64,7 +64,7 @@ JPEGDecompressor::read_size()
                      static_cast<int>(m_cinfo.image_height));
 }
 
-PixelData
+PixelData<RGBPixel>
 JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 {
   if (!(scale == 1 ||
@@ -102,32 +102,31 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 
   jpeg_start_decompress(&m_cinfo);
 
-  PixelData dst(PixelFormat::RGB,
-                geom::isize(static_cast<int>(m_cinfo.output_width),
-                            static_cast<int>(m_cinfo.output_height)));
+  PixelData<RGBPixel> dst(geom::isize(static_cast<int>(m_cinfo.output_width),
+                                      static_cast<int>(m_cinfo.output_height)));
 
   if (m_cinfo.out_color_space == JCS_RGB &&
       m_cinfo.output_components == 3) {
-    std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
+    std::vector<JSAMPLE const*> scanlines(m_cinfo.output_height);
 
     for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
-      scanlines[y] = dst.get_row_data(static_cast<int>(y));
+      scanlines[y] = static_cast<JSAMPLE const*>(dst.get_row_data(static_cast<int>(y)));
     }
 
     while (m_cinfo.output_scanline < m_cinfo.output_height) {
-      jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
+      jpeg_read_scanlines(&m_cinfo, const_cast<JSAMPROW*>(&scanlines[m_cinfo.output_scanline]),
                           m_cinfo.output_height - m_cinfo.output_scanline);
     }
   } else if (m_cinfo.out_color_space == JCS_GRAYSCALE &&
              m_cinfo.output_components == 1) {
-    std::vector<JSAMPLE*> scanlines(m_cinfo.output_height);
+    std::vector<JSAMPLE const*> scanlines(m_cinfo.output_height);
 
     for (JDIMENSION y = 0; y < m_cinfo.output_height; ++y) {
-      scanlines[y] = dst.get_row_data(static_cast<int>(y));
+      scanlines[y] = static_cast<JSAMPLE const*>(dst.get_row_data(static_cast<int>(y)));
     }
 
     while (m_cinfo.output_scanline < m_cinfo.output_height) {
-      jpeg_read_scanlines(&m_cinfo, &scanlines[m_cinfo.output_scanline],
+      jpeg_read_scanlines(&m_cinfo, const_cast<JSAMPROW*>(&scanlines[m_cinfo.output_scanline]),
                           m_cinfo.output_height - m_cinfo.output_scanline);
     }
 
@@ -136,8 +135,8 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     // other color formats
     for (int y = 0; y < dst.get_height(); ++y)
     {
-      uint8_t* rowptr = dst.get_row_data(y);
-      for (int x = dst.get_width()-1; x >= 0; --x)
+      uint8_t* rowptr = static_cast<uint8_t*>(dst.get_row_data(y));
+      for (int x = dst.get_width() - 1; x >= 0; --x)
       {
         rowptr[3*x+0] = rowptr[x];
         rowptr[3*x+1] = rowptr[x];
@@ -164,7 +163,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
     for(int y = 0; y < dst.get_height(); ++y)
     {
       uint8_t* jpegptr = &output_data[y * m_cinfo.output_width * m_cinfo.output_components];
-      uint8_t* rowptr = dst.get_row_data(y);
+      uint8_t* rowptr = static_cast<uint8_t*>(dst.get_row_data(y));
       for(int x = dst.get_width()-1; x >= 0; --x)
       {
         uint8_t const cmyk_c = jpegptr[4*x + 0];

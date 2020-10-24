@@ -62,8 +62,23 @@ public:
 
   IPixelData const& get_pixel_data() const { return *m_pixel_data; }
 
+  template<typename Pixel>
+  PixelData<Pixel> convert_to() const {
+    return {};
+  }
+
+  template<typename Pixel>
+  std::optional<PixelData<Pixel>> as_pixeldata() const {
+    PixelData<Pixel> const* ptr = dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get());
+    if (ptr == nullptr) {
+      return {};
+    } else {
+      return *ptr;
+    }
+  }
+
 private:
-  std::shared_ptr<const IPixelData> m_pixel_data;
+  std::shared_ptr<IPixelData const> m_pixel_data;
 };
 
 } // namespace surf

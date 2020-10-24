@@ -35,7 +35,7 @@ JPEGCompressor::~JPEGCompressor()
 }
 
 void
-JPEGCompressor::save(PixelData const& pixel_data, int quality)
+JPEGCompressor::save(PixelData<RGBPixel> const& pixel_data, int quality)
 {
   m_cinfo.image_width = static_cast<JDIMENSION>(pixel_data.get_width());
   m_cinfo.image_height = static_cast<JDIMENSION>(pixel_data.get_height());
@@ -51,7 +51,7 @@ JPEGCompressor::save(PixelData const& pixel_data, int quality)
   std::vector<JSAMPROW> row_pointer(static_cast<size_t>(pixel_data.get_height()));
   for(int y = 0; y < pixel_data.get_height(); ++y)
   {
-    row_pointer[static_cast<size_t>(y)] = const_cast<JSAMPLE*>(pixel_data.get_row_data(y));
+    row_pointer[y] = const_cast<JSAMPLE*>(static_cast<JSAMPLE const*>(pixel_data.get_row_data(y)));
   }
 
   while(m_cinfo.next_scanline < m_cinfo.image_height)

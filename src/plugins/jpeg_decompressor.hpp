@@ -47,7 +47,7 @@ public:
   virtual ~JPEGDecompressor();
 
   geom::isize read_size();
-  PixelData read_image(int scale, geom::isize* image_size);
+  PixelData<RGBPixel> read_image(int scale, geom::isize* image_size);
 
 private:
   [[noreturn]]
