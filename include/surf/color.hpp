@@ -27,6 +27,10 @@ namespace surf {
 class Color
 {
 public:
+  static Color black;
+  static Color white;
+
+public:
   Color() :
     r(0.0f), g(0.0f), b(0.0f), a(0.0f)
   {}
