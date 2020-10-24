@@ -22,7 +22,7 @@
 
 #include <geom/size.hpp>
 
-#include "rgbaf.hpp"
+#include "color.hpp"
 #include "software_surface.hpp"
 
 namespace surf {
@@ -50,8 +50,8 @@ public:
   int  get_height() const;
   int  get_pitch()  const;
 
-  void put_pixel(geom::ipoint const& pos, const RGBAf& rgba);
-  void get_pixel(geom::ipoint const& pos, RGBAf& rgba) const;
+  void put_pixel(geom::ipoint const& pos, const Color& rgba);
+  void get_pixel(geom::ipoint const& pos, Color& rgba) const;
 
 private:
   geom::isize m_size;

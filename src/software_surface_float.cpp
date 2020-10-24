@@ -57,7 +57,7 @@ SoftwareSurfaceFloat::apply_gamma(float gamma)
   {
     for(int x = 0; x < m_size.width(); ++x)
     {
-      RGBAf rgba;
+      Color rgba;
       get_pixel({x, y}, rgba);
       rgba.r = powf(rgba.r, gamma);
       rgba.g = powf(rgba.g, gamma);
@@ -92,7 +92,7 @@ SoftwareSurfaceFloat::get_pitch() const
 }
 
 void
-SoftwareSurfaceFloat::put_pixel(geom::ipoint const& pos, const RGBAf& rgba)
+SoftwareSurfaceFloat::put_pixel(geom::ipoint const& pos, const Color& rgba)
 {
   int const x = pos.x();
   int const y = pos.y();
@@ -104,7 +104,7 @@ SoftwareSurfaceFloat::put_pixel(geom::ipoint const& pos, const RGBAf& rgba)
 }
 
 void
-SoftwareSurfaceFloat::get_pixel(geom::ipoint const& pos, RGBAf& rgba) const
+SoftwareSurfaceFloat::get_pixel(geom::ipoint const& pos, Color& rgba) const
 {
   int const x = pos.x();
   int const y = pos.y();
@@ -123,7 +123,7 @@ SoftwareSurfaceFloat::to_software_surface() const
   {
     for(int x = 0; x < m_size.width(); ++x)
     {
-      RGBAf rgbaf;
+      Color rgbaf;
       get_pixel({x, y}, rgbaf);
 
       RGBA rgba;
