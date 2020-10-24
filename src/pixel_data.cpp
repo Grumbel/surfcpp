@@ -88,29 +88,6 @@ PixelData::PixelData(PixelFormat format, geom::isize const& size) :
   }
 }
 
-int
-PixelData::get_bits_per_pixel() const
-{
-  return get_bytes_per_pixel() * 8;
-}
-
-int
-PixelData::get_bytes_per_pixel() const
-{
-  switch(m_format)
-  {
-    case PixelFormat::RGB:
-      return 3;
-
-    case PixelFormat::RGBA:
-      return 4;
-
-    default:
-      assert(false && "PixelData::get_bytes_per_pixel(): Unknown format");
-      return 0;
-  }
-}
-
 void
 PixelData::put_pixel(geom::ipoint const& pos, RGBA const& rgba)
 {

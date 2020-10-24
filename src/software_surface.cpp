@@ -71,13 +71,13 @@ SoftwareSurface::get_format() const
 int
 SoftwareSurface::get_bytes_per_pixel() const
 {
-  return m_pixel_data->get_bytes_per_pixel();
+  return m_pixel_data->get_format().bytes_per_pixel();
 }
 
 int
 SoftwareSurface::get_bits_per_pixel() const
 {
-  return m_pixel_data->get_bytes_per_pixel() / 8;
+  return m_pixel_data->get_format().bits_per_pixel();
 }
 
 uint8_t const*

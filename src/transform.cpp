@@ -345,8 +345,8 @@ PixelData crop(PixelData const& src, geom::irect const& rect)
   for(int y = clipped.top(); y < clipped.bottom(); ++y)
   {
     memcpy(dst.get_row_data(y - clipped.top()),
-           src.get_row_data(y) + clipped.left() * src.get_bytes_per_pixel(),
-           clipped.width() * src.get_bytes_per_pixel());
+           src.get_row_data(y) + clipped.left() * src.get_format().bytes_per_pixel(),
+           clipped.width() * src.get_format().bytes_per_pixel());
   }
 
   return dst;
