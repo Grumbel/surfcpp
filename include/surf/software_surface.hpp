@@ -68,6 +68,11 @@ public:
   }
 
   template<typename Pixel>
+  bool is_pixel_format() const {
+    return dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get()) != nullptr;
+  }
+
+  template<typename Pixel>
   std::optional<PixelData<Pixel>> as_pixeldata() const {
     PixelData<Pixel> const* ptr = dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get());
     if (ptr == nullptr) {

@@ -153,6 +153,9 @@ public:
   virtual int get_width() const = 0;
   virtual int get_height() const = 0;
   virtual int get_row_length() const = 0;
+  virtual void* get_row_data(int y) = 0;
+  virtual void const* get_row_data(int y) const = 0;
+
   virtual bool empty() const = 0;
 };
 
@@ -215,7 +218,7 @@ public:
     return m_pixels.data() + (y * m_row_length);
   }
 
-  void* get_row_data(int y) {
+  void* get_row_data(int y) override {
     return get_row(y);
   }
 
@@ -227,7 +230,7 @@ public:
     return m_pixels.data() + (y * m_row_length);
   }
 
-  void const* get_row_data(int y) const {
+  void const* get_row_data(int y) const override {
     return get_row(y);
   }
 
