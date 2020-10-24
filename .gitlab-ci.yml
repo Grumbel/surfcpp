@@ -30,26 +30,14 @@ before_script:
     g++-10
     clang-10
     clang-tidy-10
-    libcurl4-openssl-dev
     libexif-dev
     libfmt-dev
-    libgl1-mesa-dev
-    libglademm-2.4-dev
-    libglew-dev
     libglm-dev
     libgtest-dev
-    libgtkglextmm-x11-1.2-dev
-    libgtkmm-2.4-dev
     libjpeg8-dev
-    libjsoncpp-dev
     libmagick++-dev
-    libmhash-dev
-    libopenal-dev
     libpng-dev
     libsdl2-dev
-    libsigc++-2.0-dev
-    libsqlite3-dev
-    libssl-dev
 
 .build_project_template: &build_project
   stage: build
