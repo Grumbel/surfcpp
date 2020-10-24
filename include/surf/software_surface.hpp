@@ -82,9 +82,20 @@ public:
     }
   }
 
+  bool operator==(SoftwareSurface const& rhs) const {
+    return *m_pixel_data == *rhs.m_pixel_data;
+  }
+
 private:
   std::shared_ptr<IPixelData const> m_pixel_data;
 };
+
+inline
+std::ostream& operator<<(std::ostream& os, SoftwareSurface const& surface)
+{
+  surface.get_pixel_data().print(os);
+  return os;
+}
 
 } // namespace surf
 

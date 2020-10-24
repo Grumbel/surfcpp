@@ -155,8 +155,19 @@ public:
   virtual int get_row_length() const = 0;
   virtual void* get_row_data(int y) = 0;
   virtual void const* get_row_data(int y) const = 0;
-
   virtual bool empty() const = 0;
+  virtual void print(std::ostream& os) const = 0;
+
+  bool operator==(IPixelData const& rhs) const {
+    return is_equal(rhs);
+  }
+
+  bool operator!=(IPixelData const& rhs) const {
+    return !is_equal(rhs);
+  }
+
+protected:
+  virtual bool is_equal(IPixelData const&) const = 0;
 };
 
 /** A mutable low-level container for pixel data */
@@ -308,10 +319,34 @@ public:
     return dst;
   }
 
-  bool operator==(PixelData<Pixel> const& data) const {
-    return (m_size == data.m_size &&
-            m_row_length == data.m_row_length &&
-            m_pixels == data.m_pixels);
+  void print(std::ostream& os) const override {
+    os << *this;
+  }
+
+  /*
+  bool operator==(PixelData<Pixel> const& rhs) const {
+    // FIXME: be smarter and take row_length into account
+    return (m_size == rhs.m_size &&
+            m_row_length == rhs.m_row_length &&
+            m_pixels == rhs.m_pixels);
+
+  }
+
+  bool operator!=(PixelData<Pixel> const& rhs) const {
+    return !(*this == rhs);
+  }
+  */
+
+protected:
+  bool is_equal(IPixelData const& rhs) const override {
+    PixelData<Pixel> const* rhs_ptr = dynamic_cast<PixelData<Pixel> const*>(&rhs);
+    if (rhs_ptr == nullptr) {
+      return false;
+    } else {
+      return (m_size == rhs_ptr->m_size &&
+              m_row_length == rhs_ptr->m_row_length &&
+              m_pixels == rhs_ptr->m_pixels);
+    }
   }
 
 private:
