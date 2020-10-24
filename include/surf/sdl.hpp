@@ -27,6 +27,7 @@ namespace surf {
 class SDLSurfacePtr
 {
 public:
+  SDLSurfacePtr() : m_surf(nullptr) {}
   SDLSurfacePtr(SDL_Surface* surf) : m_surf(surf) { assert(m_surf != nullptr); }
   SDLSurfacePtr(SDLSurfacePtr&& other) : m_surf(std::exchange(other.m_surf, nullptr)) {}
   SDLSurfacePtr(const SDLSurfacePtr&) = delete;
@@ -58,18 +59,18 @@ private:
 };
 
 /** Create an SDL_Surface from PixelData without copying it */
-inline
-SDLSurfacePtr create_sdl_surface_view(PixelData& pixeldata)
+template<typename Pixel>
+SDLSurfacePtr create_sdl_surface_view(PixelData<Pixel>& pixeldata)
 {
   SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixeldata.get_data(),
                                                   pixeldata.get_width(),
                                                   pixeldata.get_height(),
-                                                  pixeldata.get_format().bits_per_pixel(),
-                                                  pixeldata.get_pitch(),
-                                                  pixeldata.get_format().rmask(),
-                                                  pixeldata.get_format().gmask(),
-                                                  pixeldata.get_format().bmask(),
-                                                  pixeldata.get_format().amask());
+                                                  PPixelFormat<Pixel>::bits_per_pixel,
+                                                  pixeldata.get_row_length() * sizeof(Pixel),
+                                                  PPixelFormat<Pixel>::rmask,
+                                                  PPixelFormat<Pixel>::gmask,
+                                                  PPixelFormat<Pixel>::bmask,
+                                                  PPixelFormat<Pixel>::amask);
   if (surface == nullptr) {
     std::ostringstream oss;
     oss << "SDL_Surface creation failed: " << SDL_GetError();
@@ -80,24 +81,24 @@ SDLSurfacePtr create_sdl_surface_view(PixelData& pixeldata)
 }
 
 /** Create an SDL_Surface from PixelData without copying it. */
-inline
-SDLSurfacePtr create_sdl_surface_view(PixelData const& pixeldata)
+template<typename Pixel>
+SDLSurfacePtr create_sdl_surface_view(PixelData<Pixel> const& pixeldata)
 {
-  return create_sdl_surface_view(const_cast<PixelData&>(pixeldata));
+  return create_sdl_surface_view(const_cast<PixelData<Pixel>&>(pixeldata));
 }
 
 /** Create an SDL_Surface and copy PixelData into it. */
-inline
-SDLSurfacePtr create_sdl_surface(PixelData const& pixeldata)
+template<typename Pixel>
+SDLSurfacePtr create_sdl_surface(PixelData<Pixel> const& pixeldata)
 {
   SDL_Surface* surface = SDL_CreateRGBSurface(0,
                                               pixeldata.get_width(),
                                               pixeldata.get_height(),
-                                              pixeldata.get_format().bits_per_pixel(),
-                                              pixeldata.get_format().rmask(),
-                                              pixeldata.get_format().gmask(),
-                                              pixeldata.get_format().bmask(),
-                                              pixeldata.get_format().amask());
+                                              PPixelFormat<Pixel>::bits_per_pixel,
+                                              PPixelFormat<Pixel>::rmask,
+                                              PPixelFormat<Pixel>::gmask,
+                                              PPixelFormat<Pixel>::bmask,
+                                              PPixelFormat<Pixel>::amask);
   if (surface == nullptr) {
     std::ostringstream oss;
     oss << "SDL_Surface creation failed: " << SDL_GetError();
@@ -106,34 +107,25 @@ SDLSurfacePtr create_sdl_surface(PixelData const& pixeldata)
 
   SDL_LockSurface(surface);
   for (int y = 0; y < pixeldata.get_height(); ++y) {
-    memcpy(&static_cast<uint8_t*>(surface->pixels)[y * surface->pitch], pixeldata.get_row_data(y),
-           pixeldata.get_width() * pixeldata.get_format().bytes_per_pixel());
+    memcpy(&static_cast<uint8_t*>(surface->pixels)[y * surface->pitch],
+           pixeldata.get_row(y),
+           pixeldata.get_width() * sizeof(Pixel));
   }
   SDL_UnlockSurface(surface);
 
   return surface;
 }
 
-inline
-PixelData from_sdl_surface(SDL_Surface& surface)
+template<typename Pixel>
+PixelData<Pixel> pixeldata_from_sdl_surface(SDL_Surface& surface)
 {
-  PixelFormat format;
-  if (surface.format->BitsPerPixel == 32) {
-    format = PixelFormat::RGBA;
-  } else if (surface.format->BitsPerPixel == 24) {
-    format = PixelFormat::RGB;
-  } else {
-    throw std::runtime_error("unhandled SDL_Surface format");
-  }
-
-  PixelData pixeldata(format, {surface.w, surface.h});
+  PixelData<Pixel> pixeldata({surface.w, surface.h});
   SDLSurfacePtr dst(create_sdl_surface_view(pixeldata));
   if (SDL_BlitSurface(&surface, nullptr, dst.get(), nullptr) != 0) {
     std::ostringstream oss;
     oss << "from_sdl_surface() failed:: " << SDL_GetError();
     throw std::runtime_error(oss.str());
   }
-
   return pixeldata;
 }
 

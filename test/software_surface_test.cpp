@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <geom/rect.hpp>
+#include <geom/io.hpp>
 
 #include <surf/software_surface.hpp>
 #include <surf/rgb.hpp>
@@ -10,10 +11,9 @@ using namespace surf;
 
 TEST(SoftwareSurfaceTest, default_is_valid)
 {
-  PixelData pixel_data;
+  PixelData<RGBPixel> pixel_data;
 
   EXPECT_EQ(geom::isize(0, 0), pixel_data.get_size());
-
   EXPECT_EQ(geom::isize(0, 0), halve(pixel_data).get_size());
   EXPECT_EQ(geom::isize(32, 16), scale(pixel_data, geom::isize(32, 16)).get_size());
   EXPECT_EQ(geom::isize(0, 0), crop(pixel_data, geom::irect(0, 0, 16, 16)).get_size());
@@ -24,14 +24,16 @@ TEST(SoftwareSurfaceTest, default_is_valid)
   rotate270(pixel_data);
   flip_horizontal(pixel_data);
   flip_vertical(pixel_data);
+#if 0
   to_rgb(pixel_data);
   average_color(pixel_data);
+#endif
 }
 
 TEST(SoftwareSurfaceTest, assignment)
 {
-  SoftwareSurface lhs(PixelData(PixelFormat::RGB, geom::isize(32, 16)));
-  SoftwareSurface rhs(PixelData(PixelFormat::RGB, geom::isize(64, 32)));
+  SoftwareSurface lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
+  SoftwareSurface rhs(PixelData<RGBPixel>(geom::isize(64, 32)));
   SoftwareSurface tmp;
 
   tmp = lhs;
@@ -45,8 +47,8 @@ TEST(SoftwareSurfaceTest, assignment)
 
 TEST(SoftwareSurfaceTest, move)
 {
-  SoftwareSurface lhs(PixelData(PixelFormat::RGB, geom::isize(32, 16)));
-  SoftwareSurface rhs(PixelData(PixelFormat::RGB, geom::isize(64, 32)));
+  SoftwareSurface lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
+  SoftwareSurface rhs(PixelData<RGBPixel>(geom::isize(64, 32)));
   SoftwareSurface tmp;
 
   tmp = std::move(lhs);

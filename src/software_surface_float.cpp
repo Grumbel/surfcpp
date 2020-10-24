@@ -20,6 +20,7 @@
 
 namespace surf {
 
+#if 0
 SoftwareSurfaceFloatPtr
 SoftwareSurfaceFloat::create(const geom::isize& size)
 {
@@ -136,6 +137,7 @@ SoftwareSurfaceFloat::to_software_surface() const
   }
   return SoftwareSurface(std::move(dst));
 }
+#endif
 
 } // namespace surf
 

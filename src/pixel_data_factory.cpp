@@ -24,6 +24,7 @@
 #include "util/filesystem.hpp"
 #include "pixel_data_loader.hpp"
 
+#if 0
 #include "plugins/dds.hpp"
 #include "plugins/imagemagick.hpp"
 #include "plugins/jpeg.hpp"
@@ -33,6 +34,7 @@
 #include "plugins/ufraw.hpp"
 #include "plugins/vidthumb.hpp"
 #include "plugins/xcf.hpp"
+#endif
 
 namespace surf {
 
@@ -42,6 +44,7 @@ PixelDataFactory::PixelDataFactory() :
   m_mime_type_map(),
   m_magic_map()
 {
+#if 0
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
   jpeg::register_loader(*this);
@@ -72,6 +75,8 @@ PixelDataFactory::PixelDataFactory() :
 
 #ifdef HAVE_MAGICKXX
   imagemagick::register_loader(*this);
+#endif
+
 #endif
 }
 
@@ -170,7 +175,7 @@ PixelDataFactory::find_loader_by_magic(std::span<uint8_t const> data) const
   return find_loader_by_magic(std::string(reinterpret_cast<const char*>(data.data()), size));
 }
 
-PixelData
+SoftwareSurface
 PixelDataFactory::from_file(std::filesystem::path const& filename, PixelDataLoader const& loader) const
 {
   if (loader.supports_from_file())
@@ -190,7 +195,7 @@ PixelDataFactory::from_file(std::filesystem::path const& filename, PixelDataLoad
   }
 }
 
-PixelData
+SoftwareSurface
 PixelDataFactory::from_file(std::filesystem::path const& filename, std::string_view loader) const
 {
   auto const it = std::find_if(m_loader.begin(), m_loader.end(), [loader](auto&& loader_p) {
@@ -204,7 +209,7 @@ PixelDataFactory::from_file(std::filesystem::path const& filename, std::string_v
   return (*it)->from_file(filename);
 }
 
-PixelData
+SoftwareSurface
 PixelDataFactory::from_file(std::filesystem::path const& filename) const
 {
   const PixelDataLoader* loader = find_loader_by_filename(filename);
@@ -235,7 +240,7 @@ PixelDataFactory::from_file(std::filesystem::path const& filename) const
   }
 }
 
-PixelData
+SoftwareSurface
 PixelDataFactory::from_mem(std::span<uint8_t const> data,
                                  std::string const& mime_type,
                                  std::filesystem::path const& filename) const

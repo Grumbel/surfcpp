@@ -26,6 +26,7 @@
 
 namespace surf {
 
+class SoftwareSurface;
 class PixelDataLoader;
 
 class PixelDataFactory
@@ -54,10 +55,10 @@ public:
   PixelDataLoader const* find_loader_by_magic(const std::string& data) const;
   PixelDataLoader const* find_loader_by_magic(std::span<uint8_t const> data) const;
 
-  PixelData from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
-  PixelData from_file(std::filesystem::path const& filename) const;
-  PixelData from_file(std::filesystem::path const& filename, std::string_view loader) const;
-  PixelData from_file(std::filesystem::path const& filename, PixelDataLoader const& loader) const;
+  SoftwareSurface from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
+  SoftwareSurface from_file(std::filesystem::path const& filename) const;
+  SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader) const;
+  SoftwareSurface from_file(std::filesystem::path const& filename, PixelDataLoader const& loader) const;
 
 private:
   std::vector<std::unique_ptr<PixelDataLoader> > m_loader;

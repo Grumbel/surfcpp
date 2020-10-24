@@ -35,11 +35,11 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
 bool is_png(std::filesystem::path const& filename);
 
-PixelData load_from_file(std::filesystem::path const& filename);
-PixelData load_from_mem(std::span<uint8_t const> data);
+SoftwareSurface load_from_file(std::filesystem::path const& filename);
+SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
-void save(PixelData const& surface, std::filesystem::path const& filename);
-std::vector<uint8_t> save(PixelData const& surface);
+void save(SoftwareSurface const& surface, std::filesystem::path const& filename);
+std::vector<uint8_t> save(SoftwareSurface const& surface);
 
 void register_loader(PixelDataFactory& factory);
 

@@ -22,10 +22,12 @@
 #include <string>
 
 #include "pixel_data.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 
 class PixelDataFactory;
+class SoftwareSurface;
 
 class PixelDataLoader
 {
@@ -36,8 +38,8 @@ public:
   virtual bool supports_from_file() const = 0;
   virtual bool supports_from_mem() const = 0;
 
-  virtual PixelData from_file(std::filesystem::path const& filename) const = 0;
-  virtual PixelData from_mem(std::span<uint8_t const> data) const = 0;
+  virtual SoftwareSurface from_file(std::filesystem::path const& filename) const = 0;
+  virtual SoftwareSurface from_mem(std::span<uint8_t const> data) const = 0;
 };
 
 template<typename FromFileFunc, typename FromMemFunc>
@@ -56,7 +58,7 @@ public:
   bool supports_from_file() const override { return !std::is_null_pointer<FromFileFunc>::value; }
   bool supports_from_mem() const override { return !std::is_null_pointer<FromMemFunc>::value; }
 
- PixelData from_file(std::filesystem::path const& filename) const override {
+ SoftwareSurface from_file(std::filesystem::path const& filename) const override {
    if constexpr (std::is_null_pointer<FromFileFunc>::value) {
      return {};
    } else {
@@ -64,7 +66,7 @@ public:
    }
  }
 
-  PixelData from_mem(std::span<uint8_t const> data) const override {
+  SoftwareSurface from_mem(std::span<uint8_t const> data) const override {
     if constexpr (std::is_null_pointer<FromMemFunc>::value) {
       return {};
     } else {

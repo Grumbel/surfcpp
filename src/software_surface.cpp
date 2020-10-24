@@ -30,17 +30,13 @@ namespace surf {
 SoftwareSurface
 SoftwareSurface::from_file(std::filesystem::path const& filename)
 {
-  PixelData pixel_data = PixelData::from_file(filename);
-  return SoftwareSurface(std::move(pixel_data));
+  //PixelData pixel_data = PixelData::from_file(filename);
+  //return SoftwareSurface(std::move(pixel_data));
+  return {};
 }
 
 SoftwareSurface::SoftwareSurface() :
-  m_pixel_data(std::make_shared<PixelData>())
-{
-}
-
-SoftwareSurface::SoftwareSurface(PixelData data) :
-  m_pixel_data(std::make_shared<PixelData>(std::move(data)))
+  m_pixel_data()
 {
 }
 
@@ -62,6 +58,7 @@ SoftwareSurface::get_height() const
   return m_pixel_data->get_height();
 }
 
+#if 0
 PixelFormat
 SoftwareSurface::get_format() const
 {
@@ -103,6 +100,7 @@ SoftwareSurface::get_pixel(geom::ipoint const& position, RGBA& rgba) const
 {
   m_pixel_data->get_pixel(position, rgba);
 }
+#endif
 
 } // namespace surf
 

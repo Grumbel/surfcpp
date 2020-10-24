@@ -19,9 +19,10 @@
 
 #include <geom/size.hpp>
 
+#include "pixel_data.hpp"
+
 namespace surf {
 
-class PixelData;
 class RGB;
 
 enum class Transform
@@ -39,19 +40,243 @@ enum class Transform
   FLIP_HORIZONTAL = ROTATE_180_FLIP,
 };
 
-PixelData transform(PixelData const& surface, Transform mod);
-PixelData rotate90(PixelData const& surface);
-PixelData rotate180(PixelData const& surface);
-PixelData rotate270(PixelData const& surface);
-PixelData flip_vertical(PixelData const& surface);
-PixelData flip_horizontal(PixelData const& surface);
+template<typename Pixel>
+PixelData<Pixel> transform(PixelData<Pixel> const& src, Transform mod)
+{
+  switch (mod)
+  {
+    case Transform::ROTATE_0:
+      return src;
 
-PixelData halve(PixelData const& src);
-PixelData scale(PixelData const& src, geom::isize const& size);
-PixelData crop(PixelData const& src, geom::irect const& rect);
+    case Transform::ROTATE_90:
+      return rotate90(src);
 
-PixelData to_rgb(PixelData const& src);
-RGB average_color(PixelData const& src);
+    case Transform::ROTATE_180:
+      return rotate180(src);
+
+    case Transform::ROTATE_270:
+      return rotate270(src);
+
+    case Transform::ROTATE_0_FLIP:
+      return flip_vertical(src);
+
+    case Transform::ROTATE_90_FLIP:
+      // FIXME: Could be made faster
+      return flip_vertical(rotate90(src));
+
+    case Transform::ROTATE_180_FLIP:
+      return flip_horizontal(src);
+
+    case Transform::ROTATE_270_FLIP:
+      // FIXME: Could be made faster
+      return flip_vertical(rotate270(src));
+
+    default:
+      assert(false && "never reached");
+      return src;
+  }
+}
+
+template<typename Pixel>
+PixelData<Pixel> rotate90(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(geom::isize(src.get_size().height(), src.get_size().width()));
+
+  for(int y = 0; y < src.get_size().height(); ++y) {
+    for(int x = 0; x < src.get_size().width(); ++x) {
+      dst.put_pixel(geom::ipoint(src.get_size().height() - y - 1, x),
+                    src.get_pixel(geom::ipoint(x, y)));
+    }
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> rotate180(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(src.get_size());
+
+  for(int y = 0; y < src.get_size().height(); ++y) {
+    for(int x = 0; x < src.get_size().width(); ++x) {
+      dst.put_pixel(geom::ipoint(src.get_size().width() - x - 1, src.get_size().height() - 1 - y),
+                    src.get_pixel(geom::ipoint(x, y)));
+    }
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> rotate270(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(src.get_size());
+
+  for(int y = 0; y < src.get_size().height(); ++y) {
+    for(int x = 0; x < src.get_size().width(); ++x) {
+      dst.put_pixel(geom::ipoint(y, src.get_size().width() - 1 - x),
+                    src.get_pixel(geom::ipoint(x, y)));
+    }
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> flip_vertical(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(src.get_size());
+
+  for(int y = 0; y < src.get_size().height(); ++y) {
+    std::copy_n(src.get_row(y),
+                src.get_width(),
+                dst.get_row(src.get_size().height() - 1 - y));
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> flip_horizontal(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(src.get_size());
+
+  for(int y = 0; y < src.get_size().height(); ++y) {
+    for(int x = 0; x < src.get_size().width(); ++x) {
+      dst.put_pixel(geom::ipoint(src.get_size().width() - 1 - x, y),
+                    src.get_pixel(geom::ipoint(x, y)));
+    }
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> halve(PixelData<Pixel> const& src)
+{
+  PixelData<Pixel> dst(src.get_size() / 2);
+
+  for(int y = 0; y < dst.get_height(); ++y) {
+    for(int x = 0; x < dst.get_width(); ++x) {
+      Pixel pixel = src.get_pixel(geom::ipoint(x * 2, y * 2));
+      // FIXME: insert blending
+      dst.put_pixel(geom::ipoint(x, y), pixel);
+    }
+  }
+
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> scale(PixelData<Pixel> const& src, geom::isize const& size)
+{
+  if (src.get_size() == size) { return src; }
+  if (src.get_size() == geom::isize(0, 0)) { return PixelData<Pixel>(size); }
+
+  PixelData<Pixel> dst(size);
+
+  for(int y = 0; y < dst.get_height(); ++y) {
+    for(int x = 0; x < dst.get_width(); ++x) {
+      dst.put_pixel({x, y},
+                    src.get_pixel(geom::ipoint(x * src.get_size().width()  / dst.get_size().width(),
+                                               y * src.get_size().height() / dst.get_size().height())));
+    }
+  }
+  return dst;
+}
+
+template<typename Pixel>
+PixelData<Pixel> crop(PixelData<Pixel> const& src, geom::irect const& rect)
+{
+  // Clip the rectangle to the image
+  geom::irect clipped(std::clamp(rect.left(), 0, src.get_width()),
+                      std::clamp(rect.top(), 0, src.get_height()),
+                      std::clamp(rect.right(), 0, src.get_width()),
+                      std::clamp(rect.bottom(), 0, src.get_height()));
+
+  PixelData<Pixel> dst(clipped.size());
+
+  for(int y = clipped.top(); y < clipped.bottom(); ++y) {
+    std::copy_n(src.get_row(y) + clipped.left(),
+                clipped.width(),
+                dst.get_row(y - clipped.top()));
+  }
+
+  return dst;
+}
+
+// PixelData<Pixel> to_rgb(PixelData<Pixel> const& src);
+/*
+PixelData<Pixel> to_rgb(PixelData<Pixel> const& src)
+{
+  switch(src.get_format())
+  {
+    case PixelFormat::RGB:
+      return src;
+
+    case PixelFormat::RGBA: {
+      PixelData<Pixel> dst(PixelFormat::RGB, src.get_size());
+
+      int num_pixels = src.get_width() * src.get_height();
+      uint8_t const* src_pixels = src.get_data();
+      uint8_t* dst_pixels = dst.get_data();
+
+      for(int i = 0; i < num_pixels; ++i)
+      {
+        dst_pixels[3*i+0] = src_pixels[4*i+0];
+        dst_pixels[3*i+1] = src_pixels[4*i+1];
+        dst_pixels[3*i+2] = src_pixels[4*i+2];
+      }
+
+      return dst;
+    }
+
+    default:
+      assert(false && "PixelData::to_rgb: Unknown format");
+      return {};
+  }
+}
+*/
+
+/*
+template<typename Pixel>
+RGB average_color(PixelData<Pixel> const& src)
+{
+  if (src.empty()) {
+    return {};
+  }
+
+  unsigned int total_r = 0;
+  unsigned int total_g = 0;
+  unsigned int total_b = 0;
+
+  for(int y = 0; y < src.get_height(); ++y)
+  {
+    unsigned int row_r = 0;
+    unsigned int row_g = 0;
+    unsigned int row_b = 0;
+
+    for(int x = 0; x < src.get_width(); ++x)
+    {
+      RGB rgb;
+      src.get_pixel({x, y}, rgb);
+
+      row_r += rgb.r;
+      row_g += rgb.g;
+      row_b += rgb.b;
+    }
+
+    total_r += row_r / src.get_width();
+    total_g += row_g / src.get_width();
+    total_b += row_b / src.get_width();
+  }
+
+  unsigned int num_rows = static_cast<unsigned int>(src.get_height());
+  return RGB(static_cast<uint8_t>(total_r / num_rows),
+             static_cast<uint8_t>(total_g / num_rows),
+             static_cast<uint8_t>(total_b / num_rows));
+}
+*/
 
 } // namespace surf
 

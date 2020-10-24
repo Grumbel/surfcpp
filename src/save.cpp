@@ -25,12 +25,12 @@
 
 namespace surf {
 
-void save(PixelData const& pixeldata, std::filesystem::path const& path, std::string_view format)
+void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format)
 {
   if (format == "png") {
-    surf::png::save(pixeldata, path);
+    surf::png::save(surface, path);
   } else if (format == "jpeg") {
-    surf::jpeg::save(pixeldata, path, 70);
+    surf::jpeg::save(surface, path, 70);
   } else {
     throw std::runtime_error("unsupported format");
   }

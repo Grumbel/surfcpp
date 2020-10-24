@@ -19,7 +19,7 @@
 
 namespace surf {
 
-class PixelData;
+class IPixelData;
 class RGB;
 class RGBA;
 class SoftwareSurface;

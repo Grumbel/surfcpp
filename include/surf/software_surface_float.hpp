@@ -26,6 +26,7 @@
 #include "software_surface.hpp"
 
 namespace surf {
+#if 0
 
 class SoftwareSurfaceFloat;
 
@@ -48,7 +49,7 @@ public:
   geom::isize get_size()   const;
   int  get_width()  const;
   int  get_height() const;
-  int  get_pitch()  const;
+  int  get_row_length()  const;
 
   void put_pixel(geom::ipoint const& pos, const Color& rgba);
   void get_pixel(geom::ipoint const& pos, Color& rgba) const;
@@ -57,6 +58,7 @@ private:
   geom::isize m_size;
   std::vector<float> m_pixels;
 };
+#endif
 
 } // namespace surf
 

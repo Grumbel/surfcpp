@@ -26,7 +26,7 @@
 
 namespace surf {
 
-void save(PixelData const& pixeldata, std::filesystem::path const& path, std::string_view format);
+void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format);
 
 } // namespace surf
 

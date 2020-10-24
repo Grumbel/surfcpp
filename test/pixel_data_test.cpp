@@ -12,20 +12,20 @@ using namespace surf;
 
 TEST(PixelDataTest, creation)
 {
-  PixelData pixeldata;
+  PixelData<RGBPixel> pixeldata;
   EXPECT_TRUE(pixeldata.empty());
 
-  pixeldata = PixelData::create(PixelFormat::RGB, geom::isize(64, 32));
+  pixeldata = PixelData<RGBPixel>(geom::isize(64, 32));
   EXPECT_FALSE(pixeldata.empty());
   EXPECT_EQ(pixeldata.get_size(), geom::isize(64, 32));
 }
 
 TEST(PixelDataTest, equality)
 {
-  PixelData black = PixelData::create(PixelFormat::RGB, geom::isize(64, 32), Color::black.to_rgba());
-  PixelData white = PixelData::create(PixelFormat::RGB, geom::isize(64, 32), Color::white.to_rgba());
+  PixelData<RGBPixel> black(geom::isize(64, 32), RGBPixel{0, 0, 0});
+  PixelData<RGBPixel> white(geom::isize(64, 32), RGBPixel{255, 128, 64});
 
-  PixelData pixeldata = PixelData::create(PixelFormat::RGB, geom::isize(64, 32), Color::white.to_rgba());
+  PixelData<RGBPixel> pixeldata(geom::isize(64, 32), RGBPixel{255, 128, 64});
   EXPECT_FALSE(pixeldata.empty());
 
   EXPECT_EQ(pixeldata.get_size(), geom::isize(64, 32));
@@ -34,15 +34,45 @@ TEST(PixelDataTest, equality)
   EXPECT_NE(pixeldata, black);
 }
 
+TEST(PixelDataTest, blit_to)
+{
+  PixelData<RGBPixel> white(geom::isize(4, 3), RGBPixel{255, 255, 255});
+
+  PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
+  PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
+
+  white.blit_to(pixeldata, geom::ipoint(0, 0));
+  white.blit_to(pixeldata, geom::ipoint(4, 0));
+  white.blit_to(pixeldata, geom::ipoint(0, 3));
+  white.blit_to(pixeldata, geom::ipoint(4, 3));
+
+  EXPECT_EQ(pixeldata, pixeldata_expected);
+}
+
+TEST(PixelDataTest, blit_to_convert)
+{
+  PixelData<RGBAPixel> white(geom::isize(4, 3), RGBAPixel{255, 255, 255, 255});
+
+  PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
+  PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
+
+  white.blit_to(pixeldata, geom::ipoint(0, 0));
+  white.blit_to(pixeldata, geom::ipoint(4, 0));
+  white.blit_to(pixeldata, geom::ipoint(0, 3));
+  white.blit_to(pixeldata, geom::ipoint(4, 3));
+
+  EXPECT_EQ(pixeldata, pixeldata_expected);
+}
+
 TEST(PixelDataTest, empty)
 {
-  PixelData pixeldata;
+  PixelData<RGBPixel> pixeldata;
   EXPECT_TRUE(pixeldata.empty());
 
-  pixeldata = PixelData::create(PixelFormat::RGB, geom::isize(64, 32));
+  pixeldata = PixelData<RGBPixel>(geom::isize(64, 32));
   EXPECT_FALSE(pixeldata.empty());
 
-  pixeldata = PixelData::create(PixelFormat::RGB, geom::isize(0, 0));
+  pixeldata = PixelData<RGBPixel>(geom::isize(0, 0));
   EXPECT_TRUE(pixeldata.empty());
 }
 
