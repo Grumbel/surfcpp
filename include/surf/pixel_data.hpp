@@ -177,6 +177,7 @@ public:
   virtual int get_width() const = 0;
   virtual int get_height() const = 0;
   virtual int get_row_length() const = 0;
+  virtual int get_pitch() const = 0;
   virtual void* get_row_data(int y) = 0;
   virtual void const* get_row_data(int y) const = 0;
   virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
@@ -227,6 +228,7 @@ public:
   int get_width() const override { return m_size.width(); }
   int get_height() const override { return m_size.height(); }
   int get_row_length() const override { return m_row_length; }
+  int get_pitch() const override { return m_row_length * sizeof(Pixel); }
 
   bool empty() const override { return m_pixels.empty(); }
 

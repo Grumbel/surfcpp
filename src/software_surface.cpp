@@ -91,6 +91,14 @@ SoftwareSurface::get_height() const
   return m_pixel_data->get_height();
 }
 
+int
+SoftwareSurface::get_pitch() const
+{
+  if (!m_pixel_data) { return 0; }
+
+  return m_pixel_data->get_pitch();
+}
+
 PixelFormat
 SoftwareSurface::get_format() const
 {
