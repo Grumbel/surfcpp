@@ -26,6 +26,7 @@ namespace detail {
 
 enum class PixelFormatName
 {
+  NONE,
   RGB,
   RGBA
 };
@@ -58,10 +59,11 @@ public:
       std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00,
       std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000,
       std::endian::native == std::endian::big ? 0x00000000 : 0xff000000};
+  static constexpr detail::PixelFormatImpl NONE{detail::PixelFormatName::NONE, 0, 0, 0, 0, 0, 0};
 
 public:
-  PixelFormat() : m_desc(nullptr) {}
-  PixelFormat(detail::PixelFormatImpl const& desc) :
+  constexpr PixelFormat() : m_desc(nullptr) {}
+  constexpr PixelFormat(detail::PixelFormatImpl const& desc) :
     m_desc(&desc)
   {}
 
