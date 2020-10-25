@@ -74,13 +74,18 @@ public:
   }
 
   template<typename Pixel>
-  std::optional<PixelData<Pixel>> as_pixeldata() const {
-    PixelData<Pixel> const* ptr = dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get());
-    if (ptr == nullptr) {
-      return {};
-    } else {
-      return *ptr;
-    }
+  PixelData<Pixel> const* as_pixeldata_ptr() const {
+    return dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get());
+  }
+
+  template<typename Pixel>
+  PixelData<Pixel> const& as_pixeldata() const {
+    return dynamic_cast<PixelData<Pixel> const&>(*m_pixel_data);
+  }
+
+  template<typename Pixel>
+  PixelData<Pixel>& as_pixeldata() {
+    return dynamic_cast<PixelData<Pixel>&>(*m_pixel_data);
   }
 
   bool operator==(SoftwareSurface const& rhs) const {
