@@ -133,7 +133,7 @@ SoftwareSurface::get_row_data(int y) const
 Color
 SoftwareSurface::get_pixel(geom::ipoint const& position) const
 {
-  //m_pixel_data->get_pixel(position, rgb);
+  return m_pixel_data->get_pixel_color(position);
 }
 
 } // namespace surf
