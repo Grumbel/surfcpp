@@ -20,6 +20,7 @@
 #include <geom/size.hpp>
 
 #include "pixel_data.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 
@@ -277,6 +278,41 @@ RGB average_color(PixelData<Pixel> const& src)
              static_cast<uint8_t>(total_b / num_rows));
 }
 */
+
+#define SOFTWARE_SURFACE_LIFT(function, ...)                            \
+  template<typename ...Args>                                            \
+  SoftwareSurface function(SoftwareSurface const& surface,              \
+                           Args&&... args)                              \
+  {                                                                     \
+    switch (surface.get_format()) {                                     \
+      case PixelFormat::NONE:                                           \
+        return SoftwareSurface();                                       \
+                                                                        \
+      case PixelFormat::RGB:                                            \
+        return SoftwareSurface(                                         \
+          function(surface.as_pixeldata<RGBPixel>(),                    \
+                   std::forward<Args>(args)...));                       \
+                                                                        \
+      case PixelFormat::RGBA:                                           \
+        return SoftwareSurface(                                         \
+          function(surface.as_pixeldata<RGBAPixel>(),                   \
+                   std::forward<Args>(args)...));                       \
+      default:                                                          \
+        log_unreachable();                                              \
+        return {};                                                      \
+    }                                                                   \
+  }
+
+SOFTWARE_SURFACE_LIFT(transform)
+SOFTWARE_SURFACE_LIFT(rotate90)
+SOFTWARE_SURFACE_LIFT(rotate180)
+SOFTWARE_SURFACE_LIFT(rotate270)
+SOFTWARE_SURFACE_LIFT(flip_horizontal)
+SOFTWARE_SURFACE_LIFT(flip_vertical)
+
+SOFTWARE_SURFACE_LIFT(halve)
+SOFTWARE_SURFACE_LIFT(scale)
+SOFTWARE_SURFACE_LIFT(crop)
 
 } // namespace surf
 

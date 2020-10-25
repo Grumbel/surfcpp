@@ -22,7 +22,6 @@
 #include <geom/fwd.hpp>
 
 #include "pixel_data.hpp"
-#include "transform.hpp"
 
 namespace surf {
 
