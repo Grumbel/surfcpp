@@ -40,7 +40,8 @@ SoftwareSurface::from_file(std::filesystem::path const& filename)
   return g_pixeldata_fatory.from_file(filename);
 }
 
-SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader)
+SoftwareSurface
+SoftwareSurface::from_file(std::filesystem::path const& filename, std::string_view loader)
 {
   return g_pixeldata_fatory.from_file(filename, loader);
 }
