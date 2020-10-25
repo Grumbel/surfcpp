@@ -5,6 +5,7 @@
 #include <geom/io.hpp>
 
 #include <surf/software_surface.hpp>
+#include <surf/transform.hpp>
 #include <surf/rgb.hpp>
 
 using namespace surf;
@@ -15,7 +16,7 @@ TEST(SoftwareSurfaceTest, default_is_valid)
 
   EXPECT_EQ(geom::isize(0, 0), pixel_data.get_size());
   EXPECT_EQ(geom::isize(0, 0), halve(pixel_data).get_size());
-  EXPECT_EQ(geom::isize(32, 16), scale(pixel_data, geom::isize(32, 16)).get_size());
+  EXPECT_EQ(geom::isize(0, 0), scale(pixel_data, geom::isize(32, 16)).get_size());
   EXPECT_EQ(geom::isize(0, 0), crop(pixel_data, geom::irect(0, 0, 16, 16)).get_size());
 
   transform(pixel_data, Transform::ROTATE_0);
@@ -24,6 +25,7 @@ TEST(SoftwareSurfaceTest, default_is_valid)
   rotate270(pixel_data);
   flip_horizontal(pixel_data);
   flip_vertical(pixel_data);
+  SUCCEED();
 #if 0
   to_rgb(pixel_data);
   average_color(pixel_data);

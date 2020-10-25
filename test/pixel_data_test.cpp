@@ -10,6 +10,27 @@
 
 using namespace surf;
 
+TEST(PixelDataTest, default_is_valid)
+{
+  PixelData<RGBPixel> pixel_data;
+
+  EXPECT_EQ(geom::isize(0, 0), pixel_data.get_size());
+  EXPECT_EQ(geom::isize(0, 0), halve(pixel_data).get_size());
+  EXPECT_EQ(geom::isize(32, 16), scale(pixel_data, geom::isize(32, 16)).get_size());
+  EXPECT_EQ(geom::isize(0, 0), crop(pixel_data, geom::irect(0, 0, 16, 16)).get_size());
+
+  transform(pixel_data, Transform::ROTATE_0);
+  rotate90(pixel_data);
+  rotate180(pixel_data);
+  rotate270(pixel_data);
+  flip_horizontal(pixel_data);
+  flip_vertical(pixel_data);
+#if 0
+  to_rgb(pixel_data);
+  average_color(pixel_data);
+#endif
+}
+
 TEST(PixelDataTest, creation)
 {
   PixelData<RGBPixel> pixeldata;
