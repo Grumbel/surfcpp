@@ -84,7 +84,6 @@ SoftwareSurface::get_height() const
   return m_pixel_data->get_height();
 }
 
-#if 0
 PixelFormat
 SoftwareSurface::get_format() const
 {
@@ -103,30 +102,27 @@ SoftwareSurface::get_bits_per_pixel() const
   return m_pixel_data->get_format().bits_per_pixel();
 }
 
-uint8_t const*
+void const*
 SoftwareSurface::get_data() const
 {
-  return m_pixel_data->get_data();
+  if (!m_pixel_data) { return nullptr; }
+
+  return m_pixel_data->get_row_data(0);
 }
 
-uint8_t const*
+void const*
 SoftwareSurface::get_row_data(int y) const
 {
+  if (!m_pixel_data) { return nullptr; }
+
   return m_pixel_data->get_row_data(y);
 }
 
-void
-SoftwareSurface::get_pixel(geom::ipoint const& position, RGB& rgb) const
+Color
+SoftwareSurface::get_pixel(geom::ipoint const& position) const
 {
-  m_pixel_data->get_pixel(position, rgb);
+  //m_pixel_data->get_pixel(position, rgb);
 }
-
-void
-SoftwareSurface::get_pixel(geom::ipoint const& position, RGBA& rgba) const
-{
-  m_pixel_data->get_pixel(position, rgba);
-}
-#endif
 
 } // namespace surf
 

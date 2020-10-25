@@ -47,30 +47,25 @@ public:
   geom::isize get_size() const;
   int get_width() const;
   int get_height() const;
-  //PixelFormat get_format() const;
+  int get_pitch() const;
+  PixelFormat get_format() const;
 
   //SoftwareSurface to_rgb() const;
   //RGB get_average_color() const;
 
-  //void get_pixel(geom::ipoint const& position, RGB& rgb) const;
-  //void get_pixel(geom::ipoint const& position, RGBA& rgba) const;
+  Color get_pixel(geom::ipoint const& position) const;
 
-  //int get_bytes_per_pixel() const;
-  //int get_bits_per_pixel() const;
+  void* get_data();
+  void* get_row_data(int y);
 
-  uint8_t const* get_data() const;
-  uint8_t const* get_row_data(int y) const;
+  void const* get_data() const;
+  void const* get_row_data(int y) const;
 
   IPixelData const& get_pixel_data() const { return *m_pixel_data; }
 
   template<typename Pixel>
   PixelData<Pixel> convert_to() const {
     return {};
-  }
-
-  template<typename Pixel>
-  bool is_pixel_format() const {
-    return dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get()) != nullptr;
   }
 
   template<typename Pixel>

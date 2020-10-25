@@ -349,7 +349,7 @@ void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
     IPixelData const& src = surface.get_pixel_data();
 
     // FIXME: handle additional color types
-    int color_type = surface.is_pixel_format<RGBPixel>() ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA;
+    int color_type = surface.get_format() == PixelFormat::RGB ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA;
 
     png_set_IHDR(png_ptr, info_ptr,
                  static_cast<png_uint_32>(src.get_width()),
@@ -393,7 +393,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface)
   IPixelData const& src = surface.get_pixel_data();
 
   // FIXME: handle additional color types
-  int color_type = surface.is_pixel_format<RGBPixel>() ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA;
+  int color_type = surface.get_format() == PixelFormat::RGB ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA;
 
   png_set_IHDR(png_ptr, info_ptr,
                static_cast<png_uint_32>(src.get_width()),
