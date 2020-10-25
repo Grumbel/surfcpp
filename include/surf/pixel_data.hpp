@@ -175,12 +175,6 @@ template<typename Pixel>
 class PixelData : public IPixelData
 {
 public:
-  /*
-  static PixelData<T> from_file(std::filesystem::path const& filename);
-  static PixelData<T> from_file(std::filesystem::path const& filename, std::string_view loader);
-  static PixelData<T> create(PixelFormat format, const geom::isize& size, RGBA const& rgba = RGBA(0, 0, 0, 0));
-  */
-public:
   using value_type = Pixel;
 
 public:

@@ -24,15 +24,41 @@
 
 #include "rgb.hpp"
 #include "rgba.hpp"
+#include "pixel_data_factory.hpp"
 
 namespace surf {
+
+namespace {
+
+PixelDataFactory g_pixeldata_fatory;
+
+} // namespace
 
 SoftwareSurface
 SoftwareSurface::from_file(std::filesystem::path const& filename)
 {
-  //PixelData pixel_data = PixelData::from_file(filename);
-  //return SoftwareSurface(std::move(pixel_data));
-  return {};
+  return g_pixeldata_fatory.from_file(filename);
+}
+
+SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader)
+{
+  return g_pixeldata_fatory.from_file(filename, loader);
+}
+
+SoftwareSurface
+SoftwareSurface::create(PixelFormat format, geom::isize const& size, Color const& color)
+{
+  switch (format)
+  {
+    case PixelFormat::RGB:
+      return SoftwareSurface(PixelData<RGBPixel>(size, convert<Color, RGBPixel>(color)));
+
+    case PixelFormat::RGBA:
+      return SoftwareSurface(PixelData<RGBAPixel>(size, convert<Color, RGBAPixel>(color)));
+
+    default:
+      throw std::runtime_error("unsupported PixelFormat");
+  }
 }
 
 SoftwareSurface::SoftwareSurface() :
