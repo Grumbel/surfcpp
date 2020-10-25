@@ -69,37 +69,49 @@ SoftwareSurface::SoftwareSurface() :
 geom::isize
 SoftwareSurface::get_size()  const
 {
+  if (!m_pixel_data) { return {0, 0}; }
+
   return m_pixel_data->get_size();
 }
 
 int
 SoftwareSurface::get_width()  const
 {
+  if (!m_pixel_data) { return 0; }
+
   return m_pixel_data->get_width();
 }
 
 int
 SoftwareSurface::get_height() const
 {
+  if (!m_pixel_data) { return 0; }
+
   return m_pixel_data->get_height();
 }
 
 PixelFormat
 SoftwareSurface::get_format() const
 {
+  if (!m_pixel_data) { return PixelFormat::NONE; }
+
   return m_pixel_data->get_format();
 }
 
-int
-SoftwareSurface::get_bytes_per_pixel() const
+void*
+SoftwareSurface::get_data()
 {
-  return m_pixel_data->get_format().bytes_per_pixel();
+  if (!m_pixel_data) { return nullptr; }
+
+  return m_pixel_data->get_row_data(0);
 }
 
-int
-SoftwareSurface::get_bits_per_pixel() const
+void*
+SoftwareSurface::get_row_data(int y)
 {
-  return m_pixel_data->get_format().bits_per_pixel();
+  if (!m_pixel_data) { return nullptr; }
+
+  return m_pixel_data->get_row_data(y);
 }
 
 void const*
