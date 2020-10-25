@@ -40,7 +40,7 @@ public:
 
   template<typename Pixel>
   SoftwareSurface(PixelData<Pixel> data) :
-    m_pixel_data(std::make_shared<PixelData<Pixel>>(std::move(data)))
+    m_pixel_data(std::make_unique<PixelData<Pixel>>(std::move(data)))
   {}
 
   geom::isize get_size() const;
@@ -87,7 +87,7 @@ public:
   }
 
 private:
-  std::shared_ptr<IPixelData const> m_pixel_data;
+  std::unique_ptr<IPixelData> m_pixel_data;
 };
 
 inline
