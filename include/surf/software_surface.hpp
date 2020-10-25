@@ -39,7 +39,7 @@ public:
   SoftwareSurface();
 
   template<typename Pixel>
-  SoftwareSurface(PixelData<Pixel> data) :
+  explicit SoftwareSurface(PixelData<Pixel> data) :
     m_pixel_data(std::make_unique<PixelData<Pixel>>(std::move(data)))
   {}
 

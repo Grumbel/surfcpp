@@ -106,12 +106,12 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename, int scale,
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface;
+    return SoftwareSurface{surface};
   } else {
-    return transform(surface, modifier); // FIXME: SLOW
+    return SoftwareSurface{transform(surface, modifier)}; // FIXME: SLOW
   }
 #else
-  return surface;
+  return SoftwareSurface{surface};
 #endif
 }
 
@@ -129,12 +129,12 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale, geom::is
   }
 
   if (modifier == Transform::ROTATE_0) {
-    return surface;
+    return SoftwareSurface(surface);
   } else {
-    return transform(surface, modifier); // FIXME: SLOW;
+    return SoftwareSurface(transform(surface, modifier)); // FIXME: SLOW;
   }
 #else
-  return surface;
+  return SoftwareSurface(surface);
 #endif
 }
 

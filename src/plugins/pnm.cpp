@@ -75,7 +75,7 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
     throw std::runtime_error("PNM::load_from_mem(): Unhandled PNM format: '" + pnm.get_magic() + "'");
   }
 
-  return dst;
+  return SoftwareSurface(dst);
 }
 
 } // namespace pnm

@@ -63,7 +63,7 @@ MagickImage2PixelData(const Magick::Image& image)
       }
     }
 
-    return dst;
+    return SoftwareSurface(dst);
   }
   else
   {
@@ -84,7 +84,7 @@ MagickImage2PixelData(const Magick::Image& image)
       }
     }
 
-    return dst;
+    return SoftwareSurface(dst);
   }
 }
 

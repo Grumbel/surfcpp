@@ -70,7 +70,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
     memcpy(dst.get_data(), dds.get_data(), dds.get_length());
 
-    return dst;
+    return SoftwareSurface(dst);
   }
 }
 
