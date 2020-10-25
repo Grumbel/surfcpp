@@ -34,7 +34,7 @@ class SoftwareSurface
 public:
   static SoftwareSurface from_file(std::filesystem::path const& filename);
   static SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader);
-  static SoftwareSurface create(PixelFormat format, geom::isize const& size, Color const& color);
+  static SoftwareSurface create(PixelFormat format, geom::isize const& size, Color const& color = {});
 
 public:
   SoftwareSurface();
