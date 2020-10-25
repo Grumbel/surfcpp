@@ -28,6 +28,7 @@
 #include <geom/size.hpp>
 #include <logmich/log.hpp>
 
+#include "color.hpp"
 #include "rgba.hpp"
 #include "pixel_format.hpp"
 
@@ -64,6 +65,7 @@ struct PPixelFormat
 template<>
 struct PPixelFormat<RGBPixel>
 {
+  static constexpr PixelFormat format = PixelFormat::RGB;
   static constexpr int bits_per_pixel = 24;
   static constexpr int bytes_per_pixel = 3;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff;
@@ -75,6 +77,7 @@ struct PPixelFormat<RGBPixel>
 template<>
 struct PPixelFormat<RGBAPixel>
 {
+  static constexpr PixelFormat format = PixelFormat::RGBA;
   static constexpr int bits_per_pixel = 32;
   static constexpr int bytes_per_pixel = 4;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
@@ -149,6 +152,7 @@ class IPixelData
 {
 public:
   virtual ~IPixelData() {}
+  virtual PixelFormat get_format() const = 0;
   virtual geom::isize get_size() const = 0;
   virtual int get_width() const = 0;
   virtual int get_height() const = 0;
@@ -195,6 +199,8 @@ public:
     m_row_length(m_size.width()),
     m_pixels(std::move(pixels))
   {}
+
+  PixelFormat get_format() const override { return PPixelFormat<Pixel>::format; }
 
   geom::isize get_size() const override { return m_size; }
   int get_width() const override { return m_size.width(); }
