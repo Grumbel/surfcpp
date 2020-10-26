@@ -60,12 +60,20 @@ TEST(SoftwareSurfaceTest, move)
   // EXPECT_EQ(geom::isize(32, 16), tmp.get_size());
 }
 
-TEST(SoftwareSurfaceTest, convert)
+TEST(SoftwareSurfaceTest, convert_to)
 {
   SoftwareSurface lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
   SoftwareSurface rhs = lhs.convert_to(PixelFormat::RGBA);
 
   EXPECT_EQ(lhs.get_size(), rhs.get_size());
+}
+
+TEST(SoftwareSurfaceTest, blit_to)
+{
+  SoftwareSurface src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+
+  src.blit_to(dst, geom::ipoint(1, 2));
 }
 
 /* EOF */

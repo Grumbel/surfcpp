@@ -107,6 +107,20 @@ SoftwareSurface::get_format() const
   return m_pixel_data->get_format();
 }
 
+void
+SoftwareSurface::blit_to(SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    (*this),
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      src_as_pixeldata.blit_to(dst_as_pixeldata, pos)));
+}
+
 SoftwareSurface
 SoftwareSurface::convert_to(PixelFormat format) const
 {

@@ -51,7 +51,7 @@ public:
   int get_pitch() const;
   PixelFormat get_format() const;
 
-  void blit_to(SoftwareSurface const& dst, geom::ipoint const& pos);
+  void blit_to(SoftwareSurface& dst, geom::ipoint const& pos);
   SoftwareSurface convert_to(PixelFormat format) const;
 
   //SoftwareSurface to_rgb() const;
