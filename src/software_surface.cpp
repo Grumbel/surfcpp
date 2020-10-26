@@ -108,7 +108,7 @@ SoftwareSurface::get_format() const
 }
 
 void
-SoftwareSurface::blit_to(SoftwareSurface& dst, geom::ipoint const& pos)
+SoftwareSurface::blit_to(SoftwareSurface& dst, geom::ipoint const& pos) const
 {
   SOFTWARE_SURFACE_UNWRAP(
     (*this),

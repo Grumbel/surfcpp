@@ -12,7 +12,7 @@ using namespace surf;
 
 TEST(PixelDataTest, default_is_valid)
 {
-  PixelData<RGBPixel> pixel_data;
+  PixelData<RGBPixel> const pixel_data;
 
   EXPECT_EQ(geom::isize(0, 0), pixel_data.get_size());
   EXPECT_EQ(geom::isize(0, 0), halve(pixel_data).get_size());
@@ -43,10 +43,10 @@ TEST(PixelDataTest, creation)
 
 TEST(PixelDataTest, equality)
 {
-  PixelData<RGBPixel> black(geom::isize(64, 32), RGBPixel{0, 0, 0});
-  PixelData<RGBPixel> white(geom::isize(64, 32), RGBPixel{255, 128, 64});
+  PixelData<RGBPixel> const black(geom::isize(64, 32), RGBPixel{0, 0, 0});
+  PixelData<RGBPixel> const white(geom::isize(64, 32), RGBPixel{255, 128, 64});
 
-  PixelData<RGBPixel> pixeldata(geom::isize(64, 32), RGBPixel{255, 128, 64});
+  PixelData<RGBPixel> const pixeldata(geom::isize(64, 32), RGBPixel{255, 128, 64});
   EXPECT_FALSE(pixeldata.empty());
 
   EXPECT_EQ(pixeldata.get_size(), geom::isize(64, 32));
@@ -60,7 +60,7 @@ TEST(PixelDataTest, equality)
 
 TEST(PixelDataTest, blit_to)
 {
-  PixelData<RGBPixel> white(geom::isize(4, 3), RGBPixel{255, 255, 255});
+  PixelData<RGBPixel> const white(geom::isize(4, 3), RGBPixel{255, 255, 255});
 
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
   PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
@@ -75,10 +75,10 @@ TEST(PixelDataTest, blit_to)
 
 TEST(PixelDataTest, blit_to_convert)
 {
-  PixelData<RGBAPixel> white(geom::isize(4, 3), RGBAPixel{255, 255, 255, 255});
+  PixelData<RGBAPixel> const white(geom::isize(4, 3), RGBAPixel{255, 255, 255, 255});
 
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
-  PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
+  PixelData<RGBPixel> const pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
 
   white.blit_to(pixeldata, geom::ipoint(0, 0));
   white.blit_to(pixeldata, geom::ipoint(4, 0));
@@ -90,8 +90,8 @@ TEST(PixelDataTest, blit_to_convert)
 
 TEST(PixelDataTest, convert)
 {
-  PixelData<RGBPixel> pixeldata_rgb(geom::isize(64, 32));
-  PixelData<RGBAPixel> pixeldata_rgba = pixeldata_rgb.convert_to<RGBAPixel>();
+  PixelData<RGBPixel> const pixeldata_rgb(geom::isize(64, 32));
+  PixelData<RGBAPixel> const pixeldata_rgba = pixeldata_rgb.convert_to<RGBAPixel>();
 
   EXPECT_EQ(pixeldata_rgb.get_size(), pixeldata_rgba.get_size());
 }
