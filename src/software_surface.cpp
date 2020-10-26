@@ -24,13 +24,13 @@
 
 #include "rgb.hpp"
 #include "rgba.hpp"
-#include "pixel_data_factory.hpp"
+#include "software_surface_factory.hpp"
 
 namespace surf {
 
 namespace {
 
-PixelDataFactory g_pixeldata_fatory;
+SoftwareSurfaceFactory g_pixeldata_fatory;
 
 } // namespace
 

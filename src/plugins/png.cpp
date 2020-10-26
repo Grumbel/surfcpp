@@ -25,8 +25,8 @@
 
 #include <logmich/log.hpp>
 
-#include "pixel_data_factory.hpp"
-#include "pixel_data_loader.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 
 namespace surf {
 namespace png {
@@ -417,7 +417,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface)
   return std::move(mem.data);
 }
 
-void register_loader(PixelDataFactory& factory)
+void register_loader(SoftwareSurfaceFactory& factory)
 {
   auto loader = make_loader("png", load_from_file, load_from_mem);
 

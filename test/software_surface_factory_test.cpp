@@ -3,13 +3,13 @@
 
 #include <geom/rect.hpp>
 
-#include <surf/pixel_data_factory.hpp>
+#include <surf/software_surface_factory.hpp>
 
 using namespace surf;
 
 TEST(SoftwareSurfaceFactoryTest, construction)
 {
-  PixelDataFactory pixeldata_factory;
+  SoftwareSurfaceFactory software_surface_factory;
 }
 
 /* EOF */

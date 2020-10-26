@@ -23,8 +23,8 @@ class IPixelData;
 class RGB;
 class RGBA;
 class SoftwareSurface;
-class PixelDataFactory;
-class PixelDataLoader;
+class SoftwareSurfaceFactory;
+class SoftwareSurfaceLoader;
 class PixelFormat;
 enum class Transform;
 

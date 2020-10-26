@@ -27,49 +27,49 @@
 namespace surf {
 
 class SoftwareSurface;
-class PixelDataLoader;
+class SoftwareSurfaceLoader;
 
-class PixelDataFactory
+class SoftwareSurfaceFactory
 {
 private:
-  typedef std::map<std::string, const PixelDataLoader*> ExtensionMap;
-  typedef std::map<std::string, const PixelDataLoader*> MimeTypeMap;
-  typedef std::map<std::string, const PixelDataLoader*> MagicMap;
+  typedef std::map<std::string, const SoftwareSurfaceLoader*> ExtensionMap;
+  typedef std::map<std::string, const SoftwareSurfaceLoader*> MimeTypeMap;
+  typedef std::map<std::string, const SoftwareSurfaceLoader*> MagicMap;
 
 public:
-  PixelDataFactory();
-  ~PixelDataFactory();
+  SoftwareSurfaceFactory();
+  ~SoftwareSurfaceFactory();
 
-  void add_loader(std::unique_ptr<PixelDataLoader> loader);
+  void add_loader(std::unique_ptr<SoftwareSurfaceLoader> loader);
   bool has_supported_extension(std::filesystem::path const& filename);
 
   /** Files are handled in the order of mime-type, extension, magic,
       if one fails, the next in line is tried. Extension is the most
       important one, as it is used to filter valid files when
       generating file lists */
-  void register_by_magic(PixelDataLoader const& loader, const std::string& magic);
-  void register_by_mime_type(PixelDataLoader const& loader, const std::string& mime_type);
-  void register_by_extension(PixelDataLoader const& loader, const std::string& extension);
+  void register_by_magic(SoftwareSurfaceLoader const& loader, const std::string& magic);
+  void register_by_mime_type(SoftwareSurfaceLoader const& loader, const std::string& mime_type);
+  void register_by_extension(SoftwareSurfaceLoader const& loader, const std::string& extension);
 
-  PixelDataLoader const* find_loader_by_filename(std::filesystem::path const& filename) const;
-  PixelDataLoader const* find_loader_by_magic(const std::string& data) const;
-  PixelDataLoader const* find_loader_by_magic(std::span<uint8_t const> data) const;
+  SoftwareSurfaceLoader const* find_loader_by_filename(std::filesystem::path const& filename) const;
+  SoftwareSurfaceLoader const* find_loader_by_magic(const std::string& data) const;
+  SoftwareSurfaceLoader const* find_loader_by_magic(std::span<uint8_t const> data) const;
 
   SoftwareSurface from_mem(std::span<uint8_t const> data, std::string const& mime_type, std::filesystem::path const& filename) const;
   SoftwareSurface from_file(std::filesystem::path const& filename) const;
   SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader) const;
-  SoftwareSurface from_file(std::filesystem::path const& filename, PixelDataLoader const& loader) const;
+  SoftwareSurface from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const;
 
 private:
-  std::vector<std::unique_ptr<PixelDataLoader> > m_loader;
+  std::vector<std::unique_ptr<SoftwareSurfaceLoader> > m_loader;
 
   ExtensionMap m_extension_map;
   MimeTypeMap  m_mime_type_map;
   MagicMap m_magic_map;
 
 private:
-  PixelDataFactory(const PixelDataFactory&);
-  PixelDataFactory& operator=(const PixelDataFactory&);
+  SoftwareSurfaceFactory(const SoftwareSurfaceFactory&);
+  SoftwareSurfaceFactory& operator=(const SoftwareSurfaceFactory&);
 };
 
 } // namespace surf

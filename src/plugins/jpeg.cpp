@@ -19,8 +19,8 @@
 
 #include <geom/size.hpp>
 
-#include "pixel_data_factory.hpp"
-#include "pixel_data_loader.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "plugins/exif.hpp"
 #include "plugins/file_jpeg_compressor.hpp"
 #include "plugins/file_jpeg_decompressor.hpp"
@@ -62,7 +62,7 @@ geom::isize apply_orientation(Transform modifier, const geom::isize& size)
 
 bool filename_is_jpeg(std::filesystem::path const& filename)
 {
-  // FIXME: Merge this with util/jpeg_pixel_data_loader, maybe
+  // FIXME: Merge this with util/jpeg_software_surface_loader, maybe
   // store the fileformat/SoftwareSurfaceLoader in the database intead
   // of figuring out the format each time anew
   return (Filesystem::get_extension(filename) == "jpg" ||
@@ -160,7 +160,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
   return data;
 }
 
-void register_loader(PixelDataFactory& factory)
+void register_loader(SoftwareSurfaceFactory& factory)
 {
   auto loader = make_loader("jpeg",
                             [](std::filesystem::path const& filename){ return load_from_file(filename); },

@@ -19,8 +19,8 @@
 #include <logmich/log.hpp>
 
 #include "plugins/png.hpp"
-#include "pixel_data_factory.hpp"
-#include "pixel_data_loader.hpp"
+#include "software_surface_factory.hpp"
+#include "software_surface_loader.hpp"
 #include "util/exec.hpp"
 #include "util/filesystem.hpp"
 
@@ -53,7 +53,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   return png::load_from_mem(koconverter.get_stdout());
 }
 
-void register_loader(PixelDataFactory& factory)
+void register_loader(SoftwareSurfaceFactory& factory)
 {
   auto loader = make_loader("kra", load_from_file, nullptr);
 

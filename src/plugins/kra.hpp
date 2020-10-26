@@ -28,7 +28,7 @@ namespace kra {
 
 bool is_available();
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
-void register_loader(PixelDataFactory& factory);
+void register_loader(SoftwareSurfaceFactory& factory);
 
 } // namespace kra
 } // namespace surf
