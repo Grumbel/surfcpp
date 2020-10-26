@@ -39,11 +39,16 @@ public:
 
 public:
   SoftwareSurface();
+  SoftwareSurface(SoftwareSurface const& other);
+  SoftwareSurface(SoftwareSurface&& other) = default;
 
   template<typename Pixel>
   explicit SoftwareSurface(PixelData<Pixel> data) :
     m_pixel_data(std::make_unique<PixelData<Pixel>>(std::move(data)))
   {}
+
+  SoftwareSurface& operator=(SoftwareSurface const& other);
+  SoftwareSurface& operator=(SoftwareSurface&& other) = default;
 
   geom::isize get_size() const;
   int get_width() const;

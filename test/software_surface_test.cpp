@@ -36,8 +36,11 @@ TEST(SoftwareSurfaceTest, assignment)
 {
   SoftwareSurface lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
   SoftwareSurface rhs(PixelData<RGBPixel>(geom::isize(64, 32)));
+  SoftwareSurface tmp;
 
-  lhs = std::exchange(rhs, std::move(lhs));
+  tmp = lhs;
+  lhs = rhs;
+  rhs = tmp;
 
   EXPECT_EQ(geom::isize(64, 32), lhs.get_size());
   EXPECT_EQ(geom::isize(32, 16), rhs.get_size());

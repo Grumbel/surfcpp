@@ -184,6 +184,7 @@ public:
   virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
   virtual bool empty() const = 0;
   virtual void print(std::ostream& os) const = 0;
+  virtual std::unique_ptr<IPixelData> copy() const = 0;
 
   bool operator==(IPixelData const& rhs) const {
     return is_equal(rhs);
@@ -353,6 +354,10 @@ public:
 
   void print(std::ostream& os) const override {
     os << *this;
+  }
+
+  std::unique_ptr<IPixelData> copy() const override {
+    return std::make_unique<PixelData<Pixel>>(*this);
   }
 
 protected:

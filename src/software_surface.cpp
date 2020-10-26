@@ -67,6 +67,18 @@ SoftwareSurface::SoftwareSurface() :
 {
 }
 
+SoftwareSurface::SoftwareSurface(SoftwareSurface const& other) :
+  m_pixel_data(other.m_pixel_data->copy())
+{
+}
+
+SoftwareSurface&
+SoftwareSurface::operator=(SoftwareSurface const& other)
+{
+  m_pixel_data = other.m_pixel_data->copy();
+  return *this;
+}
+
 geom::isize
 SoftwareSurface::get_size()  const
 {
