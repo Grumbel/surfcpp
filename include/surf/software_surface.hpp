@@ -57,6 +57,7 @@ public:
   PixelFormat get_format() const;
 
   void blit_to(SoftwareSurface& dst, geom::ipoint const& pos) const;
+  void blit_to(geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos) const;
   SoftwareSurface convert_to(PixelFormat format) const;
 
   //SoftwareSurface to_rgb() const;

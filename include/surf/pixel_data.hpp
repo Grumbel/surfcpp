@@ -314,6 +314,12 @@ public:
     log_not_implemented();
   }
 
+  template<typename DstPixel>
+  void blit_to(geom::irect const& srcrect, PixelData<DstPixel>& dst, const geom::ipoint& pos) const
+  {
+    log_not_implemented();
+  }
+
   void fill(Pixel const& pixel)
   {
     for (int y = 0; y < m_size.height(); ++y) {
