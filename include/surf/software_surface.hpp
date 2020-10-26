@@ -21,6 +21,7 @@
 #include <memory>
 #include <geom/fwd.hpp>
 
+#include "unwrap.hpp"
 #include "pixel_data.hpp"
 
 namespace surf {
@@ -95,109 +96,6 @@ std::ostream& operator<<(std::ostream& os, SoftwareSurface const& surface)
   surface.get_pixel_data().print(os);
   return os;
 }
-
-#define SOFTWARE_SURFACE_UNWRAP(format, fail_expr, expr)        \
-  switch (format)                                               \
-  {                                                             \
-    default:                                                    \
-    case PixelFormat::NONE: {                                   \
-      fail_expr;                                                \
-      break;                                                    \
-    }                                                           \
-                                                                \
-    case PixelFormat::RGB: {                                    \
-      auto&& pixeldata = surface.as_pixeldata<RGBPixel>();      \
-      expr;                                                     \
-      break;                                                    \
-    }                                                           \
-                                                                \
-    case PixelFormat::RGBA {:                                   \
-      auto&& pixeldata = surface.as_pixeldata<RGBAPixel>();     \
-      expr;                                                     \
-      break;                                                    \
-    }                                                           \
-  }
-
-#define SOFTWARE_SURFACE_LIFT_N(name, function)         \
-  template<typename ...Args>                            \
-  SoftwareSurface name(SoftwareSurface const& surface,  \
-                       Args&&... args)                  \
-  {                                                     \
-    switch (surface.get_format()) {                     \
-      case PixelFormat::NONE:                           \
-        return SoftwareSurface();                       \
-                                                        \
-      case PixelFormat::RGB:                            \
-        return SoftwareSurface(                         \
-          function(surface.as_pixeldata<RGBPixel>(),    \
-                   std::forward<Args>(args)...));       \
-                                                        \
-      case PixelFormat::RGBA:                           \
-        return SoftwareSurface(                         \
-          function(surface.as_pixeldata<RGBAPixel>(),   \
-                   std::forward<Args>(args)...));       \
-      default:                                          \
-        log_unreachable();                              \
-        return {};                                      \
-    }                                                   \
-  }
-
-#define SOFTWARE_SURFACE_LIFT2_N(name, function)                \
-                                                                \
-  template<typename Pixel, typename ...Args>                    \
-  SoftwareSurface name##__lift_rhs(PixelData<Pixel> const& lhs, \
-                                   SoftwareSurface const& rhs,  \
-                                   Args&&... args)              \
-  {                                                             \
-    switch (rhs.get_format()) {                                 \
-      case PixelFormat::NONE:                                   \
-        return SoftwareSurface();                               \
-                                                                \
-      case PixelFormat::RGB:                                    \
-        return SoftwareSurface(                                 \
-          function(lhs,                                         \
-                   rhs.as_pixeldata<RGBPixel>(),                \
-                   std::forward<Args>(args)...));               \
-                                                                \
-      case PixelFormat::RGBA:                                   \
-        return SoftwareSurface(                                 \
-          function(lhs,                                         \
-                   rhs.as_pixeldata<RGBAPixel>(),               \
-                   std::forward<Args>(args)...));               \
-      default:                                                  \
-        log_unreachable();                                      \
-        return {};                                              \
-    }                                                           \
-  }                                                             \
-                                                                \
-  template<typename ...Args>                                    \
-  SoftwareSurface name(SoftwareSurface const& lhs,              \
-                       SoftwareSurface const& rhs,              \
-                       Args&&... args)                          \
-  {                                                             \
-    switch (lhs.get_format()) {                                 \
-      case PixelFormat::NONE:                                   \
-        return SoftwareSurface();                               \
-                                                                \
-      case PixelFormat::RGB:                                    \
-        return SoftwareSurface(                                 \
-          name##__lift_rhs(lhs.as_pixeldata<RGBPixel>(),        \
-                           rhs,                                 \
-                           std::forward<Args>(args)...));       \
-                                                                \
-      case PixelFormat::RGBA:                                   \
-        return SoftwareSurface(                                 \
-          name##__lift_rhs(lhs.as_pixeldata<RGBAPixel>(),       \
-                           rhs,                                 \
-                           std::forward<Args>(args)...));       \
-      default:                                                  \
-        log_unreachable();                                      \
-        return {};                                              \
-    }                                                           \
-  }
-
-#define SOFTWARE_SURFACE_LIFT(function)         \
-  SOFTWARE_SURFACE_LIFT_N(function, function)
 
 } // namespace surf
 

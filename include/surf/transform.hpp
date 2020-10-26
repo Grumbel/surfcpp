@@ -279,30 +279,6 @@ RGB average_color(PixelData<Pixel> const& src)
 }
 */
 
-#define SOFTWARE_SURFACE_LIFT(function, ...)                            \
-  template<typename ...Args>                                            \
-  SoftwareSurface function(SoftwareSurface const& surface,              \
-                           Args&&... args)                              \
-  {                                                                     \
-    switch (surface.get_format()) {                                     \
-      case PixelFormat::NONE:                                           \
-        return SoftwareSurface();                                       \
-                                                                        \
-      case PixelFormat::RGB:                                            \
-        return SoftwareSurface(                                         \
-          function(surface.as_pixeldata<RGBPixel>(),                    \
-                   std::forward<Args>(args)...));                       \
-                                                                        \
-      case PixelFormat::RGBA:                                           \
-        return SoftwareSurface(                                         \
-          function(surface.as_pixeldata<RGBAPixel>(),                   \
-                   std::forward<Args>(args)...));                       \
-      default:                                                          \
-        log_unreachable();                                              \
-        return {};                                                      \
-    }                                                                   \
-  }
-
 SOFTWARE_SURFACE_LIFT(transform)
 SOFTWARE_SURFACE_LIFT(rotate90)
 SOFTWARE_SURFACE_LIFT(rotate180)
