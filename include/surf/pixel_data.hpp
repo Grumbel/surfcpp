@@ -287,7 +287,7 @@ public:
     for(int y = start_y; y < end_y; ++y)
     {
       memcpy(dst.get_row(pos.y() + y - start_y) + pos.x(),
-             get_row(y),
+             get_row(y) + start_x,
              (end_x - start_x) * sizeof(Pixel));
     }
   }
