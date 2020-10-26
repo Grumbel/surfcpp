@@ -25,7 +25,6 @@
 #include "pixel_data_loader.hpp"
 
 #include "plugins/jpeg.hpp"
-#if 0
 #include "plugins/dds.hpp"
 #include "plugins/imagemagick.hpp"
 #include "plugins/kra.hpp"
@@ -34,7 +33,6 @@
 #include "plugins/ufraw.hpp"
 #include "plugins/vidthumb.hpp"
 #include "plugins/xcf.hpp"
-#endif
 
 namespace surf {
 
@@ -47,7 +45,6 @@ PixelDataFactory::PixelDataFactory() :
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
   jpeg::register_loader(*this);
-#if 0
   png::register_loader(
     *this);
 
@@ -75,8 +72,6 @@ PixelDataFactory::PixelDataFactory() :
 
 #ifdef HAVE_MAGICKXX
   imagemagick::register_loader(*this);
-#endif
-
 #endif
 }
 
