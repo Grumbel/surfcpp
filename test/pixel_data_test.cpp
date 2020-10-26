@@ -88,6 +88,14 @@ TEST(PixelDataTest, blit_to_convert)
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
 
+TEST(PixelDataTest, convert)
+{
+  PixelData<RGBPixel> pixeldata_rgb(geom::isize(64, 32));
+  PixelData<RGBAPixel> pixeldata_rgba = pixeldata_rgb.convert_to<RGBAPixel>();
+
+  EXPECT_EQ(pixeldata_rgb.get_size(), pixeldata_rgba.get_size());
+}
+
 TEST(PixelDataTest, empty)
 {
   PixelData<RGBPixel> pixeldata;

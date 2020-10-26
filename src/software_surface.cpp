@@ -107,6 +107,20 @@ SoftwareSurface::get_format() const
   return m_pixel_data->get_format();
 }
 
+SoftwareSurface
+SoftwareSurface::convert_to(PixelFormat format) const
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    (*this),
+    src_as_pixeldata,
+    return {},
+    PIXELFORMAT_TO_TYPE(
+      get_format(),
+      pixel_type,
+      return {},
+      return SoftwareSurface(src_as_pixeldata.template convert_to<pixel_type>())));
+}
+
 void*
 SoftwareSurface::get_data()
 {

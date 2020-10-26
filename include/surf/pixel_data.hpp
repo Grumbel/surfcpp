@@ -101,6 +101,7 @@ template<typename SrcPixel, typename DstPixel>
 DstPixel convert(SrcPixel src) {
   static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
                 "convert<>() not implemented for the given types");
+  return {};
 }
 
 template<> inline
@@ -337,14 +338,17 @@ public:
   template<typename DstPixel>
   PixelData<DstPixel> convert_to() const
   {
-    PixelData<DstPixel> dst;
-    for (int y = 0; y < m_size.height(); ++y) {
-      for (int x = 0; x < m_size.width(); ++x) {
-        dst.put_pixel(geom::ipoint(x, y),
-                      convert<Pixel, DstPixel>(get_pixel(geom::ipoint(x, y))));
-      }
+    if constexpr (std::is_same<DstPixel, Pixel>::value) {
+      return *this;
+    } else {
+      std::vector<DstPixel> dstpixels;
+      dstpixels.reserve(m_pixels.size());
+      std::transform(m_pixels.begin(), m_pixels.end(), std::back_inserter(dstpixels),
+                     convert<Pixel, DstPixel>);
+
+      PixelData<DstPixel> result(m_size, std::move(dstpixels));
+      return result;
     }
-    return dst;
   }
 
   void print(std::ostream& os) const override {
