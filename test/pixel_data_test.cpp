@@ -73,7 +73,22 @@ TEST(PixelDataTest, blit_to)
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
 
-TEST(PixelDataTest, blit_to_convert)
+TEST(PixelDataTest, blit_to__srcrect)
+{
+  PixelData<RGBPixel> const white(geom::isize(8, 6), RGBPixel{255, 255, 255});
+
+  PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
+  PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
+
+  white.blit_to(geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
+  white.blit_to(geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
+  white.blit_to(geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
+  white.blit_to(geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
+
+  EXPECT_EQ(pixeldata, pixeldata_expected);
+}
+
+TEST(PixelDataTest, blit_to__convert)
 {
   PixelData<RGBAPixel> const white(geom::isize(4, 3), RGBAPixel{255, 255, 255, 255});
 
@@ -84,6 +99,21 @@ TEST(PixelDataTest, blit_to_convert)
   white.blit_to(pixeldata, geom::ipoint(4, 0));
   white.blit_to(pixeldata, geom::ipoint(0, 3));
   white.blit_to(pixeldata, geom::ipoint(4, 3));
+
+  EXPECT_EQ(pixeldata, pixeldata_expected);
+}
+
+TEST(PixelDataTest, blit_to__srcrect_convert)
+{
+  PixelData<RGBAPixel> const white(geom::isize(8, 6), RGBAPixel{255, 255, 255, 255});
+
+  PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
+  PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
+
+  white.blit_to(geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
+  white.blit_to(geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
+  white.blit_to(geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
+  white.blit_to(geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
 
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }

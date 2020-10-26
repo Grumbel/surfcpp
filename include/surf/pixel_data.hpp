@@ -309,15 +309,38 @@ public:
     }
   }
 
-  void blit_to(geom::irect& srcrect, PixelData<Pixel>& dst, const geom::ipoint& pos) const
+  void blit_to(geom::irect const& srcrect, PixelData<Pixel>& dst, const geom::ipoint& pos) const
   {
-    log_not_implemented();
+    int const start_x = std::max(0, -pos.x()) + srcrect.x();
+    int const start_y = std::max(0, -pos.y()) + srcrect.y();
+
+    int const end_x = std::min(srcrect.right(), srcrect.x() + dst.m_size.width() - pos.x());
+    int const end_y = std::min(srcrect.bottom(), srcrect.y() + dst.m_size.height() - pos.y());
+
+    for(int y = start_y; y < end_y; ++y) {
+      memcpy(dst.get_row(pos.y() + y - start_y) + pos.x(),
+             get_row(y) + start_x,
+             (end_x - start_x) * sizeof(Pixel));
+    }
   }
 
   template<typename DstPixel>
   void blit_to(geom::irect const& srcrect, PixelData<DstPixel>& dst, const geom::ipoint& pos) const
   {
-    log_not_implemented();
+    int const start_x = std::max(0, -pos.x()) + srcrect.x();
+    int const start_y = std::max(0, -pos.y()) + srcrect.y();
+
+    int const end_x = std::min(srcrect.right(), srcrect.x() + dst.get_size().width()  - pos.x());
+    int const end_y = std::min(srcrect.bottom(), srcrect.y() + dst.get_size().height() - pos.y());
+
+    for(int y = start_y; y < end_y; ++y) {
+      for(int x = start_x; x < end_x; ++x) {
+        Pixel const srcpx = get_pixel(geom::ipoint(x, y));
+        dst.put_pixel(geom::ipoint(pos.x() + x - start_x,
+                                   pos.y() + y - start_y),
+                      convert<Pixel, DstPixel>(srcpx));
+      }
+    }
   }
 
   void fill(Pixel const& pixel)
