@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_GALAPIX_UTIL_PIXEL_DATA_HPP
-#define HEADER_GALAPIX_UTIL_PIXEL_DATA_HPP
+#ifndef HEADER_SURF_PIXEL_DATA_HPP
+#define HEADER_SURF_PIXEL_DATA_HPP
 
 #include <iosfwd>
 #include <stdint.h>
