@@ -95,9 +95,13 @@ struct PPixelFormat<GreyscalePixel>
 
 template<typename SrcPixel, typename DstPixel>
 DstPixel convert(SrcPixel src) {
-  static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
+  if constexpr (std::is_same<SrcPixel, SrcPixel>::value) {
+    return src;
+  } else {
+    static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
                 "convert<>() not implemented for the given types");
-  return {};
+    return {};
+  }
 }
 
 template<> inline
