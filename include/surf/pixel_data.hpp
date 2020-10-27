@@ -17,20 +17,20 @@
 #ifndef HEADER_SURF_PIXEL_DATA_HPP
 #define HEADER_SURF_PIXEL_DATA_HPP
 
-#include <iosfwd>
 #include <stdint.h>
-#include <filesystem>
-#include <string_view>
+#include <string.h>
+
+#include <memory>
+#include <ostream>
 #include <vector>
 
 #include <geom/point.hpp>
 #include <geom/rect.hpp>
 #include <geom/size.hpp>
-#include <logmich/log.hpp>
 
 #include "color.hpp"
-#include "pixel_format.hpp"
 #include "pixel.hpp"
+#include "pixel_format.hpp"
 
 namespace surf {
 
@@ -48,7 +48,6 @@ public:
   virtual void const* get_row_data(int y) const = 0;
   virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
   virtual bool empty() const = 0;
-  virtual void print(std::ostream& os) const = 0;
   virtual std::unique_ptr<IPixelData> copy() const = 0;
 
   bool operator==(IPixelData const& rhs) const {
@@ -291,10 +290,6 @@ public:
     }
   }
 
-  void print(std::ostream& os) const override {
-    os << *this;
-  }
-
   std::unique_ptr<IPixelData> copy() const override {
     return std::make_unique<PixelData<Pixel>>(*this);
   }
@@ -316,49 +311,6 @@ private:
   int m_row_length;
   std::vector<Pixel> m_pixels;
 };
-
-inline
-std::ostream& operator<<(std::ostream& os, RGBPixel const& pixel)
-{
-  return os << fmt::format("({:02x} {:02x} {:02x})",
-                           static_cast<int>(pixel.r),
-                           static_cast<int>(pixel.g),
-                           static_cast<int>(pixel.b));
-}
-
-inline
-std::ostream& operator<<(std::ostream& os, RGBAPixel const& pixel)
-{
-  return os << fmt::format("({:02x} {:02x} {:02x} {:02x})",
-                           static_cast<int>(pixel.r),
-                           static_cast<int>(pixel.g),
-                           static_cast<int>(pixel.b),
-                           static_cast<int>(pixel.a));
-}
-
-template<typename Pixel>
-std::ostream& operator<<(std::ostream& os, PixelData<Pixel> const& pixeldata)
-{
-  os << "\n{";
-  for (int y = 0; y < pixeldata.get_height(); ++y) {
-    if (y != 0) {
-      os << " ";
-    }
-    os << " { ";
-    for (int x = 0; x < pixeldata.get_width(); ++x) {
-      Pixel pixel = pixeldata.get_pixel(geom::ipoint(x, y));
-      os << pixel;
-      if (x != pixeldata.get_width() - 1) {
-        os << ' ';
-      }
-    }
-    if (y == pixeldata.get_height() - 1) {
-      os << " }";
-    }
-    os << " }\n";
-  }
-  return os;
-}
 
 } // namespace surf
 

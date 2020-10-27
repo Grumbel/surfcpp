@@ -18,11 +18,14 @@
 #define HEADER_SURF_SOFTWARE_SURFACE_HPP
 
 #include <stdint.h>
+
+#include <filesystem>
 #include <memory>
+
 #include <geom/fwd.hpp>
 
-#include "unwrap.hpp"
 #include "pixel_data.hpp"
+#include "unwrap.hpp"
 
 namespace surf {
 
@@ -95,13 +98,6 @@ public:
 private:
   std::unique_ptr<IPixelData> m_pixel_data;
 };
-
-inline
-std::ostream& operator<<(std::ostream& os, SoftwareSurface const& surface)
-{
-  surface.get_pixel_data().print(os);
-  return os;
-}
 
 } // namespace surf
 

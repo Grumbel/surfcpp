@@ -21,6 +21,8 @@
 
 #include <bit>
 
+#include "pixel_format.hpp"
+
 namespace surf {
 
 struct RGBPixel

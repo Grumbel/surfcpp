@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <geom/rect.hpp>
+#include <logmich/log.hpp>
 
 #include "software_surface_factory.hpp"
 
