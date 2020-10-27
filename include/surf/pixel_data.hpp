@@ -288,8 +288,23 @@ public:
     }
   }
 
+  void blit_to__slow_copy(PixelData<Pixel>& dst, const geom::ipoint& pos) const
+  {
+    int const start_x = std::max(0, -pos.x());
+    int const start_y = std::max(0, -pos.y());
+
+    int const end_x = std::min(m_size.width(),  dst.m_size.width() - pos.x());
+    int const end_y = std::min(m_size.height(), dst.m_size.height() - pos.y());
+
+    for(int y = start_y; y < end_y; ++y) {
+      std::copy_n(get_row(y) + start_x,
+                  end_x - start_x,
+                  dst.get_row(pos.y() + y - start_y) + pos.x());
+    }
+  }
+
   template<typename DstPixel>
-  void blit_to(PixelData<DstPixel>& dst, const geom::ipoint& pos) const
+  void blit_to__slow(PixelData<DstPixel>& dst, const geom::ipoint& pos) const
   {
     int const start_x = std::max(0, -pos.x());
     int const start_y = std::max(0, -pos.y());
@@ -302,6 +317,24 @@ public:
         Pixel const srcpx = get_pixel(geom::ipoint(x, y));
         dst.put_pixel(geom::ipoint(pos.x() + x - start_x, pos.y() + y - start_y), convert<Pixel, DstPixel>(srcpx));
       }
+    }
+  }
+
+  template<typename DstPixel>
+  void blit_to(PixelData<DstPixel>& dst, const geom::ipoint& pos) const
+  {
+    int const start_x = std::max(0, -pos.x());
+    int const start_y = std::max(0, -pos.y());
+
+    int const end_x = std::min(m_size.width(), dst.get_size().width()  - pos.x());
+    int const end_y = std::min(m_size.height(), dst.get_size().height() - pos.y());
+
+    for(int y = start_y; y < end_y; ++y) {
+      Pixel const* const src_row = get_row(y) + start_x;
+      DstPixel* const dst_row = dst.get_row(pos.y() + y - start_y) + pos.x();
+
+      std::transform(src_row, src_row + (end_x - start_x),
+                     dst_row, convert<Pixel, DstPixel>);
     }
   }
 
@@ -339,7 +372,7 @@ public:
     }
   }
 
-  void fill(Pixel const& pixel)
+  void fill__slow(Pixel const& pixel)
   {
     for (int y = 0; y < m_size.height(); ++y) {
       Pixel* row = get_row(y);
@@ -347,6 +380,18 @@ public:
         row[x] = pixel;
       }
     }
+  }
+
+  void fill(Pixel const& pixel)
+  {
+    for (int y = 0; y < m_size.height(); ++y) {
+      std::fill_n(get_row(y), m_row_length, pixel);
+    }
+  }
+
+  void fill__all(Pixel const& pixel)
+  {
+    std::fill(m_pixels.begin(), m_pixels.end(), pixel);
   }
 
   void fill_rect(geom::irect const& rect, Pixel const& pixel)
