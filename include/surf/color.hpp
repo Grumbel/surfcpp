@@ -24,36 +24,37 @@ namespace surf {
 class Color
 {
 public:
-  static Color from_rgba8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+  static constexpr Color from_rgba8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return Color(static_cast<float>(r) / 255.0f,
                  static_cast<float>(g) / 255.0f,
                  static_cast<float>(b) / 255.0f,
                  static_cast<float>(a) / 255.0f);
   }
 
-  static Color from_rgb888(uint8_t r, uint8_t g, uint8_t b) {
+  static constexpr Color from_rgb888(uint8_t r, uint8_t g, uint8_t b) {
     return Color(static_cast<float>(r) / 255.0f,
                  static_cast<float>(g) / 255.0f,
                  static_cast<float>(b) / 255.0f,
                  1.0f);
   }
 
+  static Color from_string(std::string_view text);
+
 public:
-  Color() :
+  constexpr Color() :
     r(0.0f), g(0.0f), b(0.0f), a(0.0f)
   {}
 
-  Color(float r_,
-        float g_,
-        float b_,
-        float a_) :
+  constexpr Color(float r_, float g_, float b_, float a_ = 1.0f) :
     r(r_), g(g_), b(b_), a(a_)
   {}
 
-  inline uint8_t r8() const { return static_cast<uint8_t>(std::clamp(255.0f * r, 0.0f, 255.0f)); }
-  inline uint8_t g8() const { return static_cast<uint8_t>(std::clamp(255.0f * g, 0.0f, 255.0f)); }
-  inline uint8_t b8() const { return static_cast<uint8_t>(std::clamp(255.0f * b, 0.0f, 255.0f)); }
-  inline uint8_t a8() const { return static_cast<uint8_t>(std::clamp(255.0f * a, 0.0f, 255.0f)); }
+  inline constexpr uint8_t r8() const { return static_cast<uint8_t>(std::clamp(255.0f * r, 0.0f, 255.0f)); }
+  inline constexpr uint8_t g8() const { return static_cast<uint8_t>(std::clamp(255.0f * g, 0.0f, 255.0f)); }
+  inline constexpr uint8_t b8() const { return static_cast<uint8_t>(std::clamp(255.0f * b, 0.0f, 255.0f)); }
+  inline constexpr uint8_t a8() const { return static_cast<uint8_t>(std::clamp(255.0f * a, 0.0f, 255.0f)); }
+
+  bool operator==(Color const& rhs) const = default;
 
 public:
   float r;

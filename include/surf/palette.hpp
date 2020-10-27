@@ -17,6 +17,8 @@
 #ifndef HEADER_SURF_PALETTE_HPP
 #define HEADER_SURF_PALETTE_HPP
 
+#include <string_view>
+
 #include "color.hpp"
 
 namespace surf {
@@ -172,7 +174,11 @@ constexpr Color whitesmoke = Color::from_rgb888(0xf5, 0xf5, 0xf5);
 constexpr Color yellow = Color::from_rgb888(0xff, 0xff, 0x00);
 constexpr Color yellowgreen = Color::from_rgb888(0x9a, 0xcd, 0x32);
 
+Color lookup_colorname(std::string_view colorname);
+
 } // namespace palette
 } // namespace surf
+
+#endif
 
 /* EOF */
