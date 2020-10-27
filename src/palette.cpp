@@ -26,6 +26,9 @@ namespace palette {
 Color lookup_colorname(std::string_view colorname)
 {
   static std::unordered_map<std::string, Color> name2color = {
+    { "transparent", transparent },
+
+    // SVG colors
     { "black", black },
     { "silver", silver },
     { "gray", gray },

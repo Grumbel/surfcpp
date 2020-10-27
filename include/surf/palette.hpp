@@ -24,6 +24,8 @@
 namespace surf {
 namespace palette {
 
+constexpr Color transparent = Color(0.0f, 0.0f, 0.0f, 0.0f);
+
 // https://www.w3.org/TR/css-color-3/#svg-color
 
 constexpr Color aliceblue = Color::from_rgb888(0xf0, 0xf8, 0xff);
