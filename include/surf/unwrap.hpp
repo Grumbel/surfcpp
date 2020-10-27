@@ -42,28 +42,13 @@
   } while (false)
 
 #define SOFTWARE_SURFACE_UNWRAP(surface, pixeldata, fail_expr, expr)    \
-  do {                                                                  \
-    switch (surface.get_format())                                       \
-    {                                                                   \
-      default:                                                          \
-      case PixelFormat::NONE: {                                         \
-        fail_expr;                                                      \
-        break;                                                          \
-      }                                                                 \
-                                                                        \
-      case PixelFormat::RGB: {                                          \
-        auto&& pixeldata = surface.as_pixeldata<RGBPixel>();            \
-        expr;                                                           \
-        break;                                                          \
-      }                                                                 \
-                                                                        \
-      case PixelFormat::RGBA: {                                         \
-        auto&& pixeldata = surface.as_pixeldata<RGBAPixel>();           \
-        expr;                                                           \
-        break;                                                          \
-      }                                                                 \
-    }                                                                   \
-  } while (false)
+  PIXELFORMAT_TO_TYPE(                                                  \
+    surface.get_format(),                                               \
+    pixeldata##pixeltype,                                               \
+    fail_expr,                                                          \
+    auto&& pixeldata = surface.as_pixeldata<pixeldata##pixeltype>();    \
+    expr                                                                \
+    )
 
 #define SOFTWARE_SURFACE_LIFT_N(name, function)         \
   template<typename ...Args>                            \
