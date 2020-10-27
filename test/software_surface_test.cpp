@@ -6,7 +6,6 @@
 
 #include <surf/software_surface.hpp>
 #include <surf/transform.hpp>
-#include <surf/rgb.hpp>
 
 using namespace surf;
 

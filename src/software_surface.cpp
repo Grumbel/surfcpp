@@ -22,8 +22,6 @@
 
 #include <geom/rect.hpp>
 
-#include "rgb.hpp"
-#include "rgba.hpp"
 #include "software_surface_factory.hpp"
 
 namespace surf {

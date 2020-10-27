@@ -29,13 +29,9 @@
 #include <logmich/log.hpp>
 
 #include "color.hpp"
-#include "rgba.hpp"
 #include "pixel_format.hpp"
 
 namespace surf {
-
-class RGB;
-class RGBA;
 
 struct RGBPixel
 {
