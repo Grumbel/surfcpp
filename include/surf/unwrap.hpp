@@ -28,13 +28,13 @@
       }                                                         \
                                                                 \
       case PixelFormat::RGB: {                                  \
-        using type = RGBPixel;                                  \
+        using type = RGBPixel; /* NOLINT */                     \
         expr;                                                   \
         break;                                                  \
       }                                                         \
                                                                 \
       case PixelFormat::RGBA: {                                 \
-        using type = RGBAPixel;                                 \
+        using type = RGBAPixel; /* NOLINT */                    \
         expr;                                                   \
         break;                                                  \
       }                                                         \
@@ -43,10 +43,10 @@
 
 #define SOFTWARE_SURFACE_UNWRAP(surface, pixeldata, fail_expr, expr)    \
   PIXELFORMAT_TO_TYPE(                                                  \
-    surface.get_format(),                                               \
+    (surface).get_format(),                                             \
     pixeldata##pixeltype,                                               \
     fail_expr,                                                          \
-    auto&& pixeldata = surface.as_pixeldata<pixeldata##pixeltype>();    \
+    auto&& (pixeldata) = (surface).as_pixeldata<pixeldata##pixeltype>(); \
     expr                                                                \
     )
 

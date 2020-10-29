@@ -51,14 +51,14 @@ class PixelFormat
 public:
   static constexpr detail::PixelFormatImpl RGB{detail::PixelFormatName::RGB, 24, 3,
       std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff,
-      std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00,
+      std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00, // NOLINT
       std::endian::native == std::endian::big ? 0x000000ff : 0x00ff0000,
-      std::endian::native == std::endian::big ? 0x00000000 : 0x00000000};
+      0x00000000};
   static constexpr detail::PixelFormatImpl RGBA{detail::PixelFormatName::RGBA, 32, 4,
       std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff,
       std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00,
       std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000,
-      std::endian::native == std::endian::big ? 0x00000000 : 0xff000000};
+      std::endian::native == std::endian::big ? 0x000000ff : 0xff000000};
   static constexpr detail::PixelFormatImpl NONE{detail::PixelFormatName::NONE, 0, 0, 0, 0, 0, 0};
 
 public:

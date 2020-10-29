@@ -72,9 +72,9 @@ struct PPixelFormat<RGBPixel>
   static constexpr int bits_per_pixel = 24;
   static constexpr int bytes_per_pixel = 3;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff;
-  static constexpr uint32_t gmask = std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00;
+  static constexpr uint32_t gmask = std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00; // NOLINT
   static constexpr uint32_t bmask = std::endian::native == std::endian::big ? 0x000000ff : 0x00ff0000;
-  static constexpr uint32_t amask = std::endian::native == std::endian::big ? 0x00000000 : 0x00000000;
+  static constexpr uint32_t amask = 0x00000000;
 };
 
 template<>
