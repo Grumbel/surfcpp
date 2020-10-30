@@ -8,6 +8,8 @@
 #include <surf/sdl.hpp>
 #include <surf/transform.hpp>
 
+#include "plugins/png.hpp"
+
 using namespace surf;
 
 TEST(PixelDataTest, default_is_valid)
@@ -124,6 +126,23 @@ TEST(PixelDataTest, convert)
   PixelData<RGBAPixel> const pixeldata_rgba = pixeldata_rgb.convert_to<RGBAPixel>();
 
   EXPECT_EQ(pixeldata_rgb.get_size(), pixeldata_rgba.get_size());
+}
+
+TEST(PixelDataTest, blend)
+{
+  PixelData<RGBAPixel> dst(geom::isize(512, 512), RGBAPixel{255, 255, 255, 255});
+  //PixelData<RGBPixel> dst(geom::isize(512, 512), RGBPixel{255, 255, 255});
+
+  SoftwareSurface surface = SoftwareSurface::from_file("test/data/rgba.png");
+  PixelData<RGBAPixel> const& src = surface.as_pixeldata<RGBAPixel>();
+
+  for (int y = 0; y < dst.get_height(); y += src.get_height()) {
+    for (int x = 0; x < dst.get_width(); x += src.get_width()) {
+      src.blend_to(dst, geom::ipoint(x, y));
+    }
+  }
+
+  png::save(SoftwareSurface(std::move(dst)), "/tmp/foo2.png");
 }
 
 TEST(PixelDataTest, empty)

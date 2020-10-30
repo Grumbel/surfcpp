@@ -28,6 +28,7 @@
 #include <geom/rect.hpp>
 #include <geom/size.hpp>
 
+#include "blend.hpp"
 #include "color.hpp"
 #include "pixel.hpp"
 #include "pixel_format.hpp"
@@ -203,6 +204,25 @@ public:
 
       std::transform(src_row, src_row + (end_x - start_x),
                      dst_row, convert<Pixel, DstPixel>);
+    }
+  }
+
+  template<typename DstPixel>
+  void blend_to(PixelData<DstPixel>& dst, const geom::ipoint& pos) const
+  {
+    int const start_x = std::max(0, -pos.x());
+    int const start_y = std::max(0, -pos.y());
+
+    int const end_x = std::min(m_size.width(), dst.get_size().width()  - pos.x());
+    int const end_y = std::min(m_size.height(), dst.get_size().height() - pos.y());
+
+    for(int y = start_y; y < end_y; ++y) {
+      Pixel const* const src_row = get_row(y) + start_x;
+      DstPixel* const dst_row = dst.get_row(pos.y() + y - start_y) + pos.x();
+
+      for (int i = 0; i < (end_x - start_x); ++i) {
+        dst_row[i] = blend<Pixel, DstPixel>(src_row[i], dst_row[i]);
+      }
     }
   }
 

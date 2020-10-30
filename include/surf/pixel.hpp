@@ -21,6 +21,7 @@
 
 #include <bit>
 
+#include "color.hpp"
 #include "pixel_format.hpp"
 
 namespace surf {
