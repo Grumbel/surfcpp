@@ -108,7 +108,7 @@ if(BUILD_TESTS)
 endif()
 
 if(BUILD_BENCHMARKS)
-  pkg_search_module(BENCHMARK benchmark IMPORTED_TARGET)
+  pkg_search_module(BENCHMARK REQUIRED benchmark IMPORTED_TARGET)
 
   # build benchmarks
   file(GLOB BENCHMARK_SOURCES benchmark/*.cpp)
