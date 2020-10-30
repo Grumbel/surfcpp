@@ -3,6 +3,7 @@
 
 #include <geom/rect.hpp>
 
+#include <surf/blend.hpp>
 #include <surf/color.hpp>
 #include <surf/pixel_data.hpp>
 #include <surf/sdl.hpp>

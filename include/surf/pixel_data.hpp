@@ -28,7 +28,7 @@
 #include <geom/rect.hpp>
 #include <geom/size.hpp>
 
-#include "blend.hpp"
+#include "convert.hpp"
 #include "color.hpp"
 #include "pixel.hpp"
 #include "pixel_format.hpp"

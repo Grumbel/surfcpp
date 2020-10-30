@@ -21,7 +21,6 @@
 
 #include <bit>
 
-#include "color.hpp"
 #include "pixel_format.hpp"
 
 namespace surf {
@@ -100,65 +99,6 @@ struct PPixelFormat<GreyscalePixel>
   static constexpr uint32_t bmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
   static constexpr uint32_t amask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
 };
-
-template<typename SrcPixel, typename DstPixel>
-DstPixel convert(SrcPixel src) {
-  if constexpr (std::is_same<SrcPixel, SrcPixel>::value) {
-    return src;
-  } else {
-    static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
-                "convert<>() not implemented for the given types");
-    return {};
-  }
-}
-
-template<> inline
-RGBPixel convert<RGBAPixel, RGBPixel>(RGBAPixel src) {
-  return RGBPixel{src.r, src.g, src.b};
-}
-
-template<> inline
-RGBAPixel convert<RGBPixel, RGBAPixel>(RGBPixel src) {
-  return RGBAPixel{src.r, src.g, src.b, 255};
-}
-
-template<> inline
-RGBPixel convert<Color, RGBPixel>(Color src) {
-  return RGBPixel{src.r8(), src.g8(), src.b8()};
-}
-
-template<> inline
-RGBAPixel convert<Color, RGBAPixel>(Color src) {
-  return RGBAPixel{src.r8(), src.g8(), src.b8(), src.a8()};
-}
-
-template<> inline
-Color convert<RGBPixel, Color>(RGBPixel src) {
-  return Color::from_rgb888(src.r, src.g, src.b);
-}
-
-template<> inline
-Color convert<RGBAPixel, Color>(RGBAPixel src) {
-  return Color::from_rgba8888(src.r, src.g, src.b, src.a);
-}
-
-template<> inline
-GreyscalePixel convert<RGBPixel, GreyscalePixel>(RGBPixel src) {
-  // FIXME: add proper weighting of colors here
-  return {static_cast<uint8_t>((src.r + src.g + src.b) / 3)};
-}
-
-template<> inline
-RGBPixel convert<GreyscalePixel, RGBPixel>(GreyscalePixel src) {
-  // FIXME: add proper weighting of colors here
-  return {src.value, src.value, src.value};
-}
-
-template<> inline
-RGBAPixel convert<GreyscalePixel, RGBAPixel>(GreyscalePixel src) {
-  // FIXME: add proper weighting of colors here
-  return {src.value, src.value, src.value, 255};
-}
 
 } // namespace surf
 
