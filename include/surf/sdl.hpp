@@ -29,12 +29,12 @@ class SDLSurfacePtr
 public:
   SDLSurfacePtr() : m_surf(nullptr) {}
   SDLSurfacePtr(SDL_Surface* surf) : m_surf(surf) { assert(m_surf != nullptr); }
-  SDLSurfacePtr(SDLSurfacePtr&& other) : m_surf(std::exchange(other.m_surf, nullptr)) {}
+  SDLSurfacePtr(SDLSurfacePtr&& other) noexcept : m_surf(std::exchange(other.m_surf, nullptr)) {}
   SDLSurfacePtr(const SDLSurfacePtr&) = delete;
   SDLSurfacePtr& operator=(const SDLSurfacePtr&) = delete;
   ~SDLSurfacePtr() { destroy(); }
 
-  SDLSurfacePtr& operator=(SDLSurfacePtr&& other) {
+  SDLSurfacePtr& operator=(SDLSurfacePtr&& other) noexcept {
     if (this == &other) { return *this; }
     destroy();
     m_surf = std::exchange(other.m_surf, nullptr);

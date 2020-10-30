@@ -15,7 +15,7 @@ TEST(SDLTest, create_sdl_surface_view)
 {
   PixelData<RGBPixel> const red(geom::isize{8, 16}, RGBPixel{255, 0, 0});
   PixelData<RGBPixel> const white(geom::isize{8, 16}, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> const pixeldata = white;
+  PixelData<RGBPixel> const pixeldata = white; // NOLINT
 
   SDLSurfacePtr sdl_surf = create_sdl_surface_view(pixeldata);
 

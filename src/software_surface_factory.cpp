@@ -171,7 +171,7 @@ SoftwareSurfaceFactory::find_loader_by_magic(std::span<uint8_t const> data) cons
 }
 
 SoftwareSurface
-SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const
+SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, SoftwareSurfaceLoader const& loader) const // NOLINT
 {
   if (loader.supports_from_file())
   {

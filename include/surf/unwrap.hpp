@@ -46,7 +46,7 @@
     (surface).get_format(),                                             \
     pixeldata##pixeltype,                                               \
     fail_expr,                                                          \
-    auto&& (pixeldata) = (surface).as_pixeldata<pixeldata##pixeltype>(); \
+    auto&& pixeldata = (surface).as_pixeldata<pixeldata##pixeltype>(); /* NOLINT */  \
     expr                                                                \
     )
 

@@ -152,7 +152,9 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
     else
     {
       std::string line(stdout_lst.begin(), line_end);
-      int version, width, height;
+      int version;
+      int width;
+      int height;
       if (sscanf(line.c_str(), "Version %d, %dx%d", &version, &width, &height) == 3)
       {
         size = geom::isize(width, height);

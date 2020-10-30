@@ -85,7 +85,7 @@ private:
 };
 
 template<typename FromFileFunc, typename FromMemFunc> inline
-std::unique_ptr<SoftwareSurfaceLoader> make_loader(std::string name, FromFileFunc from_file, FromMemFunc&& from_mem)
+std::unique_ptr<SoftwareSurfaceLoader> make_loader(std::string name, FromFileFunc from_file, FromMemFunc&& from_mem) // NOLINT
 {
   std::unique_ptr<SoftwareSurfaceLoader> loader(
     new SoftwareSurfaceLoaderGeneric<FromFileFunc, FromMemFunc>(std::move(name),
