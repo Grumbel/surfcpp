@@ -108,24 +108,19 @@ if(BUILD_TESTS)
 endif()
 
 if(BUILD_BENCHMARKS)
-  pkg_search_module(BENCHMARK REQUIRED benchmark IMPORTED_TARGET)
+  find_package(benchmark REQUIRED)
 
   # build benchmarks
-  file(GLOB BENCHMARK_SOURCES benchmark/*.cpp)
-  foreach(SOURCE ${BENCHMARK_SOURCES})
-    get_filename_component(SOURCE_BASENAME ${SOURCE} NAME_WE)
-    add_executable(${SOURCE_BASENAME} ${SOURCE})
-    set_target_properties(${SOURCE_BASENAME} PROPERTIES
-      CXX_STANDARD 20
-      CXX_STANDARD_REQUIRED ON
-      CXX_EXTENSIONS OFF)
-    target_link_libraries(${SOURCE_BASENAME}
-      surf
-      PkgConfig::BENCHMARK)
-    set_target_properties(${SOURCE_BASENAME} PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/benchmark/")
-    target_compile_options(${SOURCE_BASENAME} PRIVATE ${WARNINGS_CXX_FLAGS})
-  endforeach(SOURCE)
+  file(GLOB BENCHMARK_SURF_SOURCES benchmark/*.cpp)
+  add_executable(benchmark_surf ${BENCHMARK_SURF_SOURCES})
+  set_target_properties(benchmark_surf PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+  target_compile_options(benchmark_surf PRIVATE ${WARNINGS_CXX_FLAGS})
+  target_link_libraries(benchmark_surf
+    surf
+    benchmark::benchmark)
 endif()
 
 install(TARGETS surf

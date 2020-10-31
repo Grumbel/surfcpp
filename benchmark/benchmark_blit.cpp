@@ -14,7 +14,7 @@ namespace {
 const geom::isize SRCSIZE(64, 64);
 const geom::isize DSTSIZE(1024, 1024);
 
-void blit(benchmark::State& state)
+void BM_blit(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -28,7 +28,7 @@ void blit(benchmark::State& state)
   }
 }
 
-void blit__copy(benchmark::State& state)
+void BM_blit__copy(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -42,7 +42,7 @@ void blit__copy(benchmark::State& state)
   }
 }
 
-void blit__slow(benchmark::State& state)
+void BM_blit__slow(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -56,7 +56,7 @@ void blit__slow(benchmark::State& state)
   }
 }
 
-void blit__convert(benchmark::State& state)
+void BM_blit__convert(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
@@ -70,7 +70,7 @@ void blit__convert(benchmark::State& state)
   }
 }
 
-void blit__slow_convert(benchmark::State& state)
+void BM_blit__slow_convert(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
@@ -84,36 +84,13 @@ void blit__slow_convert(benchmark::State& state)
   }
 }
 
-void fill(benchmark::State& state)
-{
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
-
-  while (state.KeepRunning()) {
-    fill(dst, RGBPixel{12, 34, 56});
-  }
-}
-
-void fill__slow(benchmark::State& state)
-{
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
-
-  while (state.KeepRunning()) {
-    fill__slow(dst, RGBPixel{12, 34, 56});
-  }
-}
-
 } // namespace
 
-BENCHMARK(blit);
-BENCHMARK(blit__copy);
-BENCHMARK(blit__slow);
+BENCHMARK(BM_blit);
+BENCHMARK(BM_blit__copy);
+BENCHMARK(BM_blit__slow);
 
-BENCHMARK(blit__convert);
-BENCHMARK(blit__slow_convert);
-
-BENCHMARK(fill);
-BENCHMARK(fill__slow);
-
-BENCHMARK_MAIN();
+BENCHMARK(BM_blit__convert);
+BENCHMARK(BM_blit__slow_convert);
 
 /* EOF */
