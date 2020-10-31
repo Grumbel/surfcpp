@@ -4,10 +4,12 @@
 #include <geom/rect.hpp>
 
 #include <surf/blend.hpp>
+#include <surf/blit.hpp>
 #include <surf/color.hpp>
 #include <surf/pixel_data.hpp>
 #include <surf/sdl.hpp>
 #include <surf/transform.hpp>
+#include <surf/io.hpp>
 
 #include "plugins/png.hpp"
 
@@ -61,17 +63,17 @@ TEST(PixelDataTest, equality)
   EXPECT_NE(pixeldata, pixeldata_rgba);
 }
 
-TEST(PixelDataTest, blit_to)
+TEST(PixelDataTest, blit)
 {
   PixelData<RGBPixel> const white(geom::isize(4, 3), RGBPixel{255, 255, 255});
 
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
   PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
 
-  white.blit_to(pixeldata, geom::ipoint(0, 0));
-  white.blit_to(pixeldata, geom::ipoint(4, 0));
-  white.blit_to(pixeldata, geom::ipoint(0, 3));
-  white.blit_to(pixeldata, geom::ipoint(4, 3));
+  blit(white, pixeldata, geom::ipoint(0, 0));
+  blit(white, pixeldata, geom::ipoint(4, 0));
+  blit(white, pixeldata, geom::ipoint(0, 3));
+  blit(white, pixeldata, geom::ipoint(4, 3));
 
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
@@ -83,10 +85,10 @@ TEST(PixelDataTest, blit_to__srcrect)
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
   PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
 
-  white.blit_to(geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
-  white.blit_to(geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
-  white.blit_to(geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
-  white.blit_to(geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
+  blit(white, geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
+  blit(white, geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
+  blit(white, geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
+  blit(white, geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
 
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
@@ -98,10 +100,10 @@ TEST(PixelDataTest, blit_to__convert)
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
   PixelData<RGBPixel> const pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
 
-  white.blit_to(pixeldata, geom::ipoint(0, 0));
-  white.blit_to(pixeldata, geom::ipoint(4, 0));
-  white.blit_to(pixeldata, geom::ipoint(0, 3));
-  white.blit_to(pixeldata, geom::ipoint(4, 3));
+  blit(white, pixeldata, geom::ipoint(0, 0));
+  blit(white, pixeldata, geom::ipoint(4, 0));
+  blit(white, pixeldata, geom::ipoint(0, 3));
+  blit(white, pixeldata, geom::ipoint(4, 3));
 
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
@@ -113,10 +115,10 @@ TEST(PixelDataTest, blit_to__srcrect_convert)
   PixelData<RGBPixel> pixeldata(geom::isize(8, 6), RGBPixel{255, 0, 0});
   PixelData<RGBPixel> pixeldata_expected(geom::isize(8, 6), RGBPixel{255, 255, 255});
 
-  white.blit_to(geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
-  white.blit_to(geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
-  white.blit_to(geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
-  white.blit_to(geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
+  blit(white, geom::irect(geom::ipoint(1, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 0));
+  blit(white, geom::irect(geom::ipoint(2, 1), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 0));
+  blit(white, geom::irect(geom::ipoint(3, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(0, 3));
+  blit(white, geom::irect(geom::ipoint(4, 3), geom::isize(4, 3)), pixeldata, geom::ipoint(4, 3));
 
   EXPECT_EQ(pixeldata, pixeldata_expected);
 }
@@ -139,7 +141,7 @@ TEST(PixelDataTest, blend)
 
   for (int y = 0; y < dst.get_height(); y += src.get_height()) {
     for (int x = 0; x < dst.get_width(); x += src.get_width()) {
-      src.blend_to(dst, geom::ipoint(x, y));
+      blend(src, dst, geom::ipoint(x, y));
     }
   }
 

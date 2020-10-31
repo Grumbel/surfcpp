@@ -23,6 +23,7 @@
 #include <geom/rect.hpp>
 #include <logmich/log.hpp>
 
+#include "blit.hpp"
 #include "software_surface_factory.hpp"
 
 namespace surf {
@@ -129,7 +130,7 @@ SoftwareSurface::blit_to(SoftwareSurface& dst, geom::ipoint const& pos) const
       dst,
       dst_as_pixeldata,
       log_unreachable(),
-      src_as_pixeldata.blit_to(dst_as_pixeldata, pos)));
+      blit(src_as_pixeldata, dst_as_pixeldata, pos)));
 }
 
 void
@@ -143,7 +144,7 @@ SoftwareSurface::blit_to(geom::irect const& srcrect, SoftwareSurface& dst, geom:
       dst,
       dst_as_pixeldata,
       log_unreachable(),
-      src_as_pixeldata.blit_to(srcrect, dst_as_pixeldata, pos)));
+      blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
 }
 
 SoftwareSurface

@@ -23,26 +23,26 @@
 namespace surf {
 
 template<typename SrcPixel, typename DstPixel>
-DstPixel blend(SrcPixel src, DstPixel dst) {
+DstPixel pixel_blend(SrcPixel src, DstPixel dst) {
   static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
                 "blend<>() not implemented for the given types");
   return DstPixel{};
 }
 
 template<> inline
-RGBPixel blend<RGBPixel, RGBPixel>(RGBPixel src, RGBPixel dst)
+RGBPixel pixel_blend<RGBPixel, RGBPixel>(RGBPixel src, RGBPixel dst)
 {
   return src;
 }
 
 template<> inline
-RGBAPixel blend<RGBPixel, RGBAPixel>(RGBPixel src, RGBAPixel dst)
+RGBAPixel pixel_blend<RGBPixel, RGBAPixel>(RGBPixel src, RGBAPixel dst)
 {
   return RGBAPixel{src.r, src.g, src.b, 255};
 }
 
 template<> inline
-RGBPixel blend<RGBAPixel, RGBPixel>(RGBAPixel src, RGBPixel dst)
+RGBPixel pixel_blend<RGBAPixel, RGBPixel>(RGBAPixel src, RGBPixel dst)
 {
   return RGBPixel{
     static_cast<uint8_t>((src.r * src.a + dst.r * (255 - src.a)) / 255),
@@ -52,7 +52,7 @@ RGBPixel blend<RGBAPixel, RGBPixel>(RGBAPixel src, RGBPixel dst)
 }
 
 template<> inline
-RGBAPixel blend<RGBAPixel, RGBAPixel>(RGBAPixel src, RGBAPixel dst)
+RGBAPixel pixel_blend<RGBAPixel, RGBAPixel>(RGBAPixel src, RGBAPixel dst)
 {
   uint8_t const out_a = static_cast<uint8_t>(src.a + dst.a * (255 - src.a) / 255);
   if (out_a == 0) {

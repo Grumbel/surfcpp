@@ -4,6 +4,7 @@
 #include <benchmark/benchmark.h>
 
 #include <surf/pixel_data.hpp>
+#include <surf/blit.hpp>
 
 using namespace surf;
 
@@ -12,7 +13,7 @@ namespace {
 const geom::isize SRCSIZE(64, 64);
 const geom::isize DSTSIZE(1024, 1024);
 
-void PixelData_blit_to(benchmark::State& state)
+void blit(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -20,13 +21,13 @@ void PixelData_blit_to(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        src.blit_to(dst, geom::ipoint(x, y));
+        blit(src, dst, geom::ipoint(x, y));
       }
     }
   }
 }
 
-void PixelData_blit_to__slow_copy(benchmark::State& state)
+void blit__copy(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -34,13 +35,13 @@ void PixelData_blit_to__slow_copy(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        src.blit_to__slow_copy(dst, geom::ipoint(x, y));
+        blit__copy(src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
       }
     }
   }
 }
 
-void PixelData_blit_to__slow(benchmark::State& state)
+void blit__slow(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
@@ -48,13 +49,13 @@ void PixelData_blit_to__slow(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        src.blit_to__slow(dst, geom::ipoint(x, y));
+        blit__slow(src, dst, geom::ipoint(x, y));
       }
     }
   }
 }
 
-void PixelData_blit_to__convert(benchmark::State& state)
+void blit__convert(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
@@ -62,13 +63,13 @@ void PixelData_blit_to__convert(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        src.blit_to(dst, geom::ipoint(x, y));
+        blit(src, dst, geom::ipoint(x, y));
       }
     }
   }
 }
 
-void PixelData_blit_to__slow_convert(benchmark::State& state)
+void blit__slow_convert(benchmark::State& state)
 {
   PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
   PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
@@ -76,7 +77,7 @@ void PixelData_blit_to__slow_convert(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        src.blit_to__slow(dst, geom::ipoint(x, y));
+        blit__slow(src, dst, geom::ipoint(x, y));
       }
     }
   }
@@ -111,12 +112,12 @@ void PixelData_fill__all(benchmark::State& state)
 
 } // namespace
 
-BENCHMARK(PixelData_blit_to);
-BENCHMARK(PixelData_blit_to__slow);
-BENCHMARK(PixelData_blit_to__slow_copy);
+BENCHMARK(blit);
+BENCHMARK(blit__copy);
+BENCHMARK(blit__slow);
 
-BENCHMARK(PixelData_blit_to__convert);
-BENCHMARK(PixelData_blit_to__slow_convert);
+BENCHMARK(blit__convert);
+BENCHMARK(blit__slow_convert);
 
 BENCHMARK(PixelData_fill);
 BENCHMARK(PixelData_fill__slow);
