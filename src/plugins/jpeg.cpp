@@ -144,7 +144,7 @@ void save(SoftwareSurface const& surface, std::filesystem::path const& filename,
   if (PixelData<RGBPixel> const* optional = surface.as_pixeldata_ptr<RGBPixel>()) {
     compressor.save(*optional, quality);
   } else {
-    compressor.save(surface.convert_to(surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
+    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
   }
 }
 
@@ -155,7 +155,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
   if (PixelData<RGBPixel> const* optional = surface.as_pixeldata_ptr<RGBPixel>()) {
     compressor.save(*optional, quality);
   } else {
-    compressor.save(surface.convert_to(surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
+    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
   }
   return data;
 }

@@ -119,48 +119,6 @@ SoftwareSurface::get_format() const
   return m_pixel_data->get_format();
 }
 
-void
-SoftwareSurface::blit_to(SoftwareSurface& dst, geom::ipoint const& pos) const
-{
-  SOFTWARE_SURFACE_UNWRAP(
-    (*this),
-    src_as_pixeldata,
-    log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
-      log_unreachable(),
-      blit(src_as_pixeldata, dst_as_pixeldata, pos)));
-}
-
-void
-SoftwareSurface::blit_to(geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos) const
-{
-  SOFTWARE_SURFACE_UNWRAP(
-    (*this),
-    src_as_pixeldata,
-    log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
-      log_unreachable(),
-      blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
-}
-
-SoftwareSurface
-SoftwareSurface::convert_to(PixelFormat format) const
-{
-  SOFTWARE_SURFACE_UNWRAP(
-    (*this),
-    src_as_pixeldata,
-    return {},
-    PIXELFORMAT_TO_TYPE(
-      get_format(),
-      pixel_type,
-      return {},
-      return SoftwareSurface(src_as_pixeldata.template convert_to<pixel_type>())));
-}
-
 void*
 SoftwareSurface::get_data()
 {
@@ -197,6 +155,46 @@ Color
 SoftwareSurface::get_pixel(geom::ipoint const& position) const
 {
   return m_pixel_data->get_pixel_color(position);
+}
+
+void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      blit(src_as_pixeldata, dst_as_pixeldata, pos)));
+}
+
+void blit(SoftwareSurface const& src, geom::irect const& srcrect,
+          SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
+}
+
+SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    return {},
+    PIXELFORMAT_TO_TYPE(
+      src.get_format(),
+      pixel_type,
+      return {},
+      return SoftwareSurface(src_as_pixeldata.template convert_to<pixel_type>())));
 }
 
 } // namespace surf

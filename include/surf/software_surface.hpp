@@ -59,11 +59,6 @@ public:
   int get_pitch() const;
   PixelFormat get_format() const;
 
-  void blit_to(SoftwareSurface& dst, geom::ipoint const& pos) const;
-  void blit_to(geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos) const;
-  SoftwareSurface convert_to(PixelFormat format) const;
-
-  //SoftwareSurface to_rgb() const;
   //RGB get_average_color() const;
 
   Color get_pixel(geom::ipoint const& position) const;
@@ -98,6 +93,10 @@ public:
 private:
   std::unique_ptr<IPixelData> m_pixel_data;
 };
+
+void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
+void blit(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
+SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format);
 
 } // namespace surf
 
