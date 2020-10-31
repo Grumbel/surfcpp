@@ -46,6 +46,7 @@ std::ostream& operator<<(std::ostream& os, RGBAPixel const& pixel)
 }
 
 template<typename Pixel>
+inline
 std::ostream& operator<<(std::ostream& os, PixelData<Pixel> const& pixeldata)
 {
   os << "\n{";
@@ -69,6 +70,7 @@ std::ostream& operator<<(std::ostream& os, PixelData<Pixel> const& pixeldata)
   return os;
 }
 
+inline
 std::ostream& operator<<(std::ostream& os, SoftwareSurface const& surface)
 {
   SOFTWARE_SURFACE_UNWRAP(

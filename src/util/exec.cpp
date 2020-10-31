@@ -190,7 +190,7 @@ Exec::process_io(int stdin_fd, int stdout_fd, int stderr_fd)
   while(!(stdout_eof && stderr_eof))
   {
     fd_set rfds;
-    FD_ZERO(&rfds);
+    FD_ZERO(&rfds); // NOLINT
 
     int nfds = 0;
 
