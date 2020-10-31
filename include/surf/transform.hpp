@@ -206,39 +206,6 @@ PixelData<Pixel> crop(PixelData<Pixel> const& src, geom::irect const& rect)
   return dst;
 }
 
-// PixelData<Pixel> to_rgb(PixelData<Pixel> const& src);
-/*
-PixelData<Pixel> to_rgb(PixelData<Pixel> const& src)
-{
-  switch(src.get_format())
-  {
-    case PixelFormat::RGB:
-      return src;
-
-    case PixelFormat::RGBA: {
-      PixelData<Pixel> dst(PixelFormat::RGB, src.get_size());
-
-      int num_pixels = src.get_width() * src.get_height();
-      uint8_t const* src_pixels = src.get_data();
-      uint8_t* dst_pixels = dst.get_data();
-
-      for(int i = 0; i < num_pixels; ++i)
-      {
-        dst_pixels[3*i+0] = src_pixels[4*i+0];
-        dst_pixels[3*i+1] = src_pixels[4*i+1];
-        dst_pixels[3*i+2] = src_pixels[4*i+2];
-      }
-
-      return dst;
-    }
-
-    default:
-      assert(false && "PixelData::to_rgb: Unknown format");
-      return {};
-  }
-}
-*/
-
 /*
 template<typename Pixel>
 RGB average_color(PixelData<Pixel> const& src)
