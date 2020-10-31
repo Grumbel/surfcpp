@@ -140,40 +140,6 @@ public:
     return get_row(y);
   }
 
-  void fill__slow(Pixel const& pixel)
-  {
-    for (int y = 0; y < m_size.height(); ++y) {
-      Pixel* row = get_row(y);
-      for (int x = 0; x < m_size.width(); ++x) {
-        row[x] = pixel;
-      }
-    }
-  }
-
-  void fill(Pixel const& pixel)
-  {
-    for (int y = 0; y < m_size.height(); ++y) {
-      std::fill_n(get_row(y), m_row_length, pixel);
-    }
-  }
-
-  void fill__all(Pixel const& pixel)
-  {
-    std::fill(m_pixels.begin(), m_pixels.end(), pixel);
-  }
-
-  void fill_rect(geom::irect const& rect, Pixel const& pixel)
-  {
-    geom::irect const rect_clipped = geom::intersection(geom::irect(m_size), rect);
-
-    for (int y = rect_clipped.top(); y < rect_clipped.bottom(); ++y) {
-      Pixel* const row = get_row(y) + rect_clipped.left() * 4;
-      for (int x = 0; x < rect_clipped.width(); ++x) {
-        row[x + 0] = pixel;
-      }
-    }
-  }
-
   template<typename DstPixel>
   PixelData<DstPixel> convert_to() const
   {

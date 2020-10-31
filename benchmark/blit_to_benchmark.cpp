@@ -5,6 +5,7 @@
 
 #include <surf/pixel_data.hpp>
 #include <surf/blit.hpp>
+#include <surf/fill.hpp>
 
 using namespace surf;
 
@@ -83,30 +84,21 @@ void blit__slow_convert(benchmark::State& state)
   }
 }
 
-void PixelData_fill(benchmark::State& state)
+void fill(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    src.fill(RGBPixel{12, 34, 56});
+    fill(dst, RGBPixel{12, 34, 56});
   }
 }
 
-void PixelData_fill__slow(benchmark::State& state)
+void fill__slow(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    src.fill__slow(RGBPixel{12, 34, 56});
-  }
-}
-
-void PixelData_fill__all(benchmark::State& state)
-{
-  PixelData<RGBPixel> src(DSTSIZE, RGBPixel{255, 255, 255});
-
-  while (state.KeepRunning()) {
-    src.fill__all(RGBPixel{12, 34, 56});
+    fill__slow(dst, RGBPixel{12, 34, 56});
   }
 }
 
@@ -119,9 +111,8 @@ BENCHMARK(blit__slow);
 BENCHMARK(blit__convert);
 BENCHMARK(blit__slow_convert);
 
-BENCHMARK(PixelData_fill);
-BENCHMARK(PixelData_fill__slow);
-BENCHMARK(PixelData_fill__all);
+BENCHMARK(fill);
+BENCHMARK(fill__slow);
 
 BENCHMARK_MAIN();
 
