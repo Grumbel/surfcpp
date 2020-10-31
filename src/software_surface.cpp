@@ -24,6 +24,9 @@
 #include <logmich/log.hpp>
 
 #include "blit.hpp"
+#include "fill.hpp"
+#include "convert.hpp"
+#include "pixel.hpp"
 #include "software_surface_factory.hpp"
 
 namespace surf {
@@ -182,6 +185,24 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
       dst_as_pixeldata,
       log_unreachable(),
       blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
+}
+
+void fill(SoftwareSurface& dst, Color const& color)
+{
+  PIXELFORMAT_TO_TYPE(
+    dst.get_format(),
+    dsttype,
+    log_unreachable(),
+    fill(dst.as_pixeldata<dsttype>(), convert<Color, dsttype>(color)));
+}
+
+void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color)
+{
+  PIXELFORMAT_TO_TYPE(
+    dst.get_format(),
+    dsttype,
+    log_unreachable(),
+    fill_rect(dst.as_pixeldata<dsttype>(), rect, convert<Color, dsttype>(color)));
 }
 
 SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format)

@@ -96,6 +96,10 @@ private:
 
 void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
 void blit(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
+
+void fill(SoftwareSurface& dst, Color const& color);
+void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color);
+
 SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format);
 
 } // namespace surf

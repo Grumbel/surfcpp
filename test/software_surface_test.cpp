@@ -4,6 +4,7 @@
 #include <geom/rect.hpp>
 #include <geom/io.hpp>
 
+#include <surf/palette.hpp>
 #include <surf/software_surface.hpp>
 #include <surf/transform.hpp>
 
@@ -62,7 +63,7 @@ TEST(SoftwareSurfaceTest, move)
   // EXPECT_EQ(geom::isize(32, 16), tmp.get_size());
 }
 
-TEST(SoftwareSurfaceTest, convert_to)
+TEST(SoftwareSurfaceTest, convert)
 {
   SoftwareSurface const lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
   SoftwareSurface rhs = convert(lhs, PixelFormat::RGBA);
@@ -70,12 +71,28 @@ TEST(SoftwareSurfaceTest, convert_to)
   EXPECT_EQ(lhs.get_size(), rhs.get_size());
 }
 
-TEST(SoftwareSurfaceTest, blit_to)
+TEST(SoftwareSurfaceTest, blit)
 {
   SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
   SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
 
   blit(src, dst, geom::ipoint(1, 2));
+}
+
+TEST(SoftwareSurfaceTest, fill)
+{
+  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+
+  fill(dst, palette::white);
+}
+
+TEST(SoftwareSurfaceTest, fill_rect)
+{
+  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+
+  fill_rect(dst, geom::irect(1, 2, 4, 4), palette::white);
 }
 
 /* EOF */
