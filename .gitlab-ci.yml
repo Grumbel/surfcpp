@@ -34,6 +34,7 @@ before_script:
     libfmt-dev
     libglm-dev
     libgtest-dev
+    libbenchmark-dev
     libjpeg8-dev
     libmagick++-dev
     libpng-dev
@@ -44,7 +45,7 @@ before_script:
   script:
     - mkdir build
     - cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DWARNINGS=ON -DWERROR=ON -DBUILD_TESTS=ON -DBUILD_EXTRA=ON -DBUILD_PROJECT_SDL=ON -DBUILD_PROJECT_GTK=ON
+    - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DWARNINGS=ON -DWERROR=ON -DBUILD_TESTS=ON -DBUILD_BENCHMARKS=ON -DBUILD_EXTRA=ON
     - make VERBOSE=1
     - make test VERBOSE=1 ARGS="-V"
 
