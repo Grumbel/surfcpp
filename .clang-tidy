@@ -18,6 +18,7 @@ Checks: >
   -readability-uppercase-literal-suffix,
   -readability-redundant-access-specifiers,
   -readability-convert-member-functions-to-static,
+  -bugprone-branch-clone,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(src/.*hpp|include/.*hpp)'
 ...

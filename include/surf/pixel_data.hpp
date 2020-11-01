@@ -17,138 +17,59 @@
 #ifndef HEADER_SURF_PIXEL_DATA_HPP
 #define HEADER_SURF_PIXEL_DATA_HPP
 
-#include <stdint.h>
-#include <string.h>
+//#include <stdint.h>
+//#include <string.h>
 
-#include <memory>
-#include <ostream>
-#include <vector>
+//#include <memory>
+//#include <ostream>
+//#include <vector>
 
-#include <geom/point.hpp>
-#include <geom/rect.hpp>
-#include <geom/size.hpp>
-
-#include "color.hpp"
-#include "convert.hpp"
-#include "ipixel_data.hpp"
-#include "pixel.hpp"
-#include "pixel_format.hpp"
+#include "pixel_view.hpp"
 
 namespace surf {
 
-/** A mutable low-level container for pixel data */
 template<typename Pixel>
-class PixelData : public IPixelData
+class PixelData : public PixelView<Pixel>
 {
 public:
-  using value_type = Pixel;
-
-public:
   PixelData() :
-    m_size(0, 0),
-    m_row_length(0),
-    m_pixels()
+    PixelView<Pixel>(),
+    m_pixels_ownership()
   {}
+
+  PixelData(PixelView<Pixel> const& view) :
+    PixelView<Pixel>(view),
+    m_pixels_ownership(geom::area(this->m_size))
+  {
+    this->m_pixels = m_pixels_ownership.data();
+    for (int y = 0; y < this->m_size.height(); ++y) {
+      std::copy_n(view.get_row(y), this->m_size.width(), this->get_row(y));
+    }
+  }
 
   PixelData(geom::isize const& size, Pixel const& pixel = {}) :
-    m_size(size),
-    m_row_length(m_size.width()),
-    m_pixels(m_size.width() * m_size.height(), pixel)
-  {}
+    PixelView<Pixel>(size, nullptr),
+    m_pixels_ownership(geom::area(size), pixel)
+  {
+    this->m_pixels = m_pixels_ownership.data();
+  }
 
   PixelData(geom::isize const& size, std::vector<Pixel> pixels) :
-    m_size(size),
-    m_row_length(m_size.width()),
-    m_pixels(std::move(pixels))
-  {}
-
-  PixelFormat get_format() const override { return PPixelFormat<Pixel>::format; }
-
-  geom::isize get_size() const override { return m_size; }
-  int get_width() const override { return m_size.width(); }
-  int get_height() const override { return m_size.height(); }
-  int get_row_length() const override { return m_row_length; }
-  int get_pitch() const override { return m_row_length * sizeof(Pixel); }
-
-  bool empty() const override { return m_pixels.empty(); }
-
-  void put_pixel(geom::ipoint const& pos, Pixel const& pixel)
+    PixelView<Pixel>(size, nullptr),
+    m_pixels_ownership(std::move(pixels))
   {
-    assert(geom::contains(m_size, pos));
-    m_pixels[pos.y() * m_row_length + pos.x()] = pixel;
+    this->m_pixels = m_pixels_ownership.data();
   }
 
-  Color get_pixel_color(geom::ipoint const& pos) const override
+  PixelData(geom::isize const& size, std::vector<Pixel> pixels, int row_length) :
+    PixelView<Pixel>(size, nullptr, row_length),
+    m_pixels_ownership(std::move(pixels))
   {
-    return convert<Pixel, Color>(get_pixel(pos));
-  }
-
-  Pixel get_pixel(geom::ipoint const& pos) const
-  {
-    assert(geom::contains(m_size, pos));
-    return m_pixels[pos.y() * m_row_length + pos.x()];
-  }
-
-  Pixel* get_data() {
-    return m_pixels.data();
-  }
-
-  Pixel* get_row(int y) {
-    return m_pixels.data() + (y * m_row_length);
-  }
-
-  void* get_row_data(int y) override {
-    return get_row(y);
-  }
-
-  Pixel const* get_data() const {
-    return m_pixels.data();
-  }
-
-  Pixel const* get_row(int y) const {
-    return m_pixels.data() + (y * m_row_length);
-  }
-
-  void const* get_row_data(int y) const override {
-    return get_row(y);
-  }
-
-  template<typename DstPixel>
-  PixelData<DstPixel> convert_to() const
-  {
-    if constexpr (std::is_same<DstPixel, Pixel>::value) {
-      return *this;
-    } else {
-      std::vector<DstPixel> dstpixels;
-      dstpixels.reserve(m_pixels.size());
-      std::transform(m_pixels.begin(), m_pixels.end(), std::back_inserter(dstpixels),
-                     convert<Pixel, DstPixel>);
-
-      PixelData<DstPixel> result(m_size, std::move(dstpixels));
-      return result;
-    }
-  }
-
-  std::unique_ptr<IPixelData> copy() const override {
-    return std::make_unique<PixelData<Pixel>>(*this);
-  }
-
-protected:
-  bool is_equal(IPixelData const& rhs) const override {
-    PixelData<Pixel> const* rhs_ptr = dynamic_cast<PixelData<Pixel> const*>(&rhs);
-    if (rhs_ptr == nullptr) {
-      return false;
-    } else {
-      return (m_size == rhs_ptr->m_size &&
-              m_row_length == rhs_ptr->m_row_length &&
-              m_pixels == rhs_ptr->m_pixels);
-    }
+    this->m_pixels = m_pixels_ownership.data();
   }
 
 private:
-  geom::isize m_size;
-  int m_row_length;
-  std::vector<Pixel> m_pixels;
+  std::vector<Pixel> m_pixels_ownership;
 };
 
 } // namespace surf

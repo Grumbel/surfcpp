@@ -17,6 +17,10 @@
 #ifndef HEADER_SURF_IPIXEL_DATA_HPP
 #define HEADER_SURF_IPIXEL_DATA_HPP
 
+#include <memory>
+
+#include <geom/fwd.hpp>
+
 namespace surf {
 
 class IPixelData
