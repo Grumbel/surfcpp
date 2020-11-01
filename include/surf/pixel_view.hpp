@@ -142,6 +142,12 @@ public:
     }
   }
 
+  PixelView<Pixel> get_view(geom::irect const& rect) {
+    return PixelView<Pixel>(rect.size(),
+                            get_row(rect.top()) + rect.left(),
+                            m_row_length);
+  }
+
   std::unique_ptr<IPixelData> copy() const override {
     return std::make_unique<PixelData<Pixel>>(*this);
   }
