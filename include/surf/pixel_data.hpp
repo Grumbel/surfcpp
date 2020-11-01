@@ -28,40 +28,13 @@
 #include <geom/rect.hpp>
 #include <geom/size.hpp>
 
-#include "convert.hpp"
 #include "color.hpp"
+#include "convert.hpp"
+#include "ipixel_data.hpp"
 #include "pixel.hpp"
 #include "pixel_format.hpp"
 
 namespace surf {
-
-class IPixelData
-{
-public:
-  virtual ~IPixelData() {}
-  virtual PixelFormat get_format() const = 0;
-  virtual geom::isize get_size() const = 0;
-  virtual int get_width() const = 0;
-  virtual int get_height() const = 0;
-  virtual int get_row_length() const = 0;
-  virtual int get_pitch() const = 0;
-  virtual void* get_row_data(int y) = 0;
-  virtual void const* get_row_data(int y) const = 0;
-  virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
-  virtual bool empty() const = 0;
-  virtual std::unique_ptr<IPixelData> copy() const = 0;
-
-  bool operator==(IPixelData const& rhs) const {
-    return is_equal(rhs);
-  }
-
-  bool operator!=(IPixelData const& rhs) const {
-    return !is_equal(rhs);
-  }
-
-protected:
-  virtual bool is_equal(IPixelData const&) const = 0;
-};
 
 /** A mutable low-level container for pixel data */
 template<typename Pixel>
