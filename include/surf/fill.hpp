@@ -25,7 +25,7 @@ namespace surf {
 namespace detail {
 
 template<typename Pixel>
-void fill__slow(PixelData<Pixel>& dst, Pixel const& pixel) // const& gives 2x speedup?!
+void fill__slow(PixelView<Pixel>& dst, Pixel const& pixel) // const& gives 2x speedup?!
 {
   int const h = dst.get_height();
   int const w = dst.get_width(); // 5x speedup
@@ -40,7 +40,7 @@ void fill__slow(PixelData<Pixel>& dst, Pixel const& pixel) // const& gives 2x sp
 }
 
 template<typename Pixel>
-void fill__filln(PixelData<Pixel>& dst, Pixel const& pixel)
+void fill__filln(PixelView<Pixel>& dst, Pixel const& pixel)
 {
   for (int y = 0; y < dst.get_height(); ++y) {
     std::fill_n(dst.get_row(y), dst.get_width(), pixel);
@@ -48,7 +48,7 @@ void fill__filln(PixelData<Pixel>& dst, Pixel const& pixel)
 }
 
 template<typename Pixel>
-void fill__fast(PixelData<Pixel>& dst, Pixel const& pixel)
+void fill__fast(PixelView<Pixel>& dst, Pixel const& pixel)
 {
   for (int y = 0; y < dst.get_height(); ++y) {
     Pixel* const row = dst.get_row(y);
@@ -75,7 +75,7 @@ void fill__fast(PixelData<Pixel>& dst, Pixel const& pixel)
 }
 
 template<typename Pixel>
-void fill__memset(PixelData<Pixel>& dst)
+void fill__memset(PixelView<Pixel>& dst)
 {
   for (int y = 0; y < dst.get_height(); ++y) {
     std::memset(dst.get_row(y), 0, dst.get_width() * sizeof(Pixel));
@@ -83,7 +83,7 @@ void fill__memset(PixelData<Pixel>& dst)
 }
 
 template<typename Pixel>
-void fill_rect__filln(PixelData<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
+void fill_rect__filln(PixelView<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
 {
   geom::irect const region = geom::intersection(geom::irect(dst.get_size()), rect);
 
@@ -94,7 +94,7 @@ void fill_rect__filln(PixelData<Pixel>& dst, geom::irect const& rect, Pixel cons
 }
 
 template<typename Pixel>
-void fill_rect__slow(PixelData<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
+void fill_rect__slow(PixelView<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
 {
   geom::irect const region = geom::intersection(geom::irect(dst.get_size()), rect);
 
@@ -110,13 +110,13 @@ void fill_rect__slow(PixelData<Pixel>& dst, geom::irect const& rect, Pixel const
 } // namespace detail
 
 template<typename Pixel>
-void fill(PixelData<Pixel>& dst, Pixel const& pixel)
+void fill(PixelView<Pixel>& dst, Pixel const& pixel)
 {
   surf::detail::fill__slow<Pixel>(dst, pixel);
 }
 
 template<typename Pixel>
-void fill_rect(PixelData<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
+void fill_rect(PixelView<Pixel>& dst, geom::irect const& rect, Pixel const& pixel)
 {
   surf::detail::fill_rect__slow<Pixel>(dst, rect, pixel);
 }

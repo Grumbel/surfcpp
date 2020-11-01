@@ -26,7 +26,7 @@
 namespace surf {
 
 // template<typename SrcPixel, typename DstPixel>
-// void blit(PixelData<SrcPixel>& src, PixelData<DstPixel>& dst, const geom::ipoint& pos)
+// void blit(PixelView<SrcPixel>& src, PixelView<DstPixel>& dst, const geom::ipoint& pos)
 // {
 //   static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
 //                 "blit() not implemented for the given types");
@@ -34,8 +34,8 @@ namespace surf {
 
 template<typename SrcPixel, typename DstPixel,
          std::enable_if_t<std::is_same<SrcPixel, DstPixel>::value, int> = 0>
-void blit(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
-          PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blit(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
+          PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   assert(contains(geom::irect(src.get_size()), srcrect));
 
@@ -52,8 +52,8 @@ void blit(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
 
 template<typename SrcPixel, typename DstPixel,
          std::enable_if_t<std::is_same<SrcPixel, DstPixel>::value, int> = 0>
-void blit__copy(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
-                PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blit__copy(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
+                PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   assert(contains(geom::irect(src.get_size()), srcrect));
 
@@ -70,8 +70,8 @@ void blit__copy(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
 
 template<typename SrcPixel, typename DstPixel,
          std::enable_if_t<!std::is_same<SrcPixel, DstPixel>::value, int> = 0>
-void blit(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
-          PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blit(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
+          PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   assert(contains(geom::irect(src.get_size()), srcrect));
 
@@ -89,7 +89,7 @@ void blit(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
 
 /** Performs a simple copy from this to \a test, no blending is performed */
 template<typename SrcPixel, typename DstPixel>
-void blit(PixelData<SrcPixel> const& src, PixelData<DstPixel>& dst, geom::ipoint const& pos)
+void blit(PixelView<SrcPixel> const& src, PixelView<DstPixel>& dst, geom::ipoint const& pos)
 {
   blit(src, geom::irect(src.get_size()), dst, pos);
 }
@@ -104,8 +104,8 @@ void blend_n(SrcPixel const* srcpixels, DstPixel* dstpixels,
 }
 
 template<typename SrcPixel, typename DstPixel>
-void blend(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
-           PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blend(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
+           PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   assert(contains(geom::irect(src.get_size()), srcrect));
 
@@ -122,13 +122,13 @@ void blend(PixelData<SrcPixel> const& src, geom::irect const& srcrect,
 }
 
 template<typename SrcPixel, typename DstPixel>
-void blend(PixelData<SrcPixel> const& src, PixelData<DstPixel>& dst, geom::ipoint const& pos)
+void blend(PixelView<SrcPixel> const& src, PixelView<DstPixel>& dst, geom::ipoint const& pos)
 {
   blend(src, geom::irect(src.get_size()), dst, pos);
 }
 
 template<typename SrcPixel, typename DstPixel>
-void blit__slow(PixelData<SrcPixel>& src, PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blit__slow(PixelView<SrcPixel>& src, PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   int const start_x = std::max(0, -pos.x());
   int const start_y = std::max(0, -pos.y());
@@ -146,7 +146,7 @@ void blit__slow(PixelData<SrcPixel>& src, PixelData<DstPixel>& dst, const geom::
 
 #if 0
 template<typename DstPixel>
-void blit(PixelData<SrcPixel>& src, geom::irect const& srcrect, PixelData<DstPixel>& dst, const geom::ipoint& pos)
+void blit(PixelView<SrcPixel>& src, geom::irect const& srcrect, PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   int const start_x = std::max(0, -pos.x()) + srcrect.x();
   int const start_y = std::max(0, -pos.y()) + srcrect.y();
