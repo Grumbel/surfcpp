@@ -22,6 +22,11 @@
 #include <string.h>
 #include <memory>
 
+#include <fmt/format.h>
+
+#include "fwd.hpp"
+#include "software_surface.hpp"
+
 namespace surf {
 
 class SDLSurfacePtr
@@ -127,6 +132,48 @@ PixelData<Pixel> pixeldata_from_sdl_surface(SDL_Surface& surface)
     throw std::runtime_error(oss.str());
   }
   return pixeldata;
+}
+
+inline
+std::unique_ptr<IPixelData> pixelview_from_sdl_surface(SDL_Surface& surface)
+{
+  switch (surface.format->format)
+  {
+    case SDL_PIXELFORMAT_RGB24:
+      return std::make_unique<PixelView<RGBPixel>>(geom::isize(surface.w, surface.h),
+                                                   static_cast<RGBPixel*>(surface.pixels),
+                                                   surface.pitch / sizeof(RGBPixel));
+
+    case SDL_PIXELFORMAT_RGBA32:
+      return std::make_unique<PixelView<RGBAPixel>>(geom::isize(surface.w, surface.h),
+                                                    static_cast<RGBAPixel*>(surface.pixels),
+                                                    surface.pitch / sizeof(RGBAPixel));
+
+    default:
+      throw std::runtime_error(fmt::format("unsupported SDL_PixelFormatEnum: {}", surface.format->format));
+  }
+}
+
+inline
+SoftwareSurface softwaresurface_from_sdl_surface(SDL_Surface& surface)
+{
+  switch (surface.format->format)
+  {
+    case SDL_PIXELFORMAT_RGB24:
+      return SoftwareSurface(pixeldata_from_sdl_surface<RGBPixel>(surface));
+
+    case SDL_PIXELFORMAT_RGBA32:
+      return SoftwareSurface(pixeldata_from_sdl_surface<RGBAPixel>(surface));
+
+    default:
+      throw std::runtime_error(fmt::format("unsupported SDL_PixelFormatEnum: {}", surface.format->format));
+  }
+}
+
+inline
+SoftwareSurface softwaresurface_view_from_sdl_surface(SDL_Surface& surface)
+{
+  return SoftwareSurface(pixelview_from_sdl_surface(surface));
 }
 
 } // namespace surf

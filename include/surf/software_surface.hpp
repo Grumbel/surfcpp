@@ -24,15 +24,12 @@
 
 #include <geom/fwd.hpp>
 
+#include "fwd.hpp"
 #include "pixel_data.hpp"
 #include "unwrap.hpp"
 
 namespace surf {
 
-class RGB;
-class RGBA;
-
-/** A non-mutable high-level SoftwareSurface with value semantics */
 class SoftwareSurface
 {
 public:
