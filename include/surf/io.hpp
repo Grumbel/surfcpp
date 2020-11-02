@@ -21,7 +21,7 @@
 #include <fmt/format.h>
 
 #include "pixel.hpp"
-#include "pixel_data.hpp"
+#include "pixel_view.hpp"
 #include "unwrap.hpp"
 
 namespace surf {
@@ -47,7 +47,7 @@ std::ostream& operator<<(std::ostream& os, RGBAPixel const& pixel)
 
 template<typename Pixel>
 inline
-std::ostream& operator<<(std::ostream& os, PixelData<Pixel> const& pixeldata)
+std::ostream& operator<<(std::ostream& os, PixelView<Pixel> const& pixeldata)
 {
   os << "\n{";
   for (int y = 0; y < pixeldata.get_height(); ++y) {

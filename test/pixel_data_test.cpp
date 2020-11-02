@@ -137,7 +137,7 @@ TEST(PixelDataTest, blend)
   //PixelData<RGBPixel> dst(geom::isize(512, 512), RGBPixel{255, 255, 255});
 
   SoftwareSurface surface = SoftwareSurface::from_file("test/data/rgba.png");
-  PixelData<RGBAPixel> const& src = surface.as_pixeldata<RGBAPixel>();
+  PixelView<RGBAPixel> const& src = surface.as_pixelview<RGBAPixel>();
 
   for (int y = 0; y < dst.get_height(); y += src.get_height()) {
     for (int x = 0; x < dst.get_width(); x += src.get_width()) {

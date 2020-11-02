@@ -59,8 +59,6 @@ public:
   int get_pitch() const;
   PixelFormat get_format() const;
 
-  //RGB get_average_color() const;
-
   Color get_pixel(geom::ipoint const& position) const;
 
   void* get_data();
@@ -72,23 +70,25 @@ public:
   IPixelData const& get_pixel_data() const { return *m_pixel_data; }
 
   template<typename Pixel>
-  PixelData<Pixel> const* as_pixeldata_ptr() const {
-    return dynamic_cast<PixelData<Pixel> const*>(m_pixel_data.get());
+  PixelView<Pixel> const* as_pixelview_ptr() const {
+    return dynamic_cast<PixelView<Pixel> const*>(m_pixel_data.get());
   }
 
   template<typename Pixel>
-  PixelData<Pixel> const& as_pixeldata() const {
-    return dynamic_cast<PixelData<Pixel> const&>(*m_pixel_data);
+  PixelView<Pixel> const& as_pixelview() const {
+    return dynamic_cast<PixelView<Pixel> const&>(*m_pixel_data);
   }
 
   template<typename Pixel>
-  PixelData<Pixel>& as_pixeldata() {
-    return dynamic_cast<PixelData<Pixel>&>(*m_pixel_data);
+  PixelView<Pixel>& as_pixelview() {
+    return dynamic_cast<PixelView<Pixel>&>(*m_pixel_data);
   }
 
   bool operator==(SoftwareSurface const& rhs) const {
     return *m_pixel_data == *rhs.m_pixel_data;
   }
+
+  SoftwareSurface get_view(geom::irect const& rect) const;
 
 private:
   std::unique_ptr<IPixelData> m_pixel_data;

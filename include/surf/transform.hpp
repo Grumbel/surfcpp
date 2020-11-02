@@ -42,7 +42,7 @@ enum class Transform
 };
 
 template<typename Pixel>
-PixelData<Pixel> transform(PixelData<Pixel> const& src, Transform mod)
+PixelData<Pixel> transform(PixelView<Pixel> const& src, Transform mod)
 {
   switch (mod)
   {
@@ -79,7 +79,7 @@ PixelData<Pixel> transform(PixelData<Pixel> const& src, Transform mod)
 }
 
 template<typename Pixel>
-PixelData<Pixel> rotate90(PixelData<Pixel> const& src)
+PixelData<Pixel> rotate90(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(geom::isize(src.get_size().height(), src.get_size().width()));
 
@@ -94,7 +94,7 @@ PixelData<Pixel> rotate90(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> rotate180(PixelData<Pixel> const& src)
+PixelData<Pixel> rotate180(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(src.get_size());
 
@@ -109,7 +109,7 @@ PixelData<Pixel> rotate180(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> rotate270(PixelData<Pixel> const& src)
+PixelData<Pixel> rotate270(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(src.get_size());
 
@@ -124,7 +124,7 @@ PixelData<Pixel> rotate270(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> flip_vertical(PixelData<Pixel> const& src)
+PixelData<Pixel> flip_vertical(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(src.get_size());
 
@@ -138,7 +138,7 @@ PixelData<Pixel> flip_vertical(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> flip_horizontal(PixelData<Pixel> const& src)
+PixelData<Pixel> flip_horizontal(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(src.get_size());
 
@@ -153,7 +153,7 @@ PixelData<Pixel> flip_horizontal(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> halve(PixelData<Pixel> const& src)
+PixelData<Pixel> halve(PixelView<Pixel> const& src)
 {
   PixelData<Pixel> dst(src.get_size() / 2);
 
@@ -169,7 +169,7 @@ PixelData<Pixel> halve(PixelData<Pixel> const& src)
 }
 
 template<typename Pixel>
-PixelData<Pixel> scale(PixelData<Pixel> const& src, geom::isize const& size)
+PixelData<Pixel> scale(PixelView<Pixel> const& src, geom::isize const& size)
 {
   if (src.get_size() == size) { return src; }
   if (src.get_size() == geom::isize(0, 0)) { return PixelData<Pixel>(size); }
@@ -187,7 +187,7 @@ PixelData<Pixel> scale(PixelData<Pixel> const& src, geom::isize const& size)
 }
 
 template<typename Pixel>
-PixelData<Pixel> crop(PixelData<Pixel> const& src, geom::irect const& rect)
+PixelData<Pixel> crop(PixelView<Pixel> const& src, geom::irect const& rect)
 {
   // Clip the rectangle to the image
   geom::irect clipped(std::clamp(rect.left(), 0, src.get_width()),
@@ -208,7 +208,7 @@ PixelData<Pixel> crop(PixelData<Pixel> const& src, geom::irect const& rect)
 
 /*
 template<typename Pixel>
-RGB average_color(PixelData<Pixel> const& src)
+RGB average_color(PixelView<Pixel> const& src)
 {
   if (src.empty()) {
     return {};

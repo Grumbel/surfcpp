@@ -41,12 +41,12 @@
     }                                                           \
   } while (false)
 
-#define SOFTWARE_SURFACE_UNWRAP(surface, pixeldata, fail_expr, expr)    \
+#define SOFTWARE_SURFACE_UNWRAP(surface, pixelview, fail_expr, expr)    \
   PIXELFORMAT_TO_TYPE(                                                  \
     (surface).get_format(),                                             \
-    pixeldata##pixeltype,                                               \
+    pixelview##pixeltype,                                               \
     fail_expr,                                                          \
-    auto&& pixeldata = (surface).as_pixeldata<pixeldata##pixeltype>(); /* NOLINT */  \
+    auto&& pixelview = (surface).as_pixelview<pixelview##pixeltype>(); /* NOLINT */  \
     expr                                                                \
     )
 
@@ -57,10 +57,10 @@
   {                                                     \
     SOFTWARE_SURFACE_UNWRAP(                            \
       surface,                                          \
-      pixeldata,                                        \
+      pixelview,                                        \
       return {},                                        \
       return SoftwareSurface(                           \
-        function(pixeldata,                             \
+        function(pixelview,                             \
                  std::forward<Args>(args)...)));        \
   }
 
@@ -75,7 +75,7 @@
   {                                                             \
     SOFTWARE_SURFACE_UNWRAP(                                    \
       lhs,                                                      \
-      lhs_pixeldata,                                            \
+      lhs_pixelview,                                            \
       return {},                                                \
       SOFTWARE_SURFACE_UNWRAP(                                  \
         rhs,                                                    \

@@ -141,10 +141,10 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data, int scale, geom::is
 void save(SoftwareSurface const& surface, std::filesystem::path const& filename, int quality)
 {
   FileJPEGCompressor compressor(filename);
-  if (PixelData<RGBPixel> const* optional = surface.as_pixeldata_ptr<RGBPixel>()) {
+  if (PixelView<RGBPixel> const* optional = surface.as_pixelview_ptr<RGBPixel>()) {
     compressor.save(*optional, quality);
   } else {
-    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
+    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixelview<RGBPixel>(), quality);
   }
 }
 
@@ -152,10 +152,10 @@ std::vector<uint8_t> save(SoftwareSurface const& surface, int quality)
 {
   std::vector<uint8_t> data;
   MemJPEGCompressor compressor(data);
-  if (PixelData<RGBPixel> const* optional = surface.as_pixeldata_ptr<RGBPixel>()) {
+  if (PixelView<RGBPixel> const* optional = surface.as_pixelview_ptr<RGBPixel>()) {
     compressor.save(*optional, quality);
   } else {
-    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixeldata<RGBPixel>(), quality);
+    compressor.save(convert(surface, surf::PixelFormat::RGB).as_pixelview<RGBPixel>(), quality);
   }
   return data;
 }

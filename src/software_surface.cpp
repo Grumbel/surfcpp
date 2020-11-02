@@ -160,6 +160,12 @@ SoftwareSurface::get_pixel(geom::ipoint const& position) const
   return m_pixel_data->get_pixel_color(position);
 }
 
+SoftwareSurface
+SoftwareSurface::get_view(geom::irect const& rect) const
+{
+  return SoftwareSurface(m_pixel_data->create_view(rect));
+}
+
 void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
 {
   SOFTWARE_SURFACE_UNWRAP(
@@ -193,7 +199,7 @@ void fill(SoftwareSurface& dst, Color const& color)
     dst.get_format(),
     dsttype,
     log_unreachable(),
-    fill(dst.as_pixeldata<dsttype>(), convert<Color, dsttype>(color)));
+    fill(dst.as_pixelview<dsttype>(), convert<Color, dsttype>(color)));
 }
 
 void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color)
@@ -202,20 +208,20 @@ void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color
     dst.get_format(),
     dsttype,
     log_unreachable(),
-    fill_rect(dst.as_pixeldata<dsttype>(), rect, convert<Color, dsttype>(color)));
+    fill_rect(dst.as_pixelview<dsttype>(), rect, convert<Color, dsttype>(color)));
 }
 
 SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format)
 {
   SOFTWARE_SURFACE_UNWRAP(
     src,
-    src_as_pixeldata,
+    src_as_pixelview,
     return {},
     PIXELFORMAT_TO_TYPE(
       src.get_format(),
       pixel_type,
       return {},
-      return SoftwareSurface(src_as_pixeldata.template convert_to<pixel_type>())));
+      return SoftwareSurface(src_as_pixelview.template convert_to<pixel_type>())));
 }
 
 } // namespace surf
