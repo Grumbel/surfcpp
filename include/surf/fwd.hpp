@@ -19,12 +19,21 @@
 
 namespace surf {
 
+enum class Transform;
+
+struct RGBPixel;
+struct RGBAPixel;
+struct GreyscalePixel;
+
+class Color;
 class IPixelData;
 class SoftwareSurface;
 class SoftwareSurfaceFactory;
 class SoftwareSurfaceLoader;
 class PixelFormat;
-enum class Transform;
+
+template<typename Pixel> class PixelData;
+template<typename Pixel> class PixelView;
 
 } // namespace surf
 
