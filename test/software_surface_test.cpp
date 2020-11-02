@@ -95,4 +95,25 @@ TEST(SoftwareSurfaceTest, fill_rect)
   fill_rect(dst, geom::irect(1, 2, 4, 4), palette::white);
 }
 
+TEST(SoftwareSurfaceTest, get_view)
+{
+  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(8, 4), {255, 0, 0}));
+  SoftwareSurface view(src.get_view(geom::irect(2, 2, 5, 5)));
+  fill(view, Color(0, 0, 0, 0));
+}
+
+TEST(SoftwareSurfaceTest, create_view)
+{
+  PixelData<RGBPixel> pixeldata(geom::isize(8, 4), {255, 0, 0});
+  SoftwareSurface view = SoftwareSurface::create_view(pixeldata);
+  fill(view, Color(0, 0, 0, 0));
+}
+
+TEST(SoftwareSurfaceTest, create_view__const)
+{
+  PixelData<RGBPixel> const pixeldata(geom::isize(8, 4), {255, 0, 0});
+  SoftwareSurface view = SoftwareSurface::create_view(pixeldata);
+  fill(view, Color(0, 0, 0, 0));
+}
+
 /* EOF */

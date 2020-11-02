@@ -160,4 +160,12 @@ TEST(PixelDataTest, empty)
   EXPECT_TRUE(pixeldata.empty());
 }
 
+TEST(PixelDataTest, create_view__const)
+{
+  PixelData<RGBPixel> const pixeldata(geom::isize(64, 32));
+  std::unique_ptr<IPixelData const> pixelview = pixeldata.create_view(geom::irect(pixeldata.get_size()));
+  // This shall not compile:
+  // fill(*pixelview, RGBPixel{0, 0, 0});
+}
+
 /* EOF */

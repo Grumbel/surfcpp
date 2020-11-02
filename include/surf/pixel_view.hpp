@@ -71,6 +71,14 @@ public:
     m_pixels(pixels)
   {}
 
+  PixelView(geom::isize const& size, Pixel const* pixels, int row_length) :
+    m_size(size),
+    m_row_length(row_length),
+    // FIXME: this is ugly and dangerous, but less troublesome than
+    // trying to make PixelView<Pixel const> work.
+    m_pixels(const_cast<Pixel*>(pixels))
+  {}
+
   PixelFormat get_format() const override { return PPixelFormat<Pixel>::format; }
 
   geom::isize get_size() const override { return m_size; }
@@ -146,6 +154,20 @@ public:
     return PixelView<Pixel>(rect.size(),
                             get_row(rect.top()) + rect.left(),
                             m_row_length);
+  }
+
+  std::unique_ptr<IPixelData> create_view(geom::irect const& rect) override
+  {
+    return std::make_unique<PixelView<Pixel>>(rect.size(),
+                                              get_row(rect.top()) + rect.left(),
+                                              m_row_length);
+  }
+
+  std::unique_ptr<IPixelData const> create_view(geom::irect const& rect) const override
+  {
+    return std::make_unique<PixelView<Pixel> const>(rect.size(),
+                                                    get_row(rect.top()) + rect.left(),
+                                                    m_row_length);
   }
 
   std::unique_ptr<IPixelData> copy() const override {

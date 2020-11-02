@@ -40,10 +40,27 @@ public:
   static SoftwareSurface from_file(std::filesystem::path const& filename, std::string_view loader);
   static SoftwareSurface create(PixelFormat format, geom::isize const& size, Color const& color = {});
 
+  template<typename Pixel>
+  static SoftwareSurface create_view(PixelData<Pixel>& data) {
+    return SoftwareSurface(std::make_unique<PixelView<Pixel>>(data));
+  }
+
+  template<typename Pixel>
+  static SoftwareSurface create_view(PixelData<Pixel> const& data){
+    return SoftwareSurface(std::make_unique<PixelView<Pixel>>(data));
+  }
+
+  static SoftwareSurface create_view(PixelFormat format, geom::isize const& size, void* ptr, int pitch);
+  static SoftwareSurface create_view(PixelFormat format, geom::isize const& size, void const* ptr, int pitch);
+
 public:
   SoftwareSurface();
   SoftwareSurface(SoftwareSurface const& other);
   SoftwareSurface(SoftwareSurface&& other) = default;
+
+  SoftwareSurface(std::unique_ptr<IPixelData> pixel_data) :
+    m_pixel_data(std::move(pixel_data))
+  {}
 
   template<typename Pixel>
   explicit SoftwareSurface(PixelData<Pixel> data) :

@@ -65,6 +65,28 @@ SoftwareSurface::create(PixelFormat format, geom::isize const& size, Color const
   }
 }
 
+SoftwareSurface
+SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void* ptr, int pitch)
+{
+  PIXELFORMAT_TO_TYPE(
+    format,
+    pixeltype,
+    log_unreachable(); return {},
+    return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
+                             size, static_cast<pixeltype*>(ptr), pitch / sizeof(pixeltype))));
+}
+
+SoftwareSurface
+SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void const* ptr, int pitch)
+{
+  PIXELFORMAT_TO_TYPE(
+    format,
+    pixeltype,
+    log_unreachable(); return {},
+    return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
+                             size, static_cast<pixeltype const*>(ptr), pitch / sizeof(pixeltype))));
+}
+
 SoftwareSurface::SoftwareSurface() :
   m_pixel_data()
 {

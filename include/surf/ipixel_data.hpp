@@ -38,6 +38,8 @@ public:
   virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
   virtual bool empty() const = 0;
   virtual std::unique_ptr<IPixelData> copy() const = 0;
+  virtual std::unique_ptr<IPixelData> create_view(geom::irect const& rect) = 0;
+  virtual std::unique_ptr<IPixelData const> create_view(geom::irect const& rect) const = 0;
 
   bool operator==(IPixelData const& rhs) const {
     return is_equal(rhs);
