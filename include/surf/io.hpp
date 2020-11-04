@@ -22,6 +22,7 @@
 
 #include "pixel.hpp"
 #include "pixel_view.hpp"
+#include "software_surface.hpp"
 #include "unwrap.hpp"
 
 namespace surf {

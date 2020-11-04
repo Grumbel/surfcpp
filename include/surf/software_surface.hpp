@@ -38,12 +38,12 @@ public:
   static SoftwareSurface create(PixelFormat format, geom::isize const& size, Color const& color = {});
 
   template<typename Pixel>
-  static SoftwareSurface create_view(PixelData<Pixel>& data) {
+  static SoftwareSurface create_view(PixelView<Pixel>& data) {
     return SoftwareSurface(std::make_unique<PixelView<Pixel>>(data));
   }
 
   template<typename Pixel>
-  static SoftwareSurface create_view(PixelData<Pixel> const& data){
+  static SoftwareSurface create_view(PixelView<Pixel> const& data) {
     return SoftwareSurface(std::make_unique<PixelView<Pixel>>(data));
   }
 

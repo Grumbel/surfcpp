@@ -21,10 +21,17 @@
 #include <string_view>
 
 #include "fwd.hpp"
+#include "software_surface.hpp"
 
 namespace surf {
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format);
+
+template<typename Pixel>
+void save(PixelView<Pixel> const& pixelview, std::filesystem::path const& path, std::string_view format)
+{
+  save(SoftwareSurface::create_view(pixelview), path, format);
+}
 
 } // namespace surf
 
