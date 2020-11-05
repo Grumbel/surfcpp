@@ -17,13 +17,6 @@
 #ifndef HEADER_SURF_PIXEL_DATA_HPP
 #define HEADER_SURF_PIXEL_DATA_HPP
 
-//#include <stdint.h>
-//#include <string.h>
-
-//#include <memory>
-//#include <ostream>
-//#include <vector>
-
 #include "pixel_view.hpp"
 
 namespace surf {
@@ -36,6 +29,40 @@ public:
     PixelView<Pixel>(),
     m_pixels_ownership()
   {}
+
+  PixelData(PixelData<Pixel> const& other) :
+    PixelView<Pixel>(other),
+    m_pixels_ownership(other.m_pixels_ownership)
+  {
+    this->m_pixels = m_pixels_ownership.data();
+  }
+
+  PixelData<Pixel>& operator=(PixelData<Pixel> const& other)
+  {
+    if (this != &other) {
+      PixelView<Pixel>::operator=(other);
+      m_pixels_ownership = other.m_pixels_ownership;
+      this->m_pixels = m_pixels_ownership.data();
+    }
+    return *this;
+  }
+
+  PixelData(PixelData<Pixel>&& other) noexcept :
+    PixelView<Pixel>(other),
+    m_pixels_ownership(std::move(other.m_pixels_ownership))
+  {
+    this->m_pixels = m_pixels_ownership.data();
+  }
+
+  PixelData<Pixel>& operator=(PixelData<Pixel>&& other) noexcept
+  {
+    if (this != &other) {
+      PixelView<Pixel>::operator=(other);
+      m_pixels_ownership = std::move(other.m_pixels_ownership);
+      this->m_pixels = m_pixels_ownership.data();
+    }
+    return *this;
+  }
 
   PixelData(PixelView<Pixel> const& view) :
     PixelView<Pixel>(view),

@@ -56,8 +56,8 @@ public:
     // nothing to delete, m_pixel isn't owned
   }
 
-  PixelView(surf::PixelView<Pixel> const& other) = default;
-  PixelView& operator=(surf::PixelView<Pixel> const& other) = default;
+  PixelView(PixelView<Pixel> const& other) = default;
+  PixelView& operator=(PixelView<Pixel> const& other) = default;
 
   PixelView(geom::isize const& size, Pixel* pixels) :
     m_size(size),
