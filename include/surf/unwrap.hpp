@@ -17,6 +17,10 @@
 #ifndef HEADER_SURF_UNWRAP_HPP
 #define HEADER_SURF_UNWRAP_HPP
 
+#include <logmich/log.hpp>
+
+#include "software_surface.hpp"
+
 #define PIXELFORMAT_TO_TYPE(format, type, fail_expr, expr)      \
   do {                                                          \
     switch (format)                                             \
@@ -49,6 +53,19 @@
     auto&& pixelview = (surface).as_pixelview<pixelview##pixeltype>(); /* NOLINT */  \
     expr                                                                \
     )
+
+#define SOFTWARE_SURFACE_LIFT_VOID(function)                \
+  template<typename ...Args>                                \
+  void function(SoftwareSurface const& surface,             \
+                Args&&... args)                             \
+  {                                                         \
+    SOFTWARE_SURFACE_UNWRAP(                                \
+      surface,                                              \
+      pixelview,                                            \
+      log_unreachable(),                                    \
+      function(pixelview,                                   \
+               std::forward<Args>(args)...));               \
+  }
 
 #define SOFTWARE_SURFACE_LIFT_N(name, function)         \
   template<typename ...Args>                            \
