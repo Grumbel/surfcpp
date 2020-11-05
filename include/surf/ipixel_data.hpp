@@ -35,6 +35,7 @@ public:
   virtual int get_pitch() const = 0;
   virtual void* get_row_data(int y) = 0;
   virtual void const* get_row_data(int y) const = 0;
+  virtual void put_pixel_color(geom::ipoint const& pos, Color const& color) = 0;
   virtual Color get_pixel_color(geom::ipoint const& pos) const = 0;
   virtual bool empty() const = 0;
   virtual std::unique_ptr<IPixelData> copy() const = 0;

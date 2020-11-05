@@ -95,6 +95,11 @@ public:
     m_pixels[pos.y() * m_row_length + pos.x()] = pixel;
   }
 
+  void put_pixel_color(geom::ipoint const& pos, Color const& color) override
+  {
+    put_pixel(pos, convert<Color, Pixel>(color));
+  }
+
   Color get_pixel_color(geom::ipoint const& pos) const override
   {
     return convert<Pixel, Color>(get_pixel(pos));
