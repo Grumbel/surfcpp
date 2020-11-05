@@ -22,6 +22,7 @@
 #include "color.hpp"
 #include "convert.hpp"
 #include "fill.hpp"
+#include "filter.hpp"
 #include "fwd.hpp"
 #include "io.hpp"
 #include "ipixel_data.hpp"
