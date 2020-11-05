@@ -46,6 +46,16 @@ std::ostream& operator<<(std::ostream& os, RGBAPixel const& pixel)
                            static_cast<int>(pixel.a));
 }
 
+inline
+std::ostream& operator<<(std::ostream& os, Color const& color)
+{
+  return os << fmt::format("({:.2f} {:.2f} {:.2f} {:.2f})",
+                           color.r,
+                           color.g,
+                           color.b,
+                           color.a);
+}
+
 template<typename Pixel>
 inline
 std::ostream& operator<<(std::ostream& os, PixelView<Pixel> const& pixeldata)
