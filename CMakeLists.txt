@@ -123,6 +123,21 @@ if(BUILD_BENCHMARKS)
     benchmark::benchmark)
 endif()
 
+if(BUILD_EXTRA)
+  file(GLOB EXTRA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    extra/*.cpp)
+  foreach(SRC ${EXTRA_SOURCES})
+    get_filename_component(SRC_BASENAME ${SRC} NAME_WE)
+    add_executable(${SRC_BASENAME} ${SRC})
+    set_target_properties(${SRC_BASENAME} PROPERTIES
+      CXX_STANDARD 20
+      CXX_STANDARD_REQUIRED ON
+      CXX_EXTENSIONS OFF)
+    target_compile_options(${SRC_BASENAME} PRIVATE ${WARNINGS_CXX_FLAGS})
+    target_link_libraries(${SRC_BASENAME} surf)
+  endforeach(SRC)
+endif()
+
 install(TARGETS surf
   PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 
