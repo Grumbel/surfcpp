@@ -24,7 +24,7 @@
 namespace surf {
 
 template<typename Pixel, typename PixelFunc>
-void pixel_filter(PixelView<Pixel> src, PixelFunc func)
+void pixel_filter(PixelView<Pixel>& src, PixelFunc func)
 {
   for(int y = 0; y < src.get_height(); ++y) {
     Pixel* const row = src.get_row(y);
@@ -35,7 +35,7 @@ void pixel_filter(PixelView<Pixel> src, PixelFunc func)
 }
 
 template<typename Pixel>
-void apply_gamma(PixelView<Pixel> src, float gamma)
+void apply_gamma(PixelView<Pixel>& src, float gamma)
 {
   // FIXME: Slow
   for(int y = 0; y < src.get_height(); ++y) {
@@ -50,7 +50,7 @@ void apply_gamma(PixelView<Pixel> src, float gamma)
 }
 
 template<typename Pixel>
-void apply_brightness(PixelView<Pixel> src, float brightness)
+void apply_brightness(PixelView<Pixel>& src, float brightness)
 {
   // FIXME: Slow
   for(int y = 0; y < src.get_height(); ++y) {
@@ -65,7 +65,7 @@ void apply_brightness(PixelView<Pixel> src, float brightness)
 }
 
 template<typename Pixel>
-void apply_invert(PixelView<Pixel> src)
+void apply_invert(PixelView<Pixel>& src)
 {
   // FIXME: Slow
   for(int y = 0; y < src.get_height(); ++y) {

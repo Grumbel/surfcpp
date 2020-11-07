@@ -56,7 +56,7 @@
 
 #define SOFTWARE_SURFACE_LIFT_VOID(function)                \
   template<typename ...Args>                                \
-  void function(SoftwareSurface const& surface,             \
+  void function(SoftwareSurface& surface,                   \
                 Args&&... args)                             \
   {                                                         \
     SOFTWARE_SURFACE_UNWRAP(                                \
