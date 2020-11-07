@@ -89,7 +89,8 @@ void print_usage(int argc, char** argv)
     << "  --crop WxH[+X+Y]     Crop the image\n"
     << "  --transform ROT      Rotate or flip the image\n"
     << "  --threshold VALUE    Apply the given threshold\n"
-    << "  --grayscale          Convert to grayscale\n";
+    << "  --grayscale          Convert to grayscale\n"
+    << "  --hsv H:S:V          Apply hue/saturation/value\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -157,6 +158,17 @@ Options parse_args(int argc, char** argv)
         }
         file_opts().filters.emplace_back([rthreshold, gthreshold, bthreshold](SoftwareSurface& sur) {
           surf::apply_threshold(sur, surf::Color(rthreshold, gthreshold, bthreshold));
+        });
+      } else if (opt == "--hsv") {
+        next_arg();
+        float hue = 0.0f;
+        float saturation = 0.5f;
+        float value = 1.0f;
+        if (sscanf(argv[i], " %f, %f, %f ", &hue, &saturation, &value) != 3) {
+          throw std::invalid_argument("invalid argument");
+        }
+        file_opts().filters.emplace_back([hue, saturation, value](SoftwareSurface& sur) {
+          surf::apply_hsv(sur, hue, saturation, value);
         });
       } else if (opt == "--grayscale") {
         file_opts().filters.emplace_back([](SoftwareSurface& sur) {
@@ -242,6 +254,7 @@ int main(int argc, char** argv)
     run(argc, argv);
   } catch (std::exception const& err) {
     std::cerr << "error: " << err.what() << std::endl;
+    exit(EXIT_FAILURE);
   }
   return 0;
 }

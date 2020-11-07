@@ -17,7 +17,10 @@
 #ifndef HEADER_SURF_FILTER_HPP
 #define HEADER_SURF_FILTER_HPP
 
+#include <cmath>
+
 #include "color.hpp"
+#include "hsv.hpp"
 #include "pixel_view.hpp"
 #include "unwrap.hpp"
 
@@ -144,6 +147,28 @@ void apply_grayscale(PixelView<Pixel>& src)
   }
 }
 
+template<typename Pixel>
+void apply_hsv(PixelView<Pixel>& src, float hue, float saturation, float value)
+{
+  // FIXME: Slow
+  for(int y = 0; y < src.get_height(); ++y) {
+    for(int x = 0; x < src.get_width(); ++x) {
+      Color color = src.get_pixel_color({x, y});
+      HSVColor hsv = hsv_from_color(color);
+
+      hsv.hue += hue;
+      hsv.saturation += saturation;
+      hsv.value += value;
+
+      hsv.hue = std::fmod(hsv.hue + 1.0f, 1.0f);
+      hsv.saturation = std::clamp(hsv.saturation, 0.0f, 1.0f);
+      hsv.value = std::clamp(hsv.value, 0.0f, 1.0f);
+
+      src.put_pixel_color({x, y}, color_from_hsv(hsv));
+    }
+  }
+}
+
 SOFTWARE_SURFACE_LIFT_VOID(apply_gamma)
 SOFTWARE_SURFACE_LIFT_VOID(apply_brightness)
 SOFTWARE_SURFACE_LIFT_VOID(apply_contrast)
@@ -151,6 +176,7 @@ SOFTWARE_SURFACE_LIFT_VOID(apply_invert)
 SOFTWARE_SURFACE_LIFT_VOID(apply_lut)
 SOFTWARE_SURFACE_LIFT_VOID(apply_threshold)
 SOFTWARE_SURFACE_LIFT_VOID(apply_grayscale)
+SOFTWARE_SURFACE_LIFT_VOID(apply_hsv)
 
 } // namespace surf
 
