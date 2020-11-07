@@ -84,6 +84,7 @@ void print_usage(int argc, char** argv)
     << "  --invert             Invert the image\n"
     << "  --gamma VALUE        Apply gamma correction\n"
     << "  --brightness VALUE   Adjust brightness\n"
+    << "  --contrast VALUE     Adjust contrast\n"
     << "  --scale WxH{!><}     Resize the image\n"
     << "  --crop WxH[+X+Y]     Crop the image\n"
     << "  --transform ROT      Rotate or flip the image\n"
@@ -139,6 +140,12 @@ Options parse_args(int argc, char** argv)
         float value = std::stof(std::string(arg));
         file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
           surf::apply_brightness(sur, value);
+        });
+      } else if (opt == "--contrast") {
+        std::string_view arg = next_arg();
+        float value = std::stof(std::string(arg));
+        file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
+          surf::apply_contrast(sur, value);
         });
       } else if (opt == "--threshold") {
         std::string_view arg = next_arg();

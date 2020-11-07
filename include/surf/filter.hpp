@@ -65,6 +65,23 @@ void apply_brightness(PixelView<Pixel>& src, float brightness)
 }
 
 template<typename Pixel>
+void apply_contrast(PixelView<Pixel>& src, float contrast /* [-1.0, 1.0f] */)
+{
+  // FIXME: Slow
+  contrast = std::clamp(((contrast + 1.0f) / 2.0f), 0.0f, 1.0f);
+  float const factor = static_cast<float>(tan(static_cast<double>(contrast) * M_PI / 2.0));
+  for(int y = 0; y < src.get_height(); ++y) {
+    for(int x = 0; x < src.get_width(); ++x) {
+      Color rgba = src.get_pixel_color({x, y});
+      rgba.r = (rgba.r - 0.5f) * factor + 0.5f;
+      rgba.g = (rgba.g - 0.5f) * factor + 0.5f;
+      rgba.b = (rgba.b - 0.5f) * factor + 0.5f;
+      src.put_pixel_color({x, y}, rgba);
+    }
+  }
+}
+
+template<typename Pixel>
 void apply_invert(PixelView<Pixel>& src)
 {
   // FIXME: Slow
@@ -129,6 +146,7 @@ void apply_grayscale(PixelView<Pixel>& src)
 
 SOFTWARE_SURFACE_LIFT_VOID(apply_gamma)
 SOFTWARE_SURFACE_LIFT_VOID(apply_brightness)
+SOFTWARE_SURFACE_LIFT_VOID(apply_contrast)
 SOFTWARE_SURFACE_LIFT_VOID(apply_invert)
 SOFTWARE_SURFACE_LIFT_VOID(apply_lut)
 SOFTWARE_SURFACE_LIFT_VOID(apply_threshold)
