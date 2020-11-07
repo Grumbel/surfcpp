@@ -19,6 +19,7 @@
 
 #include <fmt/format.h>
 
+#include <geom/io.hpp>
 #include <surf/surf.hpp>
 #include <surf/io.hpp>
 
@@ -69,12 +70,35 @@ struct Options
 
 void print_usage(int argc, char** argv)
 {
-  std::cout << argv[0] << " ( [IMGFILE] [OPTION] )...\n";
+  std::cout
+    << argv[0] << " ( [IMGFILE] [OPTION] )...\n"
+    << "\n"
+    << "General Options:\n"
+    << " -h, --help   Display this text\n"
+    << "\n"
+    << "Per Image Options:\n"
+    << "  --output FILE        Output filename\n"
+    << "  --output-dir DIR     Output directory\n"
+    << "\n"
+    << "Filter:\n"
+    << "  --invert             Invert the image\n"
+    << "  --gamma VALUE        Apply gamma correction\n"
+    << "  --brightness VALUE   Adjust brightness\n"
+    << "  --scale WxH{!><}     Resize the image\n"
+    << "  --crop WxH[+X+Y]     Crop the image\n"
+    << "  --transform ROT      Rotate or flip the image\n"
+    << "  --threshold VALUE    Apply the given threshold\n"
+    << "  --grayscale          Convert to grayscale\n";
 }
 
 Options parse_args(int argc, char** argv)
 {
   Options opts;
+
+  if (argc == 1) {
+    print_usage(argc, argv);
+    exit(EXIT_SUCCESS);
+  }
 
   for (int i = 1; i < argc; ++i) {
     auto next_arg = [&]{
@@ -83,6 +107,7 @@ Options parse_args(int argc, char** argv)
         msg << argv[i - 1] << " needs an argument";
         throw std::runtime_error(msg.str());
       }
+      return std::string_view(argv[i]);
     };
 
     auto file_opts = [&]() -> FileOptions& {
@@ -95,77 +120,71 @@ Options parse_args(int argc, char** argv)
     };
 
     if (argv[i][0] == '-') {
-      if (strcmp(argv[i], "--help") == 0 ||
-          strcmp(argv[i], "-h") == 0) {
+      std::string_view opt = argv[i];
+      if (opt == "--help" || opt == "-h") {
         print_usage(argc, argv);
         exit(EXIT_SUCCESS);
-      } else if (strcmp(argv[i], "--invert") == 0) {
+      } else if (opt == "--invert") {
         file_opts().filters.emplace_back([](SoftwareSurface& sur) {
           surf::apply_invert(sur);
         });
-      } else if (strcmp(argv[i], "--gamma") == 0) {
-        next_arg();
-        float value = std::stof(argv[i]);
+      } else if (opt == "--gamma") {
+        std::string_view arg = next_arg();
+        float value = std::stof(std::string(arg));
         file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
           surf::apply_gamma(sur, value);
         });
-      } else if (strcmp(argv[i], "--brightness") == 0) {
-        next_arg();
-        float value = std::stof(argv[i]);
+      } else if (opt == "--brightness") {
+        std::string_view arg = next_arg();
+        float value = std::stof(std::string(arg));
         file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
           surf::apply_brightness(sur, value);
         });
-      } else if (strcmp(argv[i], "--scale") == 0) {
-        next_arg();
-        int width;
-        int height;
+      } else if (opt == "--scale") {
+        std::string_view arg = next_arg();
         char op = ' ';
-        if (sscanf(argv[i], "%dx%d%c", &width, &height, &op) == 3) {
-          // ok
-        } else if (sscanf(argv[i], "%dx%d", &width, &height) == 2) {
-          //ok
-        } else {
-          throw std::invalid_argument(fmt::format("expected WxH argument for options {}", argv[i - 1]));
+        if (arg.back() == '!' || arg.back() == '<' || arg.back() == '>') {
+          op = arg.back();
+          arg = arg.substr(0, arg.length() - 1);
         }
-        file_opts().filters.emplace_back([width, height, op](SoftwareSurface& sur) {
-          geom::isize size(width, height);
+
+        geom::isize desired_size = geom::isize_from_string(std::string(arg));
+        file_opts().filters.emplace_back([desired_size, op](SoftwareSurface& sur) {
+          geom::isize size = desired_size;
           if (op == '!') {
             // nop
+          } else if (op == '<') {
+            size = geom::grow_to_fit(sur.get_size(), desired_size);
+          } else if (op == '>') {
+            size = geom::shrink_to_fit(sur.get_size(), desired_size);
           } else {
-            size = geom::resize_to_fit(sur.get_size(), geom::isize(width, height));
+            size = geom::resize_to_fit(sur.get_size(), desired_size);
           }
           sur = surf::scale(sur, size);
         });
-      } else if (strcmp(argv[i], "--crop") == 0) {
-        next_arg();
-        int x = 0;
-        int y = 0;
-        int width;
-        int height;
-        if (sscanf(argv[i], "%dx%d+%d+%d", &width, &height, &x, &y) == 4) {
-          // ok
-        } else if (sscanf(argv[i], "%dx%d", &width, &height) == 2) {
-          // ok
-        } else {
-          throw std::invalid_argument(fmt::format("expected WxH argument for options {}", argv[i - 1]));
-        }
-
-        file_opts().filters.emplace_back([x, y, width, height](SoftwareSurface& sur) {
-          sur = surf::crop(sur, geom::irect(geom::ipoint(x, y), geom::isize(width, height)));
+      } else if (opt == "--crop") {
+        std::string_view arg = next_arg();
+        geom::irect rect = geom::irect_from_string(std::string(arg));
+        file_opts().filters.emplace_back([rect](SoftwareSurface& sur) {
+          sur = surf::crop(sur, rect);
         });
-      } else if (strcmp(argv[i], "--transform") == 0) {
-        next_arg();
-        surf::Transform const transf = transform_from_string(argv[i]);
+      } else if (opt == "--transform") {
+        std::string_view arg = next_arg();
+        surf::Transform const transf = transform_from_string(arg);
         file_opts().filters.emplace_back([transf](SoftwareSurface& sur) {
           sur = surf::transform(sur, transf);
         });
-      } else if (strcmp(argv[i], "--output") == 0 ||
-                 strcmp(argv[i], "-o") == 0) {
-        next_arg();
-        file_opts().output_filename = argv[i];
+      } else if (opt == "--output" || opt == "-o") {
+        std::string_view arg = next_arg();
+        file_opts().output_filename = arg;
+
+      } else if (opt == "--output-dir" || opt == "-O") {
+        std::string_view arg = next_arg();
+        std::filesystem::path dir = arg;
+        file_opts().output_filename = dir / file_opts().input_filename.filename();
       } else {
         print_usage(argc, argv);
-        throw std::invalid_argument(fmt::format("unknown option: {}", argv[i]));
+        throw std::invalid_argument(fmt::format("unknown option: {}", opt));
       }
     } else {
       opts.files.emplace_back(FileOptions{.input_filename = argv[i]});
