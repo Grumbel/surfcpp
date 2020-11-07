@@ -27,6 +27,8 @@ namespace surf {
 
 struct RGBPixel
 {
+  using value_type = uint8_t;
+
   uint8_t r;
   uint8_t g;
   uint8_t b;
@@ -39,6 +41,8 @@ static_assert(std::is_trivial<RGBPixel>::value);
 
 struct RGBAPixel
 {
+  using value_type = uint8_t;
+
   uint8_t r;
   uint8_t g;
   uint8_t b;
@@ -52,6 +56,8 @@ static_assert(std::is_trivial<RGBAPixel>::value);
 
 struct GreyscalePixel
 {
+  using value_type = uint8_t;
+
   uint8_t value;
 
   inline bool operator==(GreyscalePixel const& rhs) const = default;

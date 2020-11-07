@@ -140,6 +140,21 @@ Options parse_args(int argc, char** argv)
         file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
           surf::apply_brightness(sur, value);
         });
+      } else if (opt == "--threshold") {
+        std::string_view arg = next_arg();
+        float rthreshold = 0.5f;
+        float gthreshold = 0.5f;
+        float bthreshold = 0.5f;
+        if (sscanf(argv[i], " %f, %f, %f ", &rthreshold, &gthreshold, &bthreshold) != 3) {
+          rthreshold = gthreshold = bthreshold = std::stof(std::string(arg));
+        }
+        file_opts().filters.emplace_back([rthreshold, gthreshold, bthreshold](SoftwareSurface& sur) {
+          surf::apply_threshold(sur, surf::Color(rthreshold, gthreshold, bthreshold));
+        });
+      } else if (opt == "--grayscale") {
+        file_opts().filters.emplace_back([](SoftwareSurface& sur) {
+          surf::apply_grayscale(sur);
+        });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
         char op = ' ';

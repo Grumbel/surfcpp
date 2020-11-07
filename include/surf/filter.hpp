@@ -79,9 +79,60 @@ void apply_invert(PixelView<Pixel>& src)
   }
 }
 
+template<typename Pixel>
+void apply_lut(PixelView<Pixel>& src, typename Pixel::value_type* lut)
+{
+  for(int y = 0; y < src.get_height(); ++y) {
+    Pixel* row = src.get_row(y);
+    for(int x = 0; x < src.get_width(); ++x) {
+      row[x] = lut[row[x]];
+    }
+  }
+}
+
+template<typename Pixel>
+void apply_threshold(PixelView<Pixel>& src, Color threshold)
+{
+  constexpr typename Pixel::value_type min_val = std::numeric_limits<typename Pixel::value_type>::min();
+  constexpr typename Pixel::value_type max_val = std::numeric_limits<typename Pixel::value_type>::max();
+
+  typename Pixel::value_type const irthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.r, 0.0f, 1.0f) *
+                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+  typename Pixel::value_type const igthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.g, 0.0f, 1.0f) *
+                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+  typename Pixel::value_type const ibthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.b, 0.0f, 1.0f) *
+                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+
+  for(int y = 0; y < src.get_height(); ++y) {
+    Pixel* row = src.get_row(y);
+    for(int x = 0; x < src.get_width(); ++x) {
+      row[x].r = row[x].r > irthreshold ? max_val : min_val;
+      row[x].g = row[x].g > igthreshold ? max_val : min_val;
+      row[x].b = row[x].b > ibthreshold ? max_val : min_val;
+    }
+  }
+}
+
+template<typename Pixel>
+void apply_grayscale(PixelView<Pixel>& src)
+{
+  for(int y = 0; y < src.get_height(); ++y) {
+    Pixel* row = src.get_row(y);
+    for(int x = 0; x < src.get_width(); ++x) {
+      typename Pixel::value_type v = static_cast<typename Pixel::value_type>((row[x].r + row[x].g + row[x].b) / 3);
+      row[x].r = v;
+      row[x].g = v;
+      row[x].b = v;
+    }
+  }
+}
+
 SOFTWARE_SURFACE_LIFT_VOID(apply_gamma)
 SOFTWARE_SURFACE_LIFT_VOID(apply_brightness)
 SOFTWARE_SURFACE_LIFT_VOID(apply_invert)
+SOFTWARE_SURFACE_LIFT_VOID(apply_lut)
+SOFTWARE_SURFACE_LIFT_VOID(apply_threshold)
+SOFTWARE_SURFACE_LIFT_VOID(apply_grayscale)
 
 } // namespace surf
 
