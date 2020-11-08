@@ -53,6 +53,13 @@ Color
 Color::from_string(std::string_view text) {
   if (text.empty()) { return {}; }
 
+  float r = 1.0f;
+  float g = 1.0f;
+  float b = 1.0f;
+  float a = 1.0f;
+
+  std::string str(text);
+
   if (text[0] == '#') {
     if (text.size() == 4) {
       return Color::from_rgb888(x2i(text[1]) * 17,
@@ -65,6 +72,9 @@ Color::from_string(std::string_view text) {
     } else {
       throw std::invalid_argument(fmt::format("invalid color string: {}", text));
     }
+  } else if (sscanf(str.c_str(), " %f, %f, %f, %f ", &r, &g, &b, &a) == 4 ||
+             sscanf(str.c_str(), " %f, %f, %f ", &r, &g, &b) == 3) {
+    return Color(r, g, b, a);
   } else {
     return palette::lookup_colorname(text);
   }

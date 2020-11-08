@@ -37,6 +37,12 @@ TEST(ColorTest, from_string)
   EXPECT_EQ(Color::from_string("GREEN"), palette::green);
   EXPECT_EQ(Color::from_string("BLUE"), palette::blue);
   EXPECT_EQ(Color::from_string("BLACK"), palette::black);
+
+  EXPECT_EQ(Color::from_string("1,1,1,1"), palette::white);
+  EXPECT_EQ(Color::from_string("1,0,0,1"), palette::red);
+  EXPECT_EQ(Color::from_string("0,1,0,1"), palette::lime);
+  EXPECT_EQ(Color::from_string("0,0,1"), palette::blue);
+  EXPECT_EQ(Color::from_string("0,0,1, 0.5 "), Color(0.0f, 0.0f, 1.0f, 0.5f));
 }
 
 TEST(ColorTest, u8)
