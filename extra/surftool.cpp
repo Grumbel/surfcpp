@@ -235,6 +235,12 @@ Options parse_args(int argc, char** argv)
         file_opts().filters.emplace_back([transf](SoftwareSurface& sur) {
           sur = surf::transform(sur, transf);
         });
+      } else if (opt == "--fill") {
+        std::string_view arg = next_arg();
+        surf::Color const color = surf::Color::from_string(arg);
+        file_opts().filters.emplace_back([color](SoftwareSurface& sur) {
+          surf::fill(sur, color);
+        });
       } else if (opt == "--output" || opt == "-o") {
         std::string_view arg = next_arg();
         file_opts().output_filename = arg;
