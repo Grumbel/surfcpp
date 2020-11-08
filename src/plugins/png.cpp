@@ -16,9 +16,10 @@
 
 #include "plugins/png.hpp"
 
-#include <string.h>
 #include <assert.h>
+#include <fstream>
 #include <stdexcept>
+#include <string.h>
 
 #include <fmt/ostream.h>
 #include <png.h>
@@ -187,119 +188,27 @@ bool is_png(std::filesystem::path const& filename)
   }
 }
 
-SoftwareSurface load_from_file(std::filesystem::path const& filename)
+SoftwareSurface load_from_stream(std::istream& is, std::string const& context)
 {
-  FILE* in = fopen(filename.c_str(), "rb");
-  if (!in) {
-    throw std::runtime_error("PNG::load_from_file(): Couldn't open " + filename.string());
-  } else {
-    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    png_infop info_ptr  = png_create_info_struct(png_ptr);
-
-    if (setjmp(png_jmpbuf(png_ptr))) {
-      png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-      throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + filename.string());
-    }
-
-    png_init_io(png_ptr, in);
-
-    png_read_info(png_ptr, info_ptr);
-
-    // Convert all formats to either RGB or RGBA so we don't have to
-    // handle them all seperatly
-    //png_set_strip_16(png_ptr);
-    png_set_expand_gray_1_2_4_to_8(png_ptr);
-    png_set_palette_to_rgb(png_ptr);
-    png_set_expand(png_ptr); // FIXME: What does this do? what the other don't?
-    png_set_tRNS_to_alpha(png_ptr);
-    png_set_gray_to_rgb(png_ptr);
-
-    png_read_update_info(png_ptr, info_ptr);
-
-    int width  = static_cast<int>(png_get_image_width(png_ptr, info_ptr));
-    int height = static_cast<int>(png_get_image_height(png_ptr, info_ptr));
-
-    PixelFormat format;
-    switch (png_get_bit_depth(png_ptr, info_ptr))
-    {
-      case 8:
-        switch (png_get_color_type(png_ptr, info_ptr))
-        {
-          case PNG_COLOR_TYPE_RGBA:
-            format = PixelFormat::RGBA8;
-            break;
-
-          case PNG_COLOR_TYPE_RGB:
-            format = PixelFormat::RGB8;
-            break;
-
-          default:
-            throw std::invalid_argument("invalid png color type");
-            break;
-        }
-        break;
-
-      case 16:
-        switch (png_get_color_type(png_ptr, info_ptr))
-        {
-          case PNG_COLOR_TYPE_RGBA:
-            format = PixelFormat::RGBA16;
-            break;
-
-          case PNG_COLOR_TYPE_RGB:
-            format = PixelFormat::RGB16;
-            break;
-
-          default:
-            throw std::invalid_argument("invalid png color type");
-            break;
-        }
-        break;
-
-      default:
-        throw std::invalid_argument("invalid png bit depth");
-        break;
-    }
-
-    SoftwareSurface surface = SoftwareSurface::create(format, geom::isize(width, height));
-
-    std::vector<png_bytep> row_pointers(height);
-    for (int y = 0; y < height; ++y) {
-      row_pointers[y] = static_cast<png_bytep>(surface.get_row_data(y));
-    }
-    png_read_image(png_ptr, row_pointers.data());
-
-    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-
-    fclose(in);
-
-    return surface;
-  }
-}
-
-SoftwareSurface load_from_mem(std::span<uint8_t const> data)
-{
-  // FIXME: Merge this with load_from_file
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   png_infop info_ptr  = png_create_info_struct(png_ptr);
 
-  PNGReadMemory png_memory;
-  png_memory.data = data.data();
-  png_memory.len  = data.size();
-  png_memory.pos  = 0;
-
   if (setjmp(png_jmpbuf(png_ptr))) {
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-    throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load from mem");
+    throw std::runtime_error("PNG::load_from_mem(): setjmp: Couldn't load " + context);
   }
 
-  png_set_read_fn(png_ptr, &png_memory, &readPNGMemory);
+  //png_init_io(png_ptr, in);
+  png_set_read_fn(png_ptr, &is, [](png_structp l_png_ptr, png_bytep buffer, size_t len) {
+    std::ifstream& l_is = *static_cast<std::ifstream*>(png_get_io_ptr(l_png_ptr));
+    l_is.read(reinterpret_cast<char*>(buffer), len);
+  });
 
   png_read_info(png_ptr, info_ptr);
 
   // Convert all formats to either RGB or RGBA so we don't have to
   // handle them all seperatly
-  png_set_strip_16(png_ptr);
+  //png_set_strip_16(png_ptr);
   png_set_expand_gray_1_2_4_to_8(png_ptr);
   png_set_palette_to_rgb(png_ptr);
   png_set_expand(png_ptr); // FIXME: What does this do? what the other don't?
@@ -308,41 +217,80 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 
   png_read_update_info(png_ptr, info_ptr);
 
-  int width = static_cast<int>(png_get_image_width(png_ptr, info_ptr));
-  int height = static_cast<int>(png_get_image_height(png_ptr, info_ptr));
-
-  SoftwareSurface surface;
-
-  switch(png_get_color_type(png_ptr, info_ptr))
+  PixelFormat format;
+  switch (png_get_bit_depth(png_ptr, info_ptr))
   {
-    case PNG_COLOR_TYPE_RGBA: {
-      PixelData<RGBAPixel> dst(geom::isize(width, height));
+    case 8:
+      switch (png_get_color_type(png_ptr, info_ptr))
+      {
+        case PNG_COLOR_TYPE_RGBA:
+          format = PixelFormat::RGBA8;
+          break;
 
-      std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
-      for (int y = 0; y < height; ++y) {
-        row_pointers[static_cast<size_t>(y)] = static_cast<png_bytep>(dst.get_row_data(y));
+        case PNG_COLOR_TYPE_RGB:
+          format = PixelFormat::RGB8;
+          break;
+
+        default:
+          throw std::invalid_argument("invalid png color type");
+          break;
       }
-
-      png_read_image(png_ptr, row_pointers.data());
       break;
-    }
 
-    case PNG_COLOR_TYPE_RGB: {
-      PixelData<RGBPixel> dst(geom::isize(width, height));
+    case 16:
+      switch (png_get_color_type(png_ptr, info_ptr))
+      {
+        case PNG_COLOR_TYPE_RGBA:
+          format = PixelFormat::RGBA16;
+          break;
 
-      std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
-      for (int y = 0; y < height; ++y) {
-        row_pointers[static_cast<size_t>(y)] = static_cast<png_bytep>(dst.get_row_data(y));
+        case PNG_COLOR_TYPE_RGB:
+          format = PixelFormat::RGB16;
+          break;
+
+        default:
+          throw std::invalid_argument("invalid png color type");
+          break;
       }
-
-      png_read_image(png_ptr, row_pointers.data());
       break;
+
+    default:
+      throw std::invalid_argument("invalid png bit depth");
+      break;
+  }
+
+  geom::isize const size(static_cast<int>(png_get_image_width(png_ptr, info_ptr)),
+                         static_cast<int>(png_get_image_height(png_ptr, info_ptr)));
+
+  SoftwareSurface surface = SoftwareSurface::create(format, size);
+  { // read data from .png
+    std::vector<png_bytep> row_pointers(surface.get_height());
+    for (int y = 0; y < surface.get_height(); ++y) {
+      row_pointers[y] = static_cast<png_bytep>(surface.get_row_data(y));
     }
+    png_read_image(png_ptr, row_pointers.data());
   }
 
   png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
   return surface;
+}
+
+SoftwareSurface load_from_file(std::filesystem::path const& filename)
+{
+  std::ifstream fin(filename, std::ios::binary);
+  if (!fin) {
+    throw std::runtime_error("PNG::load_from_file(): Couldn't open " + filename.string());
+  }
+
+  return load_from_stream(fin, filename.string());
+}
+
+SoftwareSurface load_from_mem(std::span<uint8_t const> data)
+{
+  // FIXME: unnecessary copy here
+  std::istringstream iss(std::string(data.begin(), data.end()));
+  return load_from_stream(iss, "<memory>");
 }
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& filename)

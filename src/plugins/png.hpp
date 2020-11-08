@@ -35,6 +35,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size);
 
 bool is_png(std::filesystem::path const& filename);
 
+SoftwareSurface load_from_stream(std::istream& is, std::string const& context);
 SoftwareSurface load_from_file(std::filesystem::path const& filename);
 SoftwareSurface load_from_mem(std::span<uint8_t const> data);
 
