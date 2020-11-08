@@ -28,7 +28,7 @@
 namespace surf {
 
 inline
-std::ostream& operator<<(std::ostream& os, RGBPixel const& pixel)
+std::ostream& operator<<(std::ostream& os, RGB8Pixel const& pixel)
 {
   return os << fmt::format("({:02x} {:02x} {:02x})",
                            static_cast<int>(pixel.r),
@@ -37,9 +37,47 @@ std::ostream& operator<<(std::ostream& os, RGBPixel const& pixel)
 }
 
 inline
-std::ostream& operator<<(std::ostream& os, RGBAPixel const& pixel)
+std::ostream& operator<<(std::ostream& os, RGBA8Pixel const& pixel)
 {
   return os << fmt::format("({:02x} {:02x} {:02x} {:02x})",
+                           static_cast<int>(pixel.r),
+                           static_cast<int>(pixel.g),
+                           static_cast<int>(pixel.b),
+                           static_cast<int>(pixel.a));
+}
+
+inline
+std::ostream& operator<<(std::ostream& os, RGB16Pixel const& pixel)
+{
+  return os << fmt::format("({:04x} {:04x} {:04x})",
+                           static_cast<int>(pixel.r),
+                           static_cast<int>(pixel.g),
+                           static_cast<int>(pixel.b));
+}
+
+inline
+std::ostream& operator<<(std::ostream& os, RGBA16Pixel const& pixel)
+{
+  return os << fmt::format("({:04x} {:04x} {:04x} {:04x})",
+                           static_cast<int>(pixel.r),
+                           static_cast<int>(pixel.g),
+                           static_cast<int>(pixel.b),
+                           static_cast<int>(pixel.a));
+}
+
+inline
+std::ostream& operator<<(std::ostream& os, RGB32Pixel const& pixel)
+{
+  return os << fmt::format("({:08x} {:08x} {:08x})",
+                           static_cast<int>(pixel.r),
+                           static_cast<int>(pixel.g),
+                           static_cast<int>(pixel.b));
+}
+
+inline
+std::ostream& operator<<(std::ostream& os, RGBA32Pixel const& pixel)
+{
+  return os << fmt::format("({:08x} {:08x} {:08x} {:08x})",
                            static_cast<int>(pixel.r),
                            static_cast<int>(pixel.g),
                            static_cast<int>(pixel.b),

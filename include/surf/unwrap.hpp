@@ -31,14 +31,38 @@
         break;                                                  \
       }                                                         \
                                                                 \
-      case PixelFormat::RGB: {                                  \
-        using type = RGBPixel; /* NOLINT */                     \
+      case PixelFormat::RGB8: {                                 \
+        using type = RGB8Pixel; /* NOLINT */                    \
         expr;                                                   \
         break;                                                  \
       }                                                         \
                                                                 \
-      case PixelFormat::RGBA: {                                 \
-        using type = RGBAPixel; /* NOLINT */                    \
+      case PixelFormat::RGBA8: {                                \
+        using type = RGBA8Pixel; /* NOLINT */                   \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGB16: {                                \
+        using type = RGB16Pixel; /* NOLINT */                   \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGBA16: {                               \
+        using type = RGBA16Pixel; /* NOLINT */                  \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGB32: {                                \
+        using type = RGB32Pixel; /* NOLINT */                   \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGBA32: {                               \
+        using type = RGBA32Pixel; /* NOLINT */                   \
         expr;                                                   \
         break;                                                  \
       }                                                         \
@@ -50,21 +74,21 @@
     (surface).get_format(),                                             \
     pixelview##pixeltype,                                               \
     fail_expr,                                                          \
-    auto&& pixelview = (surface).as_pixelview<pixelview##pixeltype>(); /* NOLINT */  \
+    auto&& pixelview = (surface).as_pixelview<pixelview##pixeltype>(); /* NOLINT */ \
     expr                                                                \
     )
 
-#define SOFTWARE_SURFACE_LIFT_VOID(function)                \
-  template<typename ...Args>                                \
-  void function(SoftwareSurface& surface,                   \
-                Args&&... args)                             \
-  {                                                         \
-    SOFTWARE_SURFACE_UNWRAP(                                \
-      surface,                                              \
-      pixelview,                                            \
-      log_unreachable(),                                    \
-      function(pixelview,                                   \
-               std::forward<Args>(args)...));               \
+#define SOFTWARE_SURFACE_LIFT_VOID(function)    \
+  template<typename ...Args>                    \
+  void function(SoftwareSurface& surface,       \
+                Args&&... args)                 \
+  {                                             \
+    SOFTWARE_SURFACE_UNWRAP(                    \
+      surface,                                  \
+      pixelview,                                \
+      log_unreachable(),                        \
+      function(pixelview,                       \
+               std::forward<Args>(args)...));   \
   }
 
 #define SOFTWARE_SURFACE_LIFT_N(name, function)         \
@@ -104,4 +128,4 @@
 
 #endif
 
-/* EOF */
+  /* EOF */

@@ -40,11 +40,6 @@ struct tRGBPixel
   inline bool operator==(tRGBPixel<T> const& rhs) const = default;
 };
 
-using RGBPixel = tRGBPixel<uint8_t>;
-
-static_assert(sizeof(RGBPixel) == 3);
-static_assert(std::is_trivial<RGBPixel>::value);
-
 template<typename T>
 struct tRGBAPixel
 {
@@ -60,10 +55,23 @@ struct tRGBAPixel
   inline bool operator==(tRGBAPixel<T> const& rhs) const = default;
 };
 
-using RGBAPixel = tRGBAPixel<uint8_t>;
+using RGB8Pixel = tRGBPixel<uint8_t>;
+using RGBA8Pixel = tRGBAPixel<uint8_t>;
+
+using RGB16Pixel = tRGBPixel<uint16_t>;
+using RGBA16Pixel = tRGBAPixel<uint16_t>;
+
+using RGB32Pixel = tRGBPixel<uint32_t>;
+using RGBA32Pixel = tRGBAPixel<uint32_t>;
+
+using RGBPixel = RGB8Pixel;
+using RGBAPixel = RGBA8Pixel;
 
 static_assert(sizeof(RGBAPixel) == 4);
 static_assert(std::is_trivial<RGBAPixel>::value);
+
+static_assert(sizeof(RGBPixel) == 3);
+static_assert(std::is_trivial<RGBPixel>::value);
 
 template<typename T>
 struct tGreyscalePixel
@@ -87,9 +95,9 @@ struct PPixelFormat
 };
 
 template<>
-struct PPixelFormat<RGBPixel>
+struct PPixelFormat<RGB8Pixel>
 {
-  static constexpr PixelFormat format = PixelFormat::RGB;
+  static constexpr PixelFormat format = PixelFormat::RGB8;
   static constexpr int bits_per_pixel = 24;
   static constexpr int bytes_per_pixel = 3;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff;
@@ -99,15 +107,63 @@ struct PPixelFormat<RGBPixel>
 };
 
 template<>
-struct PPixelFormat<RGBAPixel>
+struct PPixelFormat<RGBA8Pixel>
 {
-  static constexpr PixelFormat format = PixelFormat::RGBA;
+  static constexpr PixelFormat format = PixelFormat::RGBA8;
   static constexpr int bits_per_pixel = 32;
   static constexpr int bytes_per_pixel = 4;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
   static constexpr uint32_t gmask = std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00;
   static constexpr uint32_t bmask = std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000;
   static constexpr uint32_t amask = std::endian::native == std::endian::big ? 0x000000ff : 0xff000000;
+};
+
+template<>
+struct PPixelFormat<RGB16Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGB16;
+  static constexpr int bits_per_pixel = 48;
+  static constexpr int bytes_per_pixel = 6;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGBA16Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGBA16;
+  static constexpr int bits_per_pixel = 64;
+  static constexpr int bytes_per_pixel = 8;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGB32Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGB32;
+  static constexpr int bits_per_pixel = 96;
+  static constexpr int bytes_per_pixel = 12;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGBA32Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGBA32;
+  static constexpr int bits_per_pixel = 128;
+  static constexpr int bytes_per_pixel = 16;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
 };
 
 template<>

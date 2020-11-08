@@ -27,8 +27,16 @@ namespace detail {
 enum class PixelFormatName
 {
   NONE,
-  RGB,
-  RGBA
+
+  RGB8,
+  RGBA8,
+  RGB16,
+  RGBA16,
+  RGB32,
+  RGBA32,
+
+  RGB = RGB8,
+  RGBA = RGBA8
 };
 
 struct PixelFormatImpl
@@ -49,17 +57,27 @@ struct PixelFormatImpl
 class PixelFormat
 {
 public:
-  static constexpr detail::PixelFormatImpl RGB{detail::PixelFormatName::RGB, 24, 3,
+  static constexpr detail::PixelFormatImpl RGB8{detail::PixelFormatName::RGB8, 24, 3,
       std::endian::native == std::endian::big ? 0x00ff0000 : 0x000000ff,
       std::endian::native == std::endian::big ? 0x0000ff00 : 0x0000ff00, // NOLINT
       std::endian::native == std::endian::big ? 0x000000ff : 0x00ff0000,
       0x00000000};
-  static constexpr detail::PixelFormatImpl RGBA{detail::PixelFormatName::RGBA, 32, 4,
-      std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff,
-      std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00,
-      std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000,
-      std::endian::native == std::endian::big ? 0x000000ff : 0xff000000};
+  static constexpr detail::PixelFormatImpl RGBA8{detail::PixelFormatName::RGBA8, 32, 4,
+    std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff,
+    std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00,
+    std::endian::native == std::endian::big ? 0x0000ff00 : 0x00ff0000,
+    std::endian::native == std::endian::big ? 0x000000ff : 0xff000000};
+
+  static constexpr detail::PixelFormatImpl RGB16{detail::PixelFormatName::RGB16, 48, 6, 0, 0, 0, 0};
+  static constexpr detail::PixelFormatImpl RGBA16{detail::PixelFormatName::RGBA16, 64, 8, 0, 0, 0, 0};
+
+  static constexpr detail::PixelFormatImpl RGB32{detail::PixelFormatName::RGB32, 96, 12, 0, 0, 0, 0};
+  static constexpr detail::PixelFormatImpl RGBA32{detail::PixelFormatName::RGBA32, 128, 16, 0, 0, 0, 0};
+
   static constexpr detail::PixelFormatImpl NONE{detail::PixelFormatName::NONE, 0, 0, 0, 0, 0, 0};
+
+  static constexpr detail::PixelFormatImpl RGB = RGB8;
+  static constexpr detail::PixelFormatImpl RGBA = RGBA8;
 
 public:
   constexpr PixelFormat() : m_desc(nullptr) {}

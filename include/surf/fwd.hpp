@@ -27,8 +27,18 @@ template<typename T> struct tRGBPixel;
 template<typename T> struct tRGBAPixel;
 template<typename T> struct tGreyscalePixel;
 
-using RGBPixel = tRGBPixel<uint8_t>;
-using RGBAPixel = tRGBAPixel<uint8_t>;
+using RGB8Pixel = tRGBPixel<uint8_t>;
+using RGBA8Pixel = tRGBAPixel<uint8_t>;
+
+using RGB16Pixel = tRGBPixel<uint16_t>;
+using RGBA16Pixel = tRGBAPixel<uint16_t>;
+
+using RGB32Pixel = tRGBPixel<uint32_t>;
+using RGBA32Pixel = tRGBAPixel<uint32_t>;
+
+using RGBPixel = RGB8Pixel;
+using RGBAPixel = RGBA8Pixel;
+
 using GreyscalePixel = tGreyscalePixel<uint8_t>;
 
 class Color;
