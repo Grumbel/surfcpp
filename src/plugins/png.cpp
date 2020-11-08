@@ -207,7 +207,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
     // Convert all formats to either RGB or RGBA so we don't have to
     // handle them all seperatly
-    png_set_strip_16(png_ptr);
+    //png_set_strip_16(png_ptr);
     png_set_expand_gray_1_2_4_to_8(png_ptr);
     png_set_palette_to_rgb(png_ptr);
     png_set_expand(png_ptr); // FIXME: What does this do? what the other don't?
@@ -219,38 +219,55 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
     int width  = static_cast<int>(png_get_image_width(png_ptr, info_ptr));
     int height = static_cast<int>(png_get_image_height(png_ptr, info_ptr));
 
-    SoftwareSurface surface;
-
-    switch(png_get_color_type(png_ptr, info_ptr))
+    PixelFormat format;
+    switch (png_get_bit_depth(png_ptr, info_ptr))
     {
-      case PNG_COLOR_TYPE_RGBA: {
-        PixelData<RGBAPixel> dst(geom::isize(width, height));
+      case 8:
+        switch (png_get_color_type(png_ptr, info_ptr))
+        {
+          case PNG_COLOR_TYPE_RGBA:
+            format = PixelFormat::RGBA8;
+            break;
 
-        std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
-        for (int y = 0; y < height; ++y) {
-          row_pointers[static_cast<size_t>(y)] = static_cast<png_bytep>(dst.get_row_data(y));
+          case PNG_COLOR_TYPE_RGB:
+            format = PixelFormat::RGB8;
+            break;
+
+          default:
+            throw std::invalid_argument("invalid png color type");
+            break;
         }
-
-        png_read_image(png_ptr, row_pointers.data());
-
-        surface = SoftwareSurface(std::move(dst));
         break;
-      }
 
-      case PNG_COLOR_TYPE_RGB: {
-        PixelData<RGBPixel> dst(geom::isize(width, height));
+      case 16:
+        switch (png_get_color_type(png_ptr, info_ptr))
+        {
+          case PNG_COLOR_TYPE_RGBA:
+            format = PixelFormat::RGBA16;
+            break;
 
-        std::vector<png_bytep> row_pointers(static_cast<size_t>(height));
-        for (int y = 0; y < height; ++y) {
-          row_pointers[static_cast<size_t>(y)] = static_cast<png_bytep>(dst.get_row_data(y));
+          case PNG_COLOR_TYPE_RGB:
+            format = PixelFormat::RGB16;
+            break;
+
+          default:
+            throw std::invalid_argument("invalid png color type");
+            break;
         }
-
-        png_read_image(png_ptr, row_pointers.data());
-
-        surface = SoftwareSurface(std::move(dst));
         break;
-      }
+
+      default:
+        throw std::invalid_argument("invalid png bit depth");
+        break;
     }
+
+    SoftwareSurface surface = SoftwareSurface::create(format, geom::isize(width, height));
+
+    std::vector<png_bytep> row_pointers(height);
+    for (int y = 0; y < height; ++y) {
+      row_pointers[y] = static_cast<png_bytep>(surface.get_row_data(y));
+    }
+    png_read_image(png_ptr, row_pointers.data());
 
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
@@ -295,6 +312,7 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
   int height = static_cast<int>(png_get_image_height(png_ptr, info_ptr));
 
   SoftwareSurface surface;
+
   switch(png_get_color_type(png_ptr, info_ptr))
   {
     case PNG_COLOR_TYPE_RGBA: {
