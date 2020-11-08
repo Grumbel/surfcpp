@@ -252,9 +252,9 @@ SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format)
     src_as_pixelview,
     return {},
     PIXELFORMAT_TO_TYPE(
-      src.get_format(),
+      format,
       pixel_type,
-      return {},
+      log_unreachable(); return {},
       return SoftwareSurface(src_as_pixelview.template convert_to<pixel_type>())));
 }
 
