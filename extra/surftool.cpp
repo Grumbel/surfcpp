@@ -24,6 +24,7 @@
 #include <surf/io.hpp>
 
 using surf::SoftwareSurface;
+using surf::PixelFormat;
 
 namespace {
 
@@ -53,6 +54,25 @@ surf::Transform transform_from_string(std::string_view text)
     return surf::Transform::FLIP_HORIZONTAL;
   } else {
     throw std::invalid_argument(fmt::format("not a valid transform: {}", text));
+  }
+}
+
+PixelFormat pixelformat_from_string(std::string_view text)
+{
+  if (text == "rgb8") {
+    return PixelFormat::RGB8;
+  } else if (text == "rgba8") {
+    return PixelFormat::RGBA8;
+  } else if (text == "rgb16") {
+    return PixelFormat::RGB16;
+  } else if (text == "rgba16") {
+    return PixelFormat::RGBA16;
+  } else if (text == "rgb32") {
+    return PixelFormat::RGB32;
+  } else if (text == "rgba32") {
+    return PixelFormat::RGBA32;
+  } else {
+    throw std::invalid_argument(fmt::format("unknown PixelFormat: '{}'", text));
   }
 }
 
@@ -90,7 +110,8 @@ void print_usage(int argc, char** argv)
     << "  --transform ROT      Rotate or flip the image\n"
     << "  --threshold VALUE    Apply the given threshold\n"
     << "  --grayscale          Convert to grayscale\n"
-    << "  --hsv H:S:V          Apply hue/saturation/value\n";
+    << "  --hsv H:S:V          Apply hue/saturation/value\n"
+    << "  --convert FORMAT     Convert internal format to FORMAT\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -173,6 +194,12 @@ Options parse_args(int argc, char** argv)
       } else if (opt == "--grayscale") {
         file_opts().filters.emplace_back([](SoftwareSurface& sur) {
           surf::apply_grayscale(sur);
+        });
+      } else if (opt == "--convert") {
+        std::string_view arg = next_arg();
+        auto format = pixelformat_from_string(arg);
+        file_opts().filters.emplace_back([format](SoftwareSurface& sur) {
+          sur = surf::convert(sur, format);
         });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
