@@ -20,48 +20,63 @@
 #include <stdint.h>
 
 #include <bit>
+#include <limits>
 
 #include "pixel_format.hpp"
 
 namespace surf {
 
-struct RGBPixel
+template<typename T>
+struct tRGBPixel
 {
-  using value_type = uint8_t;
+  using value_type = T;
+  static constexpr bool has_alpha() { return false; }
+  static constexpr T max() { return std::numeric_limits<T>::max(); }
 
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
+  T r;
+  T g;
+  T b;
 
-  inline bool operator==(RGBPixel const& rhs) const = default;
+  inline bool operator==(tRGBPixel<T> const& rhs) const = default;
 };
+
+using RGBPixel = tRGBPixel<uint8_t>;
 
 static_assert(sizeof(RGBPixel) == 3);
 static_assert(std::is_trivial<RGBPixel>::value);
 
-struct RGBAPixel
+template<typename T>
+struct tRGBAPixel
 {
-  using value_type = uint8_t;
+  using value_type = T;
+  static constexpr bool has_alpha() { return true; }
+  static constexpr T max() { return std::numeric_limits<T>::max(); }
 
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
-  uint8_t a;
+  T r;
+  T g;
+  T b;
+  T a;
 
-  inline bool operator==(RGBAPixel const& rhs) const = default;
+  inline bool operator==(tRGBAPixel<T> const& rhs) const = default;
 };
+
+using RGBAPixel = tRGBAPixel<uint8_t>;
 
 static_assert(sizeof(RGBAPixel) == 4);
 static_assert(std::is_trivial<RGBAPixel>::value);
 
-struct GreyscalePixel
+template<typename T>
+struct tGreyscalePixel
 {
-  using value_type = uint8_t;
+  using value_type = T;
+  static constexpr T max() { return std::numeric_limits<T>::max(); }
 
-  uint8_t value;
+  T value;
 
-  inline bool operator==(GreyscalePixel const& rhs) const = default;
+  inline bool operator==(tGreyscalePixel<T> const& rhs) const = default;
 };
+
+using GreyscalePixel = tGreyscalePixel<uint8_t>;
 
 static_assert(sizeof(GreyscalePixel) == 1);
 static_assert(std::is_trivial<GreyscalePixel>::value);

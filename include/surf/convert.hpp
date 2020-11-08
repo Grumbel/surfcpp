@@ -24,43 +24,65 @@ namespace surf {
 
 template<typename SrcPixel, typename DstPixel>
 DstPixel convert(SrcPixel src) {
-  if constexpr (std::is_same<SrcPixel, SrcPixel>::value) {
+  if constexpr (std::is_same<SrcPixel, DstPixel>::value) {
     return src;
+  } else if constexpr (std::is_same<DstPixel, Color>::value) {
+    if constexpr (SrcPixel::has_alpha()) {
+      return Color(static_cast<float>(src.r) / static_cast<float>(SrcPixel::max()),
+                   static_cast<float>(src.g) / static_cast<float>(SrcPixel::max()),
+                   static_cast<float>(src.b) / static_cast<float>(SrcPixel::max()),
+                   static_cast<float>(src.a) / static_cast<float>(SrcPixel::max()));
+    } else {
+      return Color(static_cast<float>(src.r) / static_cast<float>(SrcPixel::max()),
+                   static_cast<float>(src.g) / static_cast<float>(SrcPixel::max()),
+                   static_cast<float>(src.b) / static_cast<float>(SrcPixel::max()));
+    }
+  } else if constexpr (std::is_same<SrcPixel, Color>::value) {
+    if constexpr (DstPixel::has_alpha()) {
+      return DstPixel{
+        static_cast<typename DstPixel::value_type>(src.r * static_cast<float>(DstPixel::max())),
+        static_cast<typename DstPixel::value_type>(src.g * static_cast<float>(DstPixel::max())),
+        static_cast<typename DstPixel::value_type>(src.b * static_cast<float>(DstPixel::max())),
+        static_cast<typename DstPixel::value_type>(src.a * static_cast<float>(DstPixel::max()))
+      };
+    } else {
+      return DstPixel{
+        static_cast<typename DstPixel::value_type>(src.r * static_cast<float>(DstPixel::max())),
+        static_cast<typename DstPixel::value_type>(src.g * static_cast<float>(DstPixel::max())),
+        static_cast<typename DstPixel::value_type>(src.b * static_cast<float>(DstPixel::max()))
+      };
+    }
+  } else if constexpr (!SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
+    return DstPixel{
+      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max())
+    };
+  } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
+    return DstPixel{
+      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.a * DstPixel::max() / SrcPixel::max())
+    };
+  } else if constexpr (!SrcPixel::has_alpha() && DstPixel::has_alpha()) {
+    return DstPixel{
+      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max()),
+      DstPixel::max()
+    };
+  } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
+    return DstPixel{
+      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max())
+    };
   } else {
     static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
-                "convert<>() not implemented for the given types");
+                  "convert<>() not implemented for the given types");
     return {};
   }
-}
-
-template<> inline
-RGBPixel convert<RGBAPixel, RGBPixel>(RGBAPixel src) {
-  return RGBPixel{src.r, src.g, src.b};
-}
-
-template<> inline
-RGBAPixel convert<RGBPixel, RGBAPixel>(RGBPixel src) {
-  return RGBAPixel{src.r, src.g, src.b, 255};
-}
-
-template<> inline
-RGBPixel convert<Color, RGBPixel>(Color src) {
-  return RGBPixel{src.r8(), src.g8(), src.b8()};
-}
-
-template<> inline
-RGBAPixel convert<Color, RGBAPixel>(Color src) {
-  return RGBAPixel{src.r8(), src.g8(), src.b8(), src.a8()};
-}
-
-template<> inline
-Color convert<RGBPixel, Color>(RGBPixel src) {
-  return Color::from_rgb888(src.r, src.g, src.b);
-}
-
-template<> inline
-Color convert<RGBAPixel, Color>(RGBAPixel src) {
-  return Color::from_rgba8888(src.r, src.g, src.b, src.a);
 }
 
 template<> inline

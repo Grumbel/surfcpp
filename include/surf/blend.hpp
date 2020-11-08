@@ -18,52 +18,38 @@
 #define HEADER_SURF_BLEND_HPP
 
 #include "color.hpp"
+#include "convert.hpp"
 #include "pixel.hpp"
 
 namespace surf {
 
 template<typename SrcPixel, typename DstPixel>
-DstPixel pixel_blend(SrcPixel src, DstPixel dst) {
-  static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
-                "blend<>() not implemented for the given types");
-  return DstPixel{};
-}
-
-template<> inline
-RGBPixel pixel_blend<RGBPixel, RGBPixel>(RGBPixel src, RGBPixel dst)
+DstPixel pixel_blend(SrcPixel src, DstPixel dst)
 {
-  return src;
-}
-
-template<> inline
-RGBAPixel pixel_blend<RGBPixel, RGBAPixel>(RGBPixel src, RGBAPixel dst)
-{
-  return RGBAPixel{src.r, src.g, src.b, 255};
-}
-
-template<> inline
-RGBPixel pixel_blend<RGBAPixel, RGBPixel>(RGBAPixel src, RGBPixel dst)
-{
-  return RGBPixel{
-    static_cast<uint8_t>((src.r * src.a + dst.r * (255 - src.a)) / 255),
-    static_cast<uint8_t>((src.g * src.a + dst.g * (255 - src.a)) / 255),
-    static_cast<uint8_t>((src.b * src.a + dst.b * (255 - src.a)) / 255)
-  };
-}
-
-template<> inline
-RGBAPixel pixel_blend<RGBAPixel, RGBAPixel>(RGBAPixel src, RGBAPixel dst)
-{
-  uint8_t const out_a = static_cast<uint8_t>(src.a + dst.a * (255 - src.a) / 255);
-  if (out_a == 0) {
-    return RGBAPixel{0, 0, 0, 0};
-  } else {
-    return RGBAPixel{
-      static_cast<uint8_t>((src.r * src.a + dst.r * dst.a * (255 - src.a) / 255) / out_a),
-      static_cast<uint8_t>((src.g * src.a + dst.g * dst.a * (255 - src.a) / 255) / out_a),
-      static_cast<uint8_t>((src.b * src.a + dst.b * dst.a * (255 - src.a) / 255) / out_a),
-      out_a
+  if constexpr (!SrcPixel::has_alpha()) {
+    return convert<SrcPixel, DstPixel>(src);
+  } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
+    return DstPixel{
+      static_cast<typename DstPixel::value_type>((src.r * src.a + dst.r * (SrcPixel::max() - src.a)) / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>((src.g * src.a + dst.g * (SrcPixel::max() - src.a)) / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>((src.b * src.a + dst.b * (SrcPixel::max() - src.a)) / SrcPixel::max())
     };
+  } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
+    typename DstPixel::value_type const out_a = static_cast<typename DstPixel::value_type>(src.a + dst.a * (SrcPixel::max() - src.a) / SrcPixel::max());
+    if (out_a == 0) {
+      return DstPixel{0, 0, 0, 0};
+    } else {
+      return DstPixel{
+        static_cast<typename DstPixel::value_type>((src.r * src.a * DstPixel::max() / SrcPixel::max() + dst.r * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<typename DstPixel::value_type>((src.g * src.a * DstPixel::max() / SrcPixel::max() + dst.g * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<typename DstPixel::value_type>((src.b * src.a * DstPixel::max() / SrcPixel::max() + dst.b * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        out_a
+      };
+    }
+  } else {
+    static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
+                  "blend<>() not implemented for the given types");
+    return DstPixel{};
   }
 }
 

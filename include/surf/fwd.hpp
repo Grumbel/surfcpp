@@ -17,13 +17,19 @@
 #ifndef HEADER_SURF_FWD_HPP
 #define HEADER_SURF_FWD_HPP
 
+#include <stdint.h>
+
 namespace surf {
 
 enum class Transform;
 
-struct RGBPixel;
-struct RGBAPixel;
-struct GreyscalePixel;
+template<typename T> struct tRGBPixel;
+template<typename T> struct tRGBAPixel;
+template<typename T> struct tGreyscalePixel;
+
+using RGBPixel = tRGBPixel<uint8_t>;
+using RGBAPixel = tRGBAPixel<uint8_t>;
+using GreyscalePixel = tGreyscalePixel<uint8_t>;
 
 class Color;
 class IPixelData;
