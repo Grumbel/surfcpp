@@ -63,6 +63,7 @@ public:
   float a;
 };
 
+/** clamp each color component individually */
 inline
 Color clamp(Color const& color)
 {
@@ -70,6 +71,32 @@ Color clamp(Color const& color)
                std::clamp(color.g, 0.0f, 1.0f),
                std::clamp(color.b, 0.0f, 1.0f),
                std::clamp(color.a, 0.0f, 1.0f));
+}
+
+/** clamp the color vector, preserving it's angle */
+inline
+Color boxclamp(Color const& color)
+{
+  if (color.r <= 1.0f && color.g <= 1.0f && color.b <= 1.0f) {
+    return color;
+  }
+
+  if (color.r >= color.g && color.r >= color.b) {
+    return Color(color.r / color.r,
+                 color.g / color.r,
+                 color.b / color.r,
+                 color.a);
+  } else if (color.g >= color.r && color.r >= color.b) {
+    return Color(color.r / color.g,
+                 color.g / color.g,
+                 color.b / color.g,
+                 color.a);
+  } else { // if (color.b >= color.r && color.r >= color.g) {
+    return Color(color.r / color.b,
+                 color.g / color.b,
+                 color.b / color.b,
+                 color.a);
+  }
 }
 
 } // namespace surf
