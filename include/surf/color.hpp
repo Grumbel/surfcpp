@@ -24,6 +24,8 @@ namespace surf {
 class Color
 {
 public:
+  using value_type = float;
+
   static constexpr Color from_rgba8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return Color(static_cast<float>(r) / 255.0f,
                  static_cast<float>(g) / 255.0f,

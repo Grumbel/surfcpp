@@ -19,11 +19,26 @@
 
 #include "color.hpp"
 #include "pixel.hpp"
+#include "promote.hpp"
 
 namespace surf {
 
+template<typename Pixel> inline
+typename Pixel::value_type convert_float(float v)
+{
+  if constexpr (sizeof(typename Pixel::value_type) == sizeof(float)) {
+    return static_cast<typename Pixel::value_type>(
+      std::clamp(static_cast<uint64_t>(v * static_cast<float>(Pixel::max())),
+                 static_cast<uint64_t>(0), static_cast<uint64_t>(Pixel::max())));
+  } else {
+    return static_cast<typename Pixel::value_type>(v * static_cast<float>(Pixel::max()));
+  }
+}
+
 template<typename SrcPixel, typename DstPixel>
 DstPixel convert(SrcPixel src) {
+  using promotype = typename promote<typename SrcPixel::value_type, typename DstPixel::value_type>::type;
+
   if constexpr (std::is_same<SrcPixel, DstPixel>::value) {
     return src;
   } else if constexpr (std::is_same<DstPixel, Color>::value) {
@@ -40,43 +55,43 @@ DstPixel convert(SrcPixel src) {
   } else if constexpr (std::is_same<SrcPixel, Color>::value) {
     if constexpr (DstPixel::has_alpha()) {
       return DstPixel{
-        static_cast<typename DstPixel::value_type>(src.r * static_cast<float>(DstPixel::max())),
-        static_cast<typename DstPixel::value_type>(src.g * static_cast<float>(DstPixel::max())),
-        static_cast<typename DstPixel::value_type>(src.b * static_cast<float>(DstPixel::max())),
-        static_cast<typename DstPixel::value_type>(src.a * static_cast<float>(DstPixel::max()))
+        convert_float<DstPixel>(src.r),
+        convert_float<DstPixel>(src.g),
+        convert_float<DstPixel>(src.b),
+        convert_float<DstPixel>(src.a)
       };
     } else {
       return DstPixel{
-        static_cast<typename DstPixel::value_type>(src.r * static_cast<float>(DstPixel::max())),
-        static_cast<typename DstPixel::value_type>(src.g * static_cast<float>(DstPixel::max())),
-        static_cast<typename DstPixel::value_type>(src.b * static_cast<float>(DstPixel::max()))
+        convert_float<DstPixel>(src.r),
+        convert_float<DstPixel>(src.g),
+        convert_float<DstPixel>(src.b)
       };
     }
   } else if constexpr (!SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max())
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.r) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.g) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.b) * DstPixel::max() / SrcPixel::max())
     };
   } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.a * DstPixel::max() / SrcPixel::max())
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.r) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.g) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.b) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.a) * DstPixel::max() / SrcPixel::max())
     };
   } else if constexpr (!SrcPixel::has_alpha() && DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.r) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.g) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.b) * DstPixel::max() / SrcPixel::max()),
       DstPixel::max()
     };
   } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<typename DstPixel::value_type>(src.r * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.g * DstPixel::max() / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>(src.b * DstPixel::max() / SrcPixel::max())
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.r) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.g) * DstPixel::max() / SrcPixel::max()),
+      static_cast<typename DstPixel::value_type>(static_cast<promotype>(src.b) * DstPixel::max() / SrcPixel::max())
     };
   } else {
     static_assert(!std::is_same<SrcPixel, SrcPixel>::value,

@@ -79,7 +79,7 @@ void apply_contrast(PixelView<Pixel>& src, float contrast /* [-1.0, 1.0f] */)
       rgba.r = (rgba.r - 0.5f) * factor + 0.5f;
       rgba.g = (rgba.g - 0.5f) * factor + 0.5f;
       rgba.b = (rgba.b - 0.5f) * factor + 0.5f;
-      src.put_pixel_color({x, y}, rgba);
+      src.put_pixel_color({x, y}, clamp(rgba));
     }
   }
 }
@@ -117,11 +117,11 @@ void apply_threshold(PixelView<Pixel>& src, Color threshold)
   constexpr typename Pixel::value_type max_val = std::numeric_limits<typename Pixel::value_type>::max();
 
   typename Pixel::value_type const irthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.r, 0.0f, 1.0f) *
-                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+                                                                                         static_cast<float>(std::numeric_limits<typename Pixel::value_type>::max()));
   typename Pixel::value_type const igthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.g, 0.0f, 1.0f) *
-                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+                                                                                         static_cast<float>(std::numeric_limits<typename Pixel::value_type>::max()));
   typename Pixel::value_type const ibthreshold = static_cast<typename Pixel::value_type>(std::clamp(threshold.b, 0.0f, 1.0f) *
-                                                                                         std::numeric_limits<typename Pixel::value_type>::max());
+                                                                                         static_cast<float>(std::numeric_limits<typename Pixel::value_type>::max()));
 
   for(int y = 0; y < src.get_height(); ++y) {
     Pixel* row = src.get_row(y);
