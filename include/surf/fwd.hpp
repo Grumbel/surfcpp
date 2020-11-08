@@ -46,7 +46,7 @@ class IPixelData;
 class SoftwareSurface;
 class SoftwareSurfaceFactory;
 class SoftwareSurfaceLoader;
-class PixelFormat;
+enum class PixelFormat;
 
 template<typename Pixel> class PixelData;
 template<typename Pixel> class PixelView;

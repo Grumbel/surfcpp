@@ -14,32 +14,42 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_SURF_PIXEL_FORMAT_HPP
-#define HEADER_SURF_PIXEL_FORMAT_HPP
+#include "pixel_format.hpp"
 
-#include <string>
+#include <stdexcept>
 
 namespace surf {
 
-enum class PixelFormat
+std::string to_string(PixelFormat format)
 {
-  NONE,
+  switch (format)
+  {
+    case PixelFormat::NONE:
+      return "NONE";
 
-  RGB8,
-  RGBA8,
-  RGB16,
-  RGBA16,
-  RGB32,
-  RGBA32,
+    case PixelFormat::RGB8:
+      return "RGB8";
 
-  RGB = RGB8,
-  RGBA = RGBA8
-};
+    case PixelFormat::RGBA8:
+      return "RGBA8";
 
-std::string to_string(PixelFormat format);
+    case PixelFormat::RGB16:
+      return "RGB16";
+
+    case PixelFormat::RGBA16:
+      return "RGBA16";
+
+    case PixelFormat::RGB32:
+      return "RGB32";
+
+    case PixelFormat::RGBA32:
+      return "RGBA32";
+
+    default:
+      throw std::invalid_argument("unknown PixelFormat");
+  }
+}
 
 } // namespace surf
-
-#endif
 
 /* EOF */
