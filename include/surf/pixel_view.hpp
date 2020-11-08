@@ -156,6 +156,10 @@ public:
   }
 
   PixelView<Pixel> get_view(geom::irect const& rect) {
+    if (!contains(geom::irect(m_size), rect)) {
+      throw std::invalid_argument("rect not within the SoftwareSurface area");
+    }
+
     return PixelView<Pixel>(rect.size(),
                             get_row(rect.top()) + rect.left(),
                             m_row_length);

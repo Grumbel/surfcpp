@@ -97,7 +97,7 @@ TEST(SoftwareSurfaceTest, fill_rect)
 
 TEST(SoftwareSurfaceTest, get_view)
 {
-  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(8, 4), {255, 0, 0}));
+  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(8, 6), {255, 0, 0}));
   SoftwareSurface view(src.get_view(geom::irect(2, 2, 5, 5)));
   fill(view, Color(0, 0, 0, 0));
 }
