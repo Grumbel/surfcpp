@@ -44,11 +44,30 @@ png_byte PixelFormat2PNG_COLOR_TYPE(PixelFormat format)
 {
   switch (format)
   {
-    case PixelFormat::RGB:
+    case PixelFormat::RGB8:
+    case PixelFormat::RGB16:
       return PNG_COLOR_TYPE_RGB;
 
-    case PixelFormat::RGBA:
+    case PixelFormat::RGBA8:
+    case PixelFormat::RGBA16:
       return PNG_COLOR_TYPE_RGBA;
+
+    default:
+      throw std::invalid_argument(fmt::format("PNG: unhandled format"));
+  }
+}
+
+int PixelFormat2bitdepth(PixelFormat format)
+{
+  switch (format)
+  {
+    case PixelFormat::RGB8:
+    case PixelFormat::RGBA8:
+      return 8;
+
+    case PixelFormat::RGB16:
+    case PixelFormat::RGBA16:
+      return 16;
 
     default:
       throw std::invalid_argument(fmt::format("PNG: unhandled format"));
@@ -336,7 +355,7 @@ void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
     png_set_IHDR(png_ptr, info_ptr,
                  static_cast<png_uint_32>(src.get_width()),
                  static_cast<png_uint_32>(src.get_height()),
-                 8,
+                 PixelFormat2bitdepth(surface.get_format()),
                  PixelFormat2PNG_COLOR_TYPE(surface.get_format()),
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
@@ -377,7 +396,7 @@ std::vector<uint8_t> save(SoftwareSurface const& surface)
   png_set_IHDR(png_ptr, info_ptr,
                static_cast<png_uint_32>(src.get_width()),
                static_cast<png_uint_32>(src.get_height()),
-               8,
+               PixelFormat2bitdepth(surface.get_format()),
                PixelFormat2PNG_COLOR_TYPE(surface.get_format()),
                PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT,
