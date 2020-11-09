@@ -91,7 +91,9 @@ void print_usage(int argc, char** argv)
     << "  --threshold VALUE    Apply the given threshold\n"
     << "  --grayscale          Convert to grayscale\n"
     << "  --hsv H:S:V          Apply hue/saturation/value\n"
-    << "  --convert FORMAT     Convert internal format to FORMAT\n";
+    << "  --convert FORMAT     Convert internal format to FORMAT\n"
+    << "  --blit FILE POS      Blit image\n"
+    << "  --blend FILE POS     Blend image\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -181,6 +183,26 @@ Options parse_args(int argc, char** argv)
         file_opts().filters.emplace_back([format](SoftwareSurface& sur) {
           sur = surf::convert(sur, format);
         });
+      } else if (opt == "--blit") {
+        std::string_view filename_str = next_arg();
+        std::string_view pos_str = next_arg();
+
+        auto img = SoftwareSurface::from_file(filename_str);
+        geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
+
+        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
+          blit(img, sur, pos);
+        });
+      } else if (opt == "--blend") {
+        std::string_view filename_str = next_arg();
+        std::string_view pos_str = next_arg();
+
+        auto img = SoftwareSurface::from_file(filename_str);
+        geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
+
+        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
+          blend(img, sur, pos);
+        });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
         char op = ' ';
@@ -252,7 +274,7 @@ void run(int argc, char** argv)
       filter(img);
     }
     if (fileopt.output_filename) {
-      surf::save(img, *fileopt.output_filename, "png");
+      surf::save(img, *fileopt.output_filename);
     } else {
       std::cerr << "no output file given, discarding output" << std::endl;
     }
