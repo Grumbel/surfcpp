@@ -18,6 +18,8 @@
 
 #include <stdexcept>
 
+#include <fmt/format.h>
+
 namespace surf {
 
 std::string to_string(PixelFormat format)
@@ -53,6 +55,29 @@ std::string to_string(PixelFormat format)
 
     default:
       throw std::invalid_argument("unknown PixelFormat");
+  }
+}
+
+PixelFormat pixelformat_from_string(std::string_view text)
+{
+  if (text == "rgb8") {
+    return PixelFormat::RGB8;
+  } else if (text == "rgba8") {
+    return PixelFormat::RGBA8;
+  } else if (text == "rgb16") {
+    return PixelFormat::RGB16;
+  } else if (text == "rgba16") {
+    return PixelFormat::RGBA16;
+  } else if (text == "rgb32") {
+    return PixelFormat::RGB32;
+  } else if (text == "rgba32") {
+    return PixelFormat::RGBA32;
+  } else if (text == "rgb32f") {
+    return PixelFormat::RGB32f;
+  } else if (text == "rgba32f") {
+    return PixelFormat::RGBA32f;
+  } else {
+    throw std::invalid_argument(fmt::format("unknown PixelFormat: '{}'", text));
   }
 }
 

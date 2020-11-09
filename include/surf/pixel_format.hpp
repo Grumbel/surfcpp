@@ -41,6 +41,8 @@ enum class PixelFormat
 
 std::string to_string(PixelFormat format);
 
+PixelFormat pixelformat_from_string(std::string_view text);
+
 } // namespace surf
 
 #endif
