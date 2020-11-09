@@ -32,6 +32,9 @@ enum class PixelFormat
   RGB32,
   RGBA32,
 
+  RGB32f,
+  RGBA32f,
+
   RGB = RGB8,
   RGBA = RGBA8
 };

@@ -85,6 +85,25 @@ std::ostream& operator<<(std::ostream& os, RGBA32Pixel const& pixel)
 }
 
 inline
+std::ostream& operator<<(std::ostream& os, RGB32fPixel const& pixel)
+{
+  return os << fmt::format("({:.2f} {:.2f} {:.2f})",
+                           pixel.r,
+                           pixel.g,
+                           pixel.b);
+}
+
+inline
+std::ostream& operator<<(std::ostream& os, RGBA32fPixel const& pixel)
+{
+  return os << fmt::format("({:.2f} {:.2f} {:.2f} {:.2f})",
+                           pixel.r,
+                           pixel.g,
+                           pixel.b,
+                           pixel.a);
+}
+
+inline
 std::ostream& operator<<(std::ostream& os, Color const& color)
 {
   return os << fmt::format("({:.2f} {:.2f} {:.2f} {:.2f})",

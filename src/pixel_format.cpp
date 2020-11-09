@@ -45,6 +45,12 @@ std::string to_string(PixelFormat format)
     case PixelFormat::RGBA32:
       return "RGBA32";
 
+    case PixelFormat::RGB32f:
+      return "RGB32f";
+
+    case PixelFormat::RGBA32f:
+      return "RGBA32f";
+
     default:
       throw std::invalid_argument("unknown PixelFormat");
   }

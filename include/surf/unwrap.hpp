@@ -62,7 +62,19 @@
       }                                                         \
                                                                 \
       case PixelFormat::RGBA32: {                               \
-        using type = RGBA32Pixel; /* NOLINT */                   \
+        using type = RGBA32Pixel; /* NOLINT */                  \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGB32f: {                               \
+        using type = RGB32fPixel; /* NOLINT */                  \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGBA32f: {                              \
+        using type = RGBA32fPixel; /* NOLINT */                 \
         expr;                                                   \
         break;                                                  \
       }                                                         \
@@ -128,4 +140,4 @@
 
 #endif
 
-  /* EOF */
+/* EOF */

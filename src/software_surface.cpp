@@ -52,29 +52,11 @@ SoftwareSurface::from_file(std::filesystem::path const& filename, std::string_vi
 SoftwareSurface
 SoftwareSurface::create(PixelFormat format, geom::isize const& size, Color const& color)
 {
-  switch (format)
-  {
-    case PixelFormat::RGB8:
-      return SoftwareSurface(PixelData<RGB8Pixel>(size, convert<Color, RGB8Pixel>(color)));
-
-    case PixelFormat::RGBA8:
-      return SoftwareSurface(PixelData<RGBA8Pixel>(size, convert<Color, RGBA8Pixel>(color)));
-
-    case PixelFormat::RGB16:
-      return SoftwareSurface(PixelData<RGB16Pixel>(size, convert<Color, RGB16Pixel>(color)));
-
-    case PixelFormat::RGBA16:
-      return SoftwareSurface(PixelData<RGBA16Pixel>(size, convert<Color, RGBA16Pixel>(color)));
-
-    case PixelFormat::RGB32:
-      return SoftwareSurface(PixelData<RGB32Pixel>(size, convert<Color, RGB32Pixel>(color)));
-
-    case PixelFormat::RGBA32:
-      return SoftwareSurface(PixelData<RGBA32Pixel>(size, convert<Color, RGBA32Pixel>(color)));
-
-    default:
-      throw std::runtime_error("unsupported PixelFormat");
-  }
+  PIXELFORMAT_TO_TYPE(
+    format,
+    pixeltype,
+    throw std::runtime_error("unsupported PixelFormat"),
+    return SoftwareSurface(PixelData<pixeltype>(size, convert<Color, pixeltype>(color))));
 }
 
 SoftwareSurface

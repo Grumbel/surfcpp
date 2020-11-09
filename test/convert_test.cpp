@@ -5,6 +5,12 @@
 
 using namespace surf;
 
+TEST(ConvertTest, convert_value)
+{
+  EXPECT_EQ(RGB32Pixel::max(), 4294967295);
+  EXPECT_EQ((convert_value<Color, RGB32Pixel>(1.0f)), 4294967295);
+}
+
 TEST(ConvertTest, convert_rgb)
 {
   RGB32Pixel rgb32 = convert<Color, RGB32Pixel>(Color(1.0f, 1.0f, 1.0f));

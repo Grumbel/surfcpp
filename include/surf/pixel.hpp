@@ -31,7 +31,13 @@ struct tRGBPixel
 {
   using value_type = T;
   static constexpr bool has_alpha() { return false; }
-  static constexpr T max() { return std::numeric_limits<T>::max(); }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
 
   T r;
   T g;
@@ -63,6 +69,9 @@ using RGBA16Pixel = tRGBAPixel<uint16_t>;
 
 using RGB32Pixel = tRGBPixel<uint32_t>;
 using RGBA32Pixel = tRGBAPixel<uint32_t>;
+
+using RGB32fPixel = tRGBPixel<float>;
+using RGBA32fPixel = tRGBAPixel<float>;
 
 using RGBPixel = RGB8Pixel;
 using RGBAPixel = RGBA8Pixel;
@@ -158,6 +167,30 @@ template<>
 struct PPixelFormat<RGBA32Pixel>
 {
   static constexpr PixelFormat format = PixelFormat::RGBA32;
+  static constexpr int bits_per_pixel = 128;
+  static constexpr int bytes_per_pixel = 16;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGB32fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGB32f;
+  static constexpr int bits_per_pixel = 96;
+  static constexpr int bytes_per_pixel = 12;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGBA32fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGBA32f;
   static constexpr int bits_per_pixel = 128;
   static constexpr int bytes_per_pixel = 16;
   static constexpr uint32_t rmask = 0;
