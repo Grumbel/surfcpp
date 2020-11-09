@@ -78,7 +78,19 @@
         expr;                                                   \
         break;                                                  \
       }                                                         \
-    }                                                           \
+                                                                \
+      case PixelFormat::RGB64f: {                               \
+        using type = RGB64fPixel; /* NOLINT */                  \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::RGBA64f: {                              \
+        using type = RGBA64fPixel; /* NOLINT */                 \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+    }                                           \
   } while (false)
 
 #define SOFTWARE_SURFACE_UNWRAP(surface, pixelview, fail_expr, expr)    \

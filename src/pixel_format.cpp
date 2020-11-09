@@ -53,6 +53,12 @@ std::string to_string(PixelFormat format)
     case PixelFormat::RGBA32f:
       return "RGBA32f";
 
+    case PixelFormat::RGB64f:
+      return "RGB64f";
+
+    case PixelFormat::RGBA64f:
+      return "RGBA64f";
+
     default:
       throw std::invalid_argument("unknown PixelFormat");
   }
@@ -76,6 +82,10 @@ PixelFormat pixelformat_from_string(std::string_view text)
     return PixelFormat::RGB32f;
   } else if (text == "rgba32f") {
     return PixelFormat::RGBA32f;
+  } else if (text == "rgb64f") {
+    return PixelFormat::RGB64f;
+  } else if (text == "rgba64f") {
+    return PixelFormat::RGBA64f;
   } else {
     throw std::invalid_argument(fmt::format("unknown PixelFormat: '{}'", text));
   }

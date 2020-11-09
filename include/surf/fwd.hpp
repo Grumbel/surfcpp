@@ -39,6 +39,9 @@ using RGBA32Pixel = tRGBAPixel<uint32_t>;
 using RGB32fPixel = tRGBPixel<float>;
 using RGBA32fPixel = tRGBAPixel<float>;
 
+using RGB64fPixel = tRGBPixel<double>;
+using RGBA64fPixel = tRGBAPixel<double>;
+
 using RGBPixel = RGB8Pixel;
 using RGBAPixel = RGBA8Pixel;
 

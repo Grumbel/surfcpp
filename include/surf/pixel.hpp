@@ -73,6 +73,9 @@ using RGBA32Pixel = tRGBAPixel<uint32_t>;
 using RGB32fPixel = tRGBPixel<float>;
 using RGBA32fPixel = tRGBAPixel<float>;
 
+using RGB64fPixel = tRGBPixel<double>;
+using RGBA64fPixel = tRGBAPixel<double>;
+
 using RGBPixel = RGB8Pixel;
 using RGBAPixel = RGBA8Pixel;
 
@@ -191,6 +194,30 @@ template<>
 struct PPixelFormat<RGBA32fPixel>
 {
   static constexpr PixelFormat format = PixelFormat::RGBA32f;
+  static constexpr int bits_per_pixel = 128;
+  static constexpr int bytes_per_pixel = 16;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGB64fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGB64f;
+  static constexpr int bits_per_pixel = 96;
+  static constexpr int bytes_per_pixel = 12;
+  static constexpr uint32_t rmask = 0;
+  static constexpr uint32_t gmask = 0;
+  static constexpr uint32_t bmask = 0;
+  static constexpr uint32_t amask = 0;
+};
+
+template<>
+struct PPixelFormat<RGBA64fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::RGBA64f;
   static constexpr int bits_per_pixel = 128;
   static constexpr int bytes_per_pixel = 16;
   static constexpr uint32_t rmask = 0;
