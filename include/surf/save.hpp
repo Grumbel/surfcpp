@@ -25,10 +25,10 @@
 
 namespace surf {
 
-void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format);
+void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format = "auto");
 
 template<typename Pixel>
-void save(PixelView<Pixel> const& pixelview, std::filesystem::path const& path, std::string_view format)
+void save(PixelView<Pixel> const& pixelview, std::filesystem::path const& path, std::string_view format = "auto")
 {
   save(SoftwareSurface::create_view(pixelview), path, format);
 }

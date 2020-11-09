@@ -25,7 +25,15 @@ namespace surf {
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format)
 {
-  if (format == "png") {
+  if (format == "auto") {
+    if (path.extension() == ".jpg" || path.extension() == ".JPG") {
+      surf::jpeg::save(surface, path, 70);
+    } else if (path.extension() == ".png" || path.extension() == ".PNG") {
+      surf::png::save(surface, path);
+    } else {
+      throw std::invalid_argument("unknown file extension");
+    }
+  } else if (format == "png") {
     surf::png::save(surface, path);
   } else if (format == "jpeg") {
     surf::jpeg::save(surface, path, 70);
