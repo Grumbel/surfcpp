@@ -209,6 +209,33 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
       blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
 }
 
+void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      blend(src_as_pixeldata, dst_as_pixeldata, pos)));
+}
+
+void blend(SoftwareSurface const& src, geom::irect const& srcrect,
+          SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      blend(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
+}
+
 void fill(SoftwareSurface& dst, Color const& color)
 {
   PIXELFORMAT_TO_TYPE(

@@ -17,6 +17,8 @@
 #ifndef HEADER_SURF_BLEND_HPP
 #define HEADER_SURF_BLEND_HPP
 
+#include <logmich/log.hpp>
+
 #include "color.hpp"
 #include "convert.hpp"
 #include "pixel.hpp"
@@ -26,23 +28,29 @@ namespace surf {
 template<typename SrcPixel, typename DstPixel>
 DstPixel pixel_blend(SrcPixel src, DstPixel dst)
 {
+  using srctype = typename SrcPixel::value_type;
+  using dsttype = typename DstPixel::value_type;
+
   if constexpr (!SrcPixel::has_alpha()) {
+    return convert<SrcPixel, DstPixel>(src);
+  } else if constexpr (std::is_floating_point<srctype>::value || std::is_floating_point<dsttype>::value) {
+    log_not_implemented();
     return convert<SrcPixel, DstPixel>(src);
   } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<typename DstPixel::value_type>((src.r * src.a + dst.r * (SrcPixel::max() - src.a)) / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>((src.g * src.a + dst.g * (SrcPixel::max() - src.a)) / SrcPixel::max()),
-      static_cast<typename DstPixel::value_type>((src.b * src.a + dst.b * (SrcPixel::max() - src.a)) / SrcPixel::max())
+      static_cast<dsttype>((src.r * src.a + dst.r * (SrcPixel::max() - src.a)) / SrcPixel::max()),
+      static_cast<dsttype>((src.g * src.a + dst.g * (SrcPixel::max() - src.a)) / SrcPixel::max()),
+      static_cast<dsttype>((src.b * src.a + dst.b * (SrcPixel::max() - src.a)) / SrcPixel::max())
     };
   } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
-    typename DstPixel::value_type const out_a = static_cast<typename DstPixel::value_type>(src.a + dst.a * (SrcPixel::max() - src.a) / SrcPixel::max());
+    dsttype const out_a = static_cast<dsttype>(src.a + dst.a * (SrcPixel::max() - src.a) / SrcPixel::max());
     if (out_a == 0) {
       return DstPixel{0, 0, 0, 0};
     } else {
       return DstPixel{
-        static_cast<typename DstPixel::value_type>((src.r * src.a * DstPixel::max() / SrcPixel::max() + dst.r * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
-        static_cast<typename DstPixel::value_type>((src.g * src.a * DstPixel::max() / SrcPixel::max() + dst.g * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
-        static_cast<typename DstPixel::value_type>((src.b * src.a * DstPixel::max() / SrcPixel::max() + dst.b * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((src.r * src.a * DstPixel::max() / SrcPixel::max() + dst.r * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((src.g * src.a * DstPixel::max() / SrcPixel::max() + dst.g * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((src.b * src.a * DstPixel::max() / SrcPixel::max() + dst.b * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
         out_a
       };
     }
