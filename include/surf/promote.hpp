@@ -23,7 +23,7 @@ template<typename A, typename B>
 struct promote
 {
   using type = typename std::conditional<(sizeof(A) < 4 && sizeof(B) < 4),
-                                         uint64_t,
+                                         uint32_t,
                                          uint64_t
                                          >::type;
 };
