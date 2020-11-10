@@ -148,10 +148,6 @@ struct PPixelFormat<RGB16Pixel>
   static constexpr PixelFormat format = PixelFormat::RGB16;
   static constexpr int bits_per_pixel = 48;
   static constexpr int bytes_per_pixel = 6;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -160,10 +156,6 @@ struct PPixelFormat<RGBA16Pixel>
   static constexpr PixelFormat format = PixelFormat::RGBA16;
   static constexpr int bits_per_pixel = 64;
   static constexpr int bytes_per_pixel = 8;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -172,10 +164,6 @@ struct PPixelFormat<RGB32Pixel>
   static constexpr PixelFormat format = PixelFormat::RGB32;
   static constexpr int bits_per_pixel = 96;
   static constexpr int bytes_per_pixel = 12;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -184,10 +172,6 @@ struct PPixelFormat<RGBA32Pixel>
   static constexpr PixelFormat format = PixelFormat::RGBA32;
   static constexpr int bits_per_pixel = 128;
   static constexpr int bytes_per_pixel = 16;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -196,10 +180,6 @@ struct PPixelFormat<RGB32fPixel>
   static constexpr PixelFormat format = PixelFormat::RGB32f;
   static constexpr int bits_per_pixel = 96;
   static constexpr int bytes_per_pixel = 12;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -208,10 +188,6 @@ struct PPixelFormat<RGBA32fPixel>
   static constexpr PixelFormat format = PixelFormat::RGBA32f;
   static constexpr int bits_per_pixel = 128;
   static constexpr int bytes_per_pixel = 16;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -220,10 +196,6 @@ struct PPixelFormat<RGB64fPixel>
   static constexpr PixelFormat format = PixelFormat::RGB64f;
   static constexpr int bits_per_pixel = 96;
   static constexpr int bytes_per_pixel = 12;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
@@ -232,10 +204,6 @@ struct PPixelFormat<RGBA64fPixel>
   static constexpr PixelFormat format = PixelFormat::RGBA64f;
   static constexpr int bits_per_pixel = 128;
   static constexpr int bytes_per_pixel = 16;
-  static constexpr uint32_t rmask = 0;
-  static constexpr uint32_t gmask = 0;
-  static constexpr uint32_t bmask = 0;
-  static constexpr uint32_t amask = 0;
 };
 
 template<>
