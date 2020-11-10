@@ -26,15 +26,45 @@
 
 namespace surf {
 
-template<typename Pixel> inline Pixel::value_type red(Pixel pixel) { return pixel.r; }
-template<typename Pixel> inline Pixel::value_type green(Pixel pixel) { return pixel.g; }
-template<typename Pixel> inline Pixel::value_type blue(Pixel pixel) { return pixel.b; }
+template<typename Pixel> inline typename Pixel::value_type red(Pixel pixel) { return pixel.r; }
+template<typename Pixel> inline typename Pixel::value_type green(Pixel pixel) { return pixel.g; }
+template<typename Pixel> inline typename Pixel::value_type blue(Pixel pixel) { return pixel.b; }
 
-template<typename Pixel> inline Pixel::value_type alpha(Pixel pixel) {
+template<typename Pixel> inline typename Pixel::value_type alpha(Pixel pixel) {
   if constexpr (Pixel::has_alpha()) {
     return pixel.a;
   } else {
     return Pixel::max();
+  }
+}
+
+template<typename Pixel> inline float red_f(Pixel pixel) { return static_cast<float>(pixel.r) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> inline float green_f(Pixel pixel) { return static_cast<float>(pixel.g) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> inline float blue_f(Pixel pixel) { return static_cast<float>(pixel.b) / static_cast<float>(Pixel::max()); }
+
+template<typename Pixel> inline float alpha_f(Pixel pixel) {
+  if constexpr (Pixel::has_alpha()) {
+    return static_cast<float>(pixel.a) / static_cast<float>(Pixel::max());
+  } else {
+    return 1.0f;
+  }
+}
+
+template<typename DstPixel> inline
+typename DstPixel::value_type f2value(float v)
+{
+  using srctype = float;
+  using dsttype = typename DstPixel::value_type;
+
+  if constexpr (std::is_integral<dsttype>::value &&
+                sizeof(dsttype) == sizeof(srctype)) {
+    // special case, as uint32 -> float32 will overflow
+    return static_cast<dsttype>(
+      std::clamp(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max())),
+                 static_cast<uint64_t>(0), static_cast<uint64_t>(DstPixel::max())));
+  } else {
+    return static_cast<dsttype>(std::clamp(v * static_cast<srctype>(DstPixel::max()),
+                                           0.0f, static_cast<srctype>(DstPixel::max())));
   }
 }
 
@@ -63,7 +93,13 @@ struct tRGBAPixel
 {
   using value_type = T;
   static constexpr bool has_alpha() { return true; }
-  static constexpr T max() { return std::numeric_limits<T>::max(); }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
 
   T r;
   T g;
