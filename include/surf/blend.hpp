@@ -38,19 +38,19 @@ DstPixel pixel_blend(SrcPixel src, DstPixel dst)
     return convert<SrcPixel, DstPixel>(src);
   } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
     return DstPixel{
-      static_cast<dsttype>((src.r * src.a + dst.r * (SrcPixel::max() - src.a)) / SrcPixel::max()),
-      static_cast<dsttype>((src.g * src.a + dst.g * (SrcPixel::max() - src.a)) / SrcPixel::max()),
-      static_cast<dsttype>((src.b * src.a + dst.b * (SrcPixel::max() - src.a)) / SrcPixel::max())
+      static_cast<dsttype>((red(src) * alpha(src) + red(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
+      static_cast<dsttype>((green(src) * alpha(src) + green(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
+      static_cast<dsttype>((blue(src) * alpha(src) + blue(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max())
     };
   } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
-    dsttype const out_a = static_cast<dsttype>(src.a + dst.a * (SrcPixel::max() - src.a) / SrcPixel::max());
+    dsttype const out_a = static_cast<dsttype>(alpha(src) + alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max());
     if (out_a == 0) {
       return DstPixel{0, 0, 0, 0};
     } else {
       return DstPixel{
-        static_cast<dsttype>((src.r * src.a * DstPixel::max() / SrcPixel::max() + dst.r * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
-        static_cast<dsttype>((src.g * src.a * DstPixel::max() / SrcPixel::max() + dst.g * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
-        static_cast<dsttype>((src.b * src.a * DstPixel::max() / SrcPixel::max() + dst.b * dst.a * (SrcPixel::max() - src.a) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((red(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + red(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((green(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + green(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
+        static_cast<dsttype>((blue(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + blue(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
         out_a
       };
     }

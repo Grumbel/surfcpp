@@ -65,32 +65,32 @@ DstPixel convert(SrcPixel src)
 {
   if constexpr (SrcPixel::has_alpha()) {
     if constexpr (DstPixel::has_alpha()) {
-      return DstPixel{convert_value<SrcPixel, DstPixel>(src.r),
-        convert_value<SrcPixel, DstPixel>(src.g),
-        convert_value<SrcPixel, DstPixel>(src.b),
-        convert_value<SrcPixel, DstPixel>(src.a)
+      return DstPixel{convert_value<SrcPixel, DstPixel>(red(src)),
+        convert_value<SrcPixel, DstPixel>(green(src)),
+        convert_value<SrcPixel, DstPixel>(blue(src)),
+        convert_value<SrcPixel, DstPixel>(alpha(src))
       };
     } else {
       return DstPixel{
-        convert_value<SrcPixel, DstPixel>(src.r),
-        convert_value<SrcPixel, DstPixel>(src.g),
-        convert_value<SrcPixel, DstPixel>(src.b)
+        convert_value<SrcPixel, DstPixel>(red(src)),
+        convert_value<SrcPixel, DstPixel>(green(src)),
+        convert_value<SrcPixel, DstPixel>(blue(src))
         /* discard alpha */
       };
     }
   } else {
     if constexpr (DstPixel::has_alpha()) {
       return DstPixel{
-        convert_value<SrcPixel, DstPixel>(src.r),
-        convert_value<SrcPixel, DstPixel>(src.g),
-        convert_value<SrcPixel, DstPixel>(src.b),
+        convert_value<SrcPixel, DstPixel>(red(src)),
+        convert_value<SrcPixel, DstPixel>(green(src)),
+        convert_value<SrcPixel, DstPixel>(blue(src)),
         DstPixel::max()
       };
     } else {
       return DstPixel{
-        convert_value<SrcPixel, DstPixel>(src.r),
-        convert_value<SrcPixel, DstPixel>(src.g),
-        convert_value<SrcPixel, DstPixel>(src.b)
+        convert_value<SrcPixel, DstPixel>(red(src)),
+        convert_value<SrcPixel, DstPixel>(green(src)),
+        convert_value<SrcPixel, DstPixel>(blue(src))
       };
     }
   }
@@ -99,7 +99,7 @@ DstPixel convert(SrcPixel src)
 template<> inline
 GreyscalePixel convert<RGBPixel, GreyscalePixel>(RGBPixel src) {
   // FIXME: add proper weighting of colors here
-  return {static_cast<uint8_t>((src.r + src.g + src.b) / 3)};
+  return {static_cast<uint8_t>((red(src) + green(src) + blue(src)) / 3)};
 }
 
 template<> inline

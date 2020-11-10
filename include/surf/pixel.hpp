@@ -26,6 +26,18 @@
 
 namespace surf {
 
+template<typename Pixel> inline Pixel::value_type red(Pixel pixel) { return pixel.r; }
+template<typename Pixel> inline Pixel::value_type green(Pixel pixel) { return pixel.g; }
+template<typename Pixel> inline Pixel::value_type blue(Pixel pixel) { return pixel.b; }
+
+template<typename Pixel> inline Pixel::value_type alpha(Pixel pixel) {
+  if constexpr (Pixel::has_alpha()) {
+    return pixel.a;
+  } else {
+    return Pixel::max();
+  }
+}
+
 template<typename T>
 struct tRGBPixel
 {
