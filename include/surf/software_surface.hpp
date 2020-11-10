@@ -114,6 +114,9 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurfac
 void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
 void blend(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
 
+void blend_add(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
+void blend_add(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
+
 void fill(SoftwareSurface& dst, Color const& color);
 void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color);
 

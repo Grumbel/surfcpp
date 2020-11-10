@@ -94,17 +94,19 @@ void blit(PixelView<SrcPixel> const& src, PixelView<DstPixel>& dst, geom::ipoint
   blit(src, geom::irect(src.get_size()), dst, pos);
 }
 
-template<typename SrcPixel, typename DstPixel, typename BlendFunc>
-void blend_n(SrcPixel const* srcpixels, DstPixel* dstpixels,
-             size_t count, BlendFunc blend_func)
+template<typename SrcPixel, typename DstPixel, typename BlendFunc> inline
+void blend_n(BlendFunc blend_func,
+             SrcPixel const* srcpixels, DstPixel* dstpixels,
+             size_t count)
 {
   for (size_t i = 0; i < count; ++i) {
     dstpixels[i] = blend_func(srcpixels[i], dstpixels[i]);
   }
 }
 
-template<typename SrcPixel, typename DstPixel>
-void blend(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
+template<typename BlendFunc, typename SrcPixel, typename DstPixel> inline
+void blend(BlendFunc blend_func,
+           PixelView<SrcPixel> const& src, geom::irect const& srcrect,
            PixelView<DstPixel>& dst, const geom::ipoint& pos)
 {
   assert(contains(geom::irect(src.get_size()), srcrect));
@@ -114,17 +116,18 @@ void blend(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
   geom::ioffset const dst2src(-pos.x() + srcrect.left(), -pos.y() + srcrect.top());
 
   for (int y = region.top(); y < region.bottom(); ++y) {
-    blend_n(src.get_row(y + dst2src.y()) + region.left() + dst2src.x(),
+    blend_n(blend_func,
+            src.get_row(y + dst2src.y()) + region.left() + dst2src.x(),
             dst.get_row(y) + region.left(),
-            region.width(),
-            pixel_blend<SrcPixel, DstPixel>);
+            region.width());
   }
 }
 
-template<typename SrcPixel, typename DstPixel>
-void blend(PixelView<SrcPixel> const& src, PixelView<DstPixel>& dst, geom::ipoint const& pos)
+template<typename BlendFunc, typename SrcPixel, typename DstPixel>
+void blend(BlendFunc blend_func,
+           PixelView<SrcPixel> const& src, PixelView<DstPixel>& dst, geom::ipoint const& pos)
 {
-  blend(src, geom::irect(src.get_size()), dst, pos);
+  blend(blend_func, src, geom::irect(src.get_size()), dst, pos);
 }
 
 template<typename SrcPixel, typename DstPixel>

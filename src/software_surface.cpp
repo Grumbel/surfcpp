@@ -211,29 +211,56 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
 
 void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    src,
-    src_as_pixeldata,
+  PIXELFORMAT_TO_TYPE(
+    src.get_format(),
+    srctype,
     log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
+    PIXELFORMAT_TO_TYPE(
+      dst.get_format(),
+      dsttype,
       log_unreachable(),
-      blend(src_as_pixeldata, dst_as_pixeldata, pos)));
+      blend(pixel_blend<srctype, dsttype>, src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos)));
 }
 
 void blend(SoftwareSurface const& src, geom::irect const& srcrect,
-          SoftwareSurface& dst, geom::ipoint const& pos)
+           SoftwareSurface& dst, geom::ipoint const& pos)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    src,
-    src_as_pixeldata,
+  PIXELFORMAT_TO_TYPE(
+    src.get_format(),
+    srctype,
     log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
+    PIXELFORMAT_TO_TYPE(
+      dst.get_format(),
+      dsttype,
       log_unreachable(),
-      blend(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
+      blend(pixel_blend<srctype, dsttype>, src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos)));
+}
+
+void blend_add(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  PIXELFORMAT_TO_TYPE(
+    src.get_format(),
+    srctype,
+    log_unreachable(),
+    PIXELFORMAT_TO_TYPE(
+      dst.get_format(),
+      dsttype,
+      log_unreachable(),
+      blend(pixel_add<srctype, dsttype>, src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos)));
+}
+
+void blend_add(SoftwareSurface const& src, geom::irect const& srcrect,
+               SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  PIXELFORMAT_TO_TYPE(
+    src.get_format(),
+    srctype,
+    log_unreachable(),
+    PIXELFORMAT_TO_TYPE(
+      dst.get_format(),
+      dsttype,
+      log_unreachable(),
+      blend(pixel_add<srctype, dsttype>, src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos)));
 }
 
 void fill(SoftwareSurface& dst, Color const& color)

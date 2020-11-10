@@ -93,7 +93,8 @@ void print_usage(int argc, char** argv)
     << "  --hsv H:S:V          Apply hue/saturation/value\n"
     << "  --convert FORMAT     Convert internal format to FORMAT\n"
     << "  --blit FILE POS      Blit image\n"
-    << "  --blend FILE POS     Blend image\n";
+    << "  --blend FILE POS     Blend image\n"
+    << "  --add FILE POS       Add image\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -202,6 +203,16 @@ Options parse_args(int argc, char** argv)
 
         file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
           blend(img, sur, pos);
+        });
+      } else if (opt == "--add") {
+        std::string_view filename_str = next_arg();
+        std::string_view pos_str = next_arg();
+
+        auto img = SoftwareSurface::from_file(filename_str);
+        geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
+
+        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
+          blend_add(img, sur, pos);
         });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
