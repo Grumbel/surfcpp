@@ -16,6 +16,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <stack>
 
 #include <fmt/format.h>
 
@@ -56,16 +57,48 @@ surf::Transform transform_from_string(std::string_view text)
   }
 }
 
-struct FileOptions
+class Context;
+
+using ContextCommand = std::function<void(Context& ctx)>;
+
+class Context
 {
-  std::filesystem::path input_filename = {};
-  std::vector<std::function<void(SoftwareSurface&)>> filters = {};
-  std::optional<std::filesystem::path> output_filename = {};
+public:
+  Context() : m_stack()
+  {}
+
+  void eval(ContextCommand const& cmd) {
+    cmd(*this);
+  }
+
+  SoftwareSurface& top() {
+    if (m_stack.empty()) {
+      throw std::runtime_error("can't top(), stack empty");
+    }
+    return m_stack.top();
+  }
+
+  SoftwareSurface pop() {
+    if (m_stack.empty()) {
+      throw std::runtime_error("can't pop(), stack empty");
+    }
+
+    SoftwareSurface surface = std::move(m_stack.top());
+    m_stack.pop();
+    return surface;
+  }
+
+  void push(SoftwareSurface&& img) {
+    m_stack.push(img);
+  }
+
+private:
+  std::stack<SoftwareSurface> m_stack;
 };
 
 struct Options
 {
-  std::vector<FileOptions> files = {};
+  std::vector<ContextCommand> commands = {};
 };
 
 void print_usage(int argc, char** argv)
@@ -76,11 +109,9 @@ void print_usage(int argc, char** argv)
     << "General Options:\n"
     << " -h, --help   Display this text\n"
     << "\n"
-    << "Per Image Options:\n"
+    << "Commands:\n"
     << "  --output FILE        Output filename\n"
-    << "  --output-dir DIR     Output directory\n"
-    << "\n"
-    << "Filter:\n"
+    //<< "  --output-dir DIR     Output directory\n"
     << "  --invert             Invert the image\n"
     << "  --gamma VALUE        Apply gamma correction\n"
     << "  --brightness VALUE   Adjust brightness\n"
@@ -92,9 +123,9 @@ void print_usage(int argc, char** argv)
     << "  --grayscale          Convert to grayscale\n"
     << "  --hsv H:S:V          Apply hue/saturation/value\n"
     << "  --convert FORMAT     Convert internal format to FORMAT\n"
-    << "  --blit FILE POS      Blit image\n"
-    << "  --blend FILE POS     Blend image\n"
-    << "  --add FILE POS       Add image\n";
+    << "  --blit POS           Blit image\n"
+    << "  --blend POS          Blend image\n"
+    << "  --add POS            Add image\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -116,41 +147,32 @@ Options parse_args(int argc, char** argv)
       return std::string_view(argv[i]);
     };
 
-    auto file_opts = [&]() -> FileOptions& {
-      if (opts.files.empty()) {
-        std::ostringstream os;
-        os << argv[i - 1] << " option must follow filename, not precede it";
-        throw std::runtime_error(os.str());
-      }
-      return opts.files.back();
-    };
-
     if (argv[i][0] == '-') {
       std::string_view opt = argv[i];
       if (opt == "--help" || opt == "-h") {
         print_usage(argc, argv);
         exit(EXIT_SUCCESS);
       } else if (opt == "--invert") {
-        file_opts().filters.emplace_back([](SoftwareSurface& sur) {
-          surf::apply_invert(sur);
+        opts.commands.emplace_back([](Context& ctx) {
+          surf::apply_invert(ctx.top());
         });
       } else if (opt == "--gamma") {
         std::string_view arg = next_arg();
         float value = std::stof(std::string(arg));
-        file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
-          surf::apply_gamma(sur, value);
+        opts.commands.emplace_back([value](Context& ctx) {
+          surf::apply_gamma(ctx.top(), value);
         });
       } else if (opt == "--brightness") {
         std::string_view arg = next_arg();
         float value = std::stof(std::string(arg));
-        file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
-          surf::apply_brightness(sur, value);
+        opts.commands.emplace_back([value](Context& ctx) {
+          surf::apply_brightness(ctx.top(), value);
         });
       } else if (opt == "--contrast") {
         std::string_view arg = next_arg();
         float value = std::stof(std::string(arg));
-        file_opts().filters.emplace_back([value](SoftwareSurface& sur) {
-          surf::apply_contrast(sur, value);
+        opts.commands.emplace_back([value](Context& ctx) {
+          surf::apply_contrast(ctx.top(), value);
         });
       } else if (opt == "--threshold") {
         std::string_view arg = next_arg();
@@ -160,8 +182,8 @@ Options parse_args(int argc, char** argv)
         if (sscanf(argv[i], " %f, %f, %f ", &rthreshold, &gthreshold, &bthreshold) != 3) {
           rthreshold = gthreshold = bthreshold = std::stof(std::string(arg));
         }
-        file_opts().filters.emplace_back([rthreshold, gthreshold, bthreshold](SoftwareSurface& sur) {
-          surf::apply_threshold(sur, surf::Color(rthreshold, gthreshold, bthreshold));
+        opts.commands.emplace_back([rthreshold, gthreshold, bthreshold](Context& ctx) {
+          surf::apply_threshold(ctx.top(), surf::Color(rthreshold, gthreshold, bthreshold));
         });
       } else if (opt == "--hsv") {
         next_arg();
@@ -171,48 +193,42 @@ Options parse_args(int argc, char** argv)
         if (sscanf(argv[i], " %f, %f, %f ", &hue, &saturation, &value) != 3) {
           throw std::invalid_argument("invalid argument");
         }
-        file_opts().filters.emplace_back([hue, saturation, value](SoftwareSurface& sur) {
-          surf::apply_hsv(sur, hue, saturation, value);
+        opts.commands.emplace_back([hue, saturation, value](Context& ctx) {
+          surf::apply_hsv(ctx.top(), hue, saturation, value);
         });
       } else if (opt == "--grayscale") {
-        file_opts().filters.emplace_back([](SoftwareSurface& sur) {
-          surf::apply_grayscale(sur);
+        opts.commands.emplace_back([](Context& ctx) {
+          surf::apply_grayscale(ctx.top());
         });
       } else if (opt == "--convert") {
         std::string_view arg = next_arg();
         auto format = surf::pixelformat_from_string(arg);
-        file_opts().filters.emplace_back([format](SoftwareSurface& sur) {
-          sur = surf::convert(sur, format);
+        opts.commands.emplace_back([format](Context& ctx) {
+          ctx.top() = surf::convert(ctx.top(), format);
         });
       } else if (opt == "--blit") {
-        std::string_view filename_str = next_arg();
         std::string_view pos_str = next_arg();
-
-        auto img = SoftwareSurface::from_file(filename_str);
         geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
 
-        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
-          blit(img, sur, pos);
+        opts.commands.emplace_back([pos](Context& ctx) {
+          auto img = ctx.pop();
+          blit(img, ctx.top(), pos);
         });
       } else if (opt == "--blend") {
-        std::string_view filename_str = next_arg();
         std::string_view pos_str = next_arg();
-
-        auto img = SoftwareSurface::from_file(filename_str);
         geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
 
-        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
-          blend(img, sur, pos);
+        opts.commands.emplace_back([pos](Context& ctx) {
+          auto img = ctx.pop();
+          blend(img, ctx.top(), pos);
         });
       } else if (opt == "--add") {
-        std::string_view filename_str = next_arg();
         std::string_view pos_str = next_arg();
-
-        auto img = SoftwareSurface::from_file(filename_str);
         geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
 
-        file_opts().filters.emplace_back([img{std::move(img)}, pos](SoftwareSurface& sur) {
-          blend_add(img, sur, pos);
+        opts.commands.emplace_back([pos](Context& ctx) {
+          auto img = ctx.pop();
+          blend_add(img, ctx.top(), pos);
         });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
@@ -223,51 +239,51 @@ Options parse_args(int argc, char** argv)
         }
 
         geom::isize desired_size = geom::isize_from_string(std::string(arg));
-        file_opts().filters.emplace_back([desired_size, op](SoftwareSurface& sur) {
+        opts.commands.emplace_back([desired_size, op](Context& ctx) {
           geom::isize size = desired_size;
           if (op == '!') {
             // nop
           } else if (op == '<') {
-            size = geom::grow_to_fit(sur.get_size(), desired_size);
+            size = geom::grow_to_fit(ctx.top().get_size(), desired_size);
           } else if (op == '>') {
-            size = geom::shrink_to_fit(sur.get_size(), desired_size);
+            size = geom::shrink_to_fit(ctx.top().get_size(), desired_size);
           } else {
-            size = geom::resize_to_fit(sur.get_size(), desired_size);
+            size = geom::resize_to_fit(ctx.top().get_size(), desired_size);
           }
-          sur = surf::scale(sur, size);
+          ctx.top() = surf::scale(ctx.top(), size);
         });
       } else if (opt == "--crop") {
         std::string_view arg = next_arg();
         geom::irect rect = geom::irect_from_string(std::string(arg));
-        file_opts().filters.emplace_back([rect](SoftwareSurface& sur) {
-          sur = surf::crop(sur, rect);
+        opts.commands.emplace_back([rect](Context& ctx) {
+          ctx.top() = surf::crop(ctx.top(), rect);
         });
       } else if (opt == "--transform") {
         std::string_view arg = next_arg();
         surf::Transform const transf = transform_from_string(arg);
-        file_opts().filters.emplace_back([transf](SoftwareSurface& sur) {
-          sur = surf::transform(sur, transf);
+        opts.commands.emplace_back([transf](Context& ctx) {
+          ctx.top() = surf::transform(ctx.top(), transf);
         });
       } else if (opt == "--fill") {
         std::string_view arg = next_arg();
         surf::Color const color = surf::Color::from_string(arg);
-        file_opts().filters.emplace_back([color](SoftwareSurface& sur) {
-          surf::fill(sur, color);
+        opts.commands.emplace_back([color](Context& ctx) {
+          surf::fill(ctx.top(), color);
         });
       } else if (opt == "--output" || opt == "-o") {
-        std::string_view arg = next_arg();
-        file_opts().output_filename = arg;
-
-      } else if (opt == "--output-dir" || opt == "-O") {
-        std::string_view arg = next_arg();
-        std::filesystem::path dir = arg;
-        file_opts().output_filename = dir / file_opts().input_filename.filename();
+        std::filesystem::path output_filename = next_arg();
+        opts.commands.emplace_back([output_filename](Context& ctx) {
+          surf::save(ctx.top(), output_filename);
+        });
       } else {
         print_usage(argc, argv);
         throw std::invalid_argument(fmt::format("unknown option: {}", opt));
       }
-    } else {
-      opts.files.emplace_back(FileOptions{.input_filename = argv[i]});
+    } else { // rest argument
+      std::filesystem::path input_filename = argv[i];
+      opts.commands.emplace_back([input_filename](Context& ctx) {
+        ctx.push(SoftwareSurface::from_file(input_filename));
+      });
     }
   }
 
@@ -278,17 +294,9 @@ void run(int argc, char** argv)
 {
   Options opts = parse_args(argc, argv);
 
-  for (auto&& fileopt : opts.files) {
-    std::cout << fileopt.input_filename << std::endl;
-    auto img = SoftwareSurface::from_file(fileopt.input_filename);
-    for (auto&& filter : fileopt.filters) {
-      filter(img);
-    }
-    if (fileopt.output_filename) {
-      surf::save(img, *fileopt.output_filename);
-    } else {
-      std::cerr << "no output file given, discarding output" << std::endl;
-    }
+  Context ctx;
+  for (auto&& cmd : opts.commands) {
+    ctx.eval(cmd);
   }
 }
 
