@@ -20,13 +20,18 @@
 namespace surf {
 
 template<typename A, typename B>
-struct promote
+struct promote_t
 {
   using type = typename std::conditional<(sizeof(A) < 4 && sizeof(B) < 4),
                                          uint32_t,
                                          uint64_t
                                          >::type;
 };
+
+template<typename A, typename B>
+typename promote_t<A, B>::type promote(A a) {
+  return static_cast<typename promote_t<A, B>::type>(a);
+}
 
 } // namespace surf
 

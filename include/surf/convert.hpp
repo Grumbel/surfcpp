@@ -44,7 +44,7 @@ typename DstPixel::value_type convert_value(typename SrcPixel::value_type v)
             std::clamp(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max())),
                        static_cast<uint64_t>(0), static_cast<uint64_t>(DstPixel::max())));
         } else {
-          return static_cast<dsttype>(v * static_cast<srctype>(DstPixel::max()));
+          return static_cast<dsttype>(std::clamp<srctype>(v, 0.0, 1.0) * static_cast<srctype>(DstPixel::max()));
         }
       }
     } else {
@@ -53,7 +53,7 @@ typename DstPixel::value_type convert_value(typename SrcPixel::value_type v)
         return static_cast<dsttype>(v) / static_cast<dsttype>(SrcPixel::max());
       } else {
         // int -> int
-        using promotype = typename promote<typename SrcPixel::value_type, typename DstPixel::value_type>::type;
+        using promotype = typename promote_t<typename SrcPixel::value_type, typename DstPixel::value_type>::type;
         return static_cast<dsttype>(static_cast<promotype>(v) * DstPixel::max() / SrcPixel::max());
       }
     }

@@ -26,6 +26,19 @@
 
 namespace surf {
 
+template<typename Pixel> inline
+Pixel make_pixel(typename Pixel::value_type r,
+                 typename Pixel::value_type g,
+                 typename Pixel::value_type b,
+                 typename Pixel::value_type a)
+{
+  if constexpr (Pixel::has_alpha()) {
+    return Pixel{r, g, b, a};
+  } else {
+    return Pixel{r, g, b};
+  }
+}
+
 template<typename Pixel> inline typename Pixel::value_type red(Pixel pixel) { return pixel.r; }
 template<typename Pixel> inline typename Pixel::value_type green(Pixel pixel) { return pixel.g; }
 template<typename Pixel> inline typename Pixel::value_type blue(Pixel pixel) { return pixel.b; }
@@ -56,16 +69,25 @@ typename DstPixel::value_type f2value(float v)
   using srctype = float;
   using dsttype = typename DstPixel::value_type;
 
-  if constexpr (std::is_integral<dsttype>::value &&
-                sizeof(dsttype) == sizeof(srctype)) {
-    // special case, as uint32 -> float32 will overflow
-    return static_cast<dsttype>(
-      std::clamp(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max())),
-                 static_cast<uint64_t>(0), static_cast<uint64_t>(DstPixel::max())));
+  if constexpr (std::is_integral<dsttype>::value) {
+    if (sizeof(dsttype) == sizeof(srctype)) {
+      // special case, as uint32 -> float32 will overflow
+      return static_cast<dsttype>(
+        std::clamp(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max())),
+                   static_cast<uint64_t>(0), static_cast<uint64_t>(DstPixel::max())));
+    } else {
+      return static_cast<dsttype>(std::clamp(v * static_cast<srctype>(DstPixel::max()),
+                                             0.0f, static_cast<srctype>(DstPixel::max())));
+    }
   } else {
-    return static_cast<dsttype>(std::clamp(v * static_cast<srctype>(DstPixel::max()),
-                                           0.0f, static_cast<srctype>(DstPixel::max())));
+    return static_cast<dsttype>(v * static_cast<srctype>(DstPixel::max()));
   }
+}
+
+template<typename Pixel, typename T> inline
+typename Pixel::value_type clamp_pixel(T v)
+{
+  return static_cast<typename Pixel::value_type>(std::clamp<T>(v, 0, static_cast<T>(Pixel::max())));
 }
 
 template<typename T>
@@ -80,6 +102,7 @@ struct tRGBPixel
       return std::numeric_limits<T>::max();
     }
   }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
 
   T r;
   T g;
@@ -100,6 +123,7 @@ struct tRGBAPixel
       return std::numeric_limits<T>::max();
     }
   }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
 
   T r;
   T g;
