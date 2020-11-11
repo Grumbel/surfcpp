@@ -125,7 +125,9 @@ void print_usage(int argc, char** argv)
     << "  --convert FORMAT     Convert internal format to FORMAT\n"
     << "  --blit POS           Blit image\n"
     << "  --blend POS          Blend image\n"
-    << "  --add POS            Add image\n";
+    << "  --blend-add POS      Add image\n"
+    << "  --multiply VALUE     Multiply the image by value\n"
+    << "  --add VALUE          Add value to pixels\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -161,6 +163,18 @@ Options parse_args(int argc, char** argv)
         float value = std::stof(std::string(arg));
         opts.commands.emplace_back([value](Context& ctx) {
           surf::apply_gamma(ctx.top(), value);
+        });
+      } else if (opt == "--multiply") {
+        std::string_view arg = next_arg();
+        float value = std::stof(std::string(arg));
+        opts.commands.emplace_back([value](Context& ctx) {
+          surf::apply_multiply(ctx.top(), value);
+        });
+      } else if (opt == "--add") {
+        std::string_view arg = next_arg();
+        float value = std::stof(std::string(arg));
+        opts.commands.emplace_back([value](Context& ctx) {
+          surf::apply_add(ctx.top(), value);
         });
       } else if (opt == "--brightness") {
         std::string_view arg = next_arg();
@@ -222,7 +236,7 @@ Options parse_args(int argc, char** argv)
           auto img = ctx.pop();
           blend(img, ctx.top(), pos);
         });
-      } else if (opt == "--add") {
+      } else if (opt == "--blend-add") {
         std::string_view pos_str = next_arg();
         geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
 

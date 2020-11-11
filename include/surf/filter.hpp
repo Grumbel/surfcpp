@@ -19,6 +19,7 @@
 
 #include <cmath>
 
+#include "algorithm.hpp"
 #include "color.hpp"
 #include "hsv.hpp"
 #include "pixel_view.hpp"
@@ -49,6 +50,46 @@ void apply_gamma(PixelView<Pixel>& src, float gamma)
       rgba.b = powf(rgba.b, 1.0f / gamma);
       src.put_pixel_color({x, y}, rgba);
     }
+  }
+}
+
+template<typename Pixel>
+void apply_multiply(PixelView<Pixel>& src, float factor)
+{
+  // FIXME: Slow
+  for(int y = 0; y < src.get_height(); ++y) {
+    for(int x = 0; x < src.get_width(); ++x) {
+      Color rgba = src.get_pixel_color({x, y});
+      rgba.r *= factor;
+      rgba.g *= factor;
+      rgba.b *= factor;
+      src.put_pixel_color({x, y}, rgba);
+    }
+  }
+}
+
+template<typename Pixel>
+void apply_add(PixelView<Pixel>& src, float addend)
+{
+  using type = typename Pixel::value_type;
+  type const addend_v = f2value<Pixel>(addend);
+
+  if constexpr (Pixel::is_floating_point()) {
+    for_each_pixel(src, [addend_v](Pixel& pixel) {
+      pixel = make_pixel<Pixel>(
+        clamp_pixel<Pixel>(red(pixel) + addend_v),
+        clamp_pixel<Pixel>(green(pixel) + addend_v),
+        clamp_pixel<Pixel>(blue(pixel) + addend_v),
+        alpha(pixel));
+    });
+  } else {
+    for_each_pixel(src, [addend_v](Pixel& pixel) {
+      pixel = make_pixel<Pixel>(
+        clamp_pixel<Pixel>(promote<type, type>(red(pixel)) + addend_v),
+        clamp_pixel<Pixel>(promote<type, type>(green(pixel)) + addend_v),
+        clamp_pixel<Pixel>(promote<type, type>(blue(pixel)) + addend_v),
+        alpha(pixel));
+    });
   }
 }
 
@@ -170,6 +211,8 @@ void apply_hsv(PixelView<Pixel>& src, float hue, float saturation, float value)
 }
 
 SOFTWARE_SURFACE_LIFT_VOID(apply_gamma)
+SOFTWARE_SURFACE_LIFT_VOID(apply_multiply)
+SOFTWARE_SURFACE_LIFT_VOID(apply_add)
 SOFTWARE_SURFACE_LIFT_VOID(apply_brightness)
 SOFTWARE_SURFACE_LIFT_VOID(apply_contrast)
 SOFTWARE_SURFACE_LIFT_VOID(apply_invert)
