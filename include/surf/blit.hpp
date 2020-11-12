@@ -21,6 +21,7 @@
 #include <cstring>
 
 #include "blend.hpp"
+#include "blendfunc.hpp"
 #include "pixel_data.hpp"
 
 namespace surf {
@@ -44,8 +45,8 @@ geom::irect equivalence_clip(geom::irect const& srcrect_unclipped, geom::irect c
                      dstrect_unclipped.bottom() + (srcrect.bottom() - srcrect_unclipped.bottom()) * dstrect_unclipped.height() / srcrect_unclipped.height());
 }
 
-template<typename BlendFunc, typename SrcPixel, typename DstPixel>
-void blit_scaled(BlendFunc blendfunc,
+template<typename BlendFuncType, typename SrcPixel, typename DstPixel>
+void blit_scaled(BlendFuncType blendfunc,
                  PixelView<SrcPixel> const& src, geom::irect const& srcrect_unclipped,
                  PixelView<DstPixel>& dst, geom::irect const& dstrect_unclipped)
 {
@@ -111,6 +112,22 @@ void blit(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
                 src.get_row(y + dst2src.y()) + region.left() + dst2src.x(),
                 region.width() * sizeof(SrcPixel));
   }
+}
+
+template<typename SrcPixel, typename DstPixel>
+void blit_scaled_wrap(BlendFunc blendfunc,
+                      PixelView<SrcPixel> const& src, geom::irect const& srcrect_unclipped,
+                      PixelView<DstPixel>& dst, geom::irect const& dstrect_unclipped)
+{
+  using srctype = SrcPixel;
+  using dsttype = DstPixel;
+
+  BLENDFUNC_TO_TYPE(
+    blendfunc,
+    blendfunc_type,
+    blit_scaled(blendfunc_type(),
+                src, srcrect_unclipped,
+                dst, dstrect_unclipped));
 }
 
 template<typename SrcPixel, typename DstPixel,

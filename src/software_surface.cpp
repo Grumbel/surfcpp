@@ -213,20 +213,13 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
 
 void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect)
 {
-  PIXELFORMAT_TO_TYPE(
-    src.get_format(),
-    srctype,
+  PIXELFORMAT2_TO_TYPE(
+    src.get_format(), srctype,
+    dst.get_format(), dsttype,
     log_unreachable(),
-    PIXELFORMAT_TO_TYPE(
-      dst.get_format(),
-      dsttype,
-      log_unreachable(),
-      BLENDFUNC_TO_TYPE(
-        blendfunc,
-        blendfunc_type,
-        blit_scaled(blendfunc_type(),
-                    src.as_pixelview<srctype>(), srcrect,
-                    dst.as_pixelview<dsttype>(), dstrect))));
+    blit_scaled_wrap(blendfunc,
+                     src.as_pixelview<srctype>(), srcrect,
+                     dst.as_pixelview<dsttype>(), dstrect));
 }
 
 void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect)

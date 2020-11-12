@@ -28,27 +28,27 @@ enum class BlendFunc
   ADD
 };
 
-#define BLENDFUNC_TO_TYPE(blendfunc, blendfunc_t, expr)         \
-  do {                                                          \
-    switch (blendfunc) {                                        \
-      case BlendFunc::COPY: {                                   \
-        using blendfunc_t = pixel_copy<srctype, dsttype>;       \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-      case BlendFunc::ADD: {                                    \
-        using blendfunc_t = pixel_add<srctype, dsttype>;        \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-      case BlendFunc::BLEND: {                                  \
-        using blendfunc_t = pixel_blend<srctype, dsttype>;      \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-      default:                                                  \
-        throw std::invalid_argument("unknown blendfunc");       \
-    }                                                           \
+#define BLENDFUNC_TO_TYPE(blendfunc, blendfunc_t, expr)                 \
+  do {                                                                  \
+    switch (blendfunc) {                                                \
+      case BlendFunc::COPY: {                                           \
+        using blendfunc_t = pixel_copy<srctype, dsttype>; /* NOLINT */  \
+        expr;                                                           \
+        break;                                                          \
+      }                                                                 \
+      case BlendFunc::ADD: {                                            \
+        using blendfunc_t = pixel_add<srctype, dsttype>; /* NOLINT */   \
+        expr;                                                           \
+        break;                                                          \
+      }                                                                 \
+      case BlendFunc::BLEND: {                                          \
+        using blendfunc_t = pixel_blend<srctype, dsttype>; /* NOLINT */ \
+        expr;                                                           \
+        break;                                                          \
+      }                                                                 \
+      default:                                                          \
+        throw std::invalid_argument("unknown blendfunc");               \
+    }                                                                   \
   } while (false)
 
 } // namespace surf

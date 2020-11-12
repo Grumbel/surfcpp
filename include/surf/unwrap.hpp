@@ -93,6 +93,17 @@
     }                                           \
   } while (false)
 
+#define PIXELFORMAT2_TO_TYPE(srcformat, srctype, dstformat, dsttype, fail_expr, expr) \
+  PIXELFORMAT_TO_TYPE(                                                  \
+    (srcformat),                                                        \
+    srctype,                                                            \
+    fail_expr,                                                          \
+    PIXELFORMAT_TO_TYPE(                                                \
+      (dstformat),                                                      \
+      dsttype,                                                          \
+      fail_expr,                                                        \
+      expr))
+
 #define SOFTWARE_SURFACE_UNWRAP(surface, pixelview, fail_expr, expr)    \
   PIXELFORMAT_TO_TYPE(                                                  \
     (surface).get_format(),                                             \
