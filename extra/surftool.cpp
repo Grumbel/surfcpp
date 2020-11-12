@@ -65,7 +65,9 @@ using ContextCommand = std::function<void(Context& ctx)>;
 class Context
 {
 public:
-  Context() : m_stack()
+  Context() :
+    m_blendfunc(surf::BlendFunc::COPY),
+    m_stack()
   {}
 
   void eval(ContextCommand const& cmd) {
@@ -93,7 +95,16 @@ public:
     m_stack.push(img);
   }
 
+  void set_blendfunc(surf::BlendFunc func) {
+    m_blendfunc = func;
+  }
+
+  surf::BlendFunc blendfunc() const {
+    return m_blendfunc;
+  }
+
 private:
+  surf::BlendFunc m_blendfunc;
   std::stack<SoftwareSurface> m_stack;
 };
 
@@ -128,6 +139,7 @@ void print_usage(int argc, char** argv)
     << "  --blit-scaled RECT   Blit image scaled\n"
     << "  --blend POS          Blend image\n"
     << "  --blend-add POS      Add image\n"
+    << "  --blendfunc FUNC     Switch blendfunc to FUNC\n"
     << "  --multiply VALUE     Multiply the image by value\n"
     << "  --add VALUE          Add value to pixels\n";
 }
@@ -212,6 +224,12 @@ Options parse_args(int argc, char** argv)
         opts.commands.emplace_back([hue, saturation, value](Context& ctx) {
           surf::apply_hsv(ctx.top(), hue, saturation, value);
         });
+      } else if (opt == "--blendfunc") {
+        std::string_view arg = next_arg();
+        surf::BlendFunc blendfunc = surf::BlendFunc_from_string(arg);
+        opts.commands.emplace_back([blendfunc](Context& ctx) {
+          ctx.set_blendfunc(blendfunc);
+        });
       } else if (opt == "--grayscale") {
         opts.commands.emplace_back([](Context& ctx) {
           surf::apply_grayscale(ctx.top());
@@ -234,10 +252,9 @@ Options parse_args(int argc, char** argv)
         std::string_view rect_str = next_arg();
         geom::irect rect = geom::irect_from_string(std::string(rect_str));
 
-        surf::BlendFunc blendfunc = surf::BlendFunc::COPY;
-        opts.commands.emplace_back([blendfunc, rect](Context& ctx) {
+        opts.commands.emplace_back([rect](Context& ctx) {
           auto img = ctx.pop();
-          blit_scaled(blendfunc, img, ctx.top(), rect);
+          blit_scaled(ctx.blendfunc(), img, ctx.top(), rect);
         });
       } else if (opt == "--blend") {
         std::string_view pos_str = next_arg();

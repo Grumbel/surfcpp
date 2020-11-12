@@ -17,6 +17,8 @@
 #ifndef HEADER_SURF_BLENDFUNC_HPP
 #define HEADER_SURF_BLENDFUNC_HPP
 
+#include <string_view>
+
 #include "blend.hpp"
 
 namespace surf {
@@ -27,6 +29,8 @@ enum class BlendFunc
   BLEND,
   ADD
 };
+
+BlendFunc BlendFunc_from_string(std::string_view blendfunc_str);
 
 #define BLENDFUNC_TO_TYPE(blendfunc, blendfunc_t, expr)                 \
   do {                                                                  \
