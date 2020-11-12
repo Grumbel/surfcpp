@@ -209,6 +209,24 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
       blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
 }
 
+void blit_scaled(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect)
+{
+  SOFTWARE_SURFACE_UNWRAP(
+    src,
+    src_as_pixeldata,
+    log_unreachable(),
+    SOFTWARE_SURFACE_UNWRAP(
+      dst,
+      dst_as_pixeldata,
+      log_unreachable(),
+      blit_scaled(src_as_pixeldata, srcrect, dst_as_pixeldata, dstrect)));
+}
+
+void blit_scaled(SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect)
+{
+  blit_scaled(src, geom::irect(src.get_size()), dst, dstrect);
+}
+
 void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
 {
   PIXELFORMAT_TO_TYPE(

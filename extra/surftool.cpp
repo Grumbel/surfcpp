@@ -124,6 +124,7 @@ void print_usage(int argc, char** argv)
     << "  --hsv H:S:V          Apply hue/saturation/value\n"
     << "  --convert FORMAT     Convert internal format to FORMAT\n"
     << "  --blit POS           Blit image\n"
+    << "  --blit-scaled RECT   Blit image scaled\n"
     << "  --blend POS          Blend image\n"
     << "  --blend-add POS      Add image\n"
     << "  --multiply VALUE     Multiply the image by value\n"
@@ -227,6 +228,14 @@ Options parse_args(int argc, char** argv)
         opts.commands.emplace_back([pos](Context& ctx) {
           auto img = ctx.pop();
           blit(img, ctx.top(), pos);
+        });
+      } else if (opt == "--blit-scaled") {
+        std::string_view rect_str = next_arg();
+        geom::irect rect = geom::irect_from_string(std::string(rect_str));
+
+        opts.commands.emplace_back([rect](Context& ctx) {
+          auto img = ctx.pop();
+          blit_scaled(img, ctx.top(), rect);
         });
       } else if (opt == "--blend") {
         std::string_view pos_str = next_arg();

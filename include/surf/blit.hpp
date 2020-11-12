@@ -32,6 +32,67 @@ namespace surf {
 //                 "blit() not implemented for the given types");
 // }
 
+/** Generate a 'dstrect' such that it's relations are the same as
+    between 'srcrect_unclipped' and 'srcrect'.. */
+inline
+geom::irect equivalence_clip(geom::irect const& srcrect_unclipped, geom::irect const& srcrect,
+                             geom::irect const& dstrect_unclipped)
+{
+  return geom::irect(dstrect_unclipped.left() + (srcrect.left() - srcrect_unclipped.left()) * dstrect_unclipped.width() / srcrect_unclipped.width(),
+                     dstrect_unclipped.top() + (srcrect.top() - srcrect_unclipped.top()) * dstrect_unclipped.height() / srcrect_unclipped.height(),
+                     dstrect_unclipped.right() + (srcrect.right() - srcrect_unclipped.right()) * dstrect_unclipped.width() / srcrect_unclipped.width(),
+                     dstrect_unclipped.bottom() + (srcrect.bottom() - srcrect_unclipped.bottom()) * dstrect_unclipped.height() / srcrect_unclipped.height());
+}
+
+template<typename SrcPixel, typename DstPixel>
+void blit_scaled(PixelView<SrcPixel> const& src, geom::irect const& srcrect_unclipped,
+                 PixelView<DstPixel>& dst, geom::irect const& dstrect_unclipped)
+{
+  geom::irect const dstrect1 = geom::intersection(geom::irect(dst.get_size()), dstrect_unclipped);
+  geom::irect const srcrect1 = equivalence_clip(dstrect_unclipped, dstrect1, srcrect_unclipped);
+
+  geom::irect const srcrect = geom::intersection(geom::irect(src.get_size()), srcrect1);
+  geom::irect const dstrect = equivalence_clip(srcrect1, srcrect, dstrect1);
+
+  assert(contains(geom::irect(src.get_size()), srcrect));
+  assert(contains(geom::irect(dst.get_size()), dstrect));
+
+#if 0
+  // clip dstrect
+  geom::irect dstrect1 = geom::intersection(geom::irect(dst.get_size()), dstrect_unclipped);
+  // clip srcrect like dstrect
+  geom::irect srcrect1(srcrect_unclipped.left() + (dstrect1.left() - dstrect_unclipped.left()) * srcrect_unclipped.width() / dstrect_unclipped.width(),
+                       srcrect_unclipped.top() + (dstrect1.top() - dstrect_unclipped.top()) * srcrect_unclipped.height() / dstrect_unclipped.height(),
+                       srcrect_unclipped.right() + (dstrect1.right() - dstrect_unclipped.right()) * srcrect_unclipped.width() / dstrect_unclipped.width(),
+                       srcrect_unclipped.bottom() + (dstrect1.bottom() - dstrect_unclipped.bottom()) * srcrect_unclipped.height() / dstrect_unclipped.height());
+
+  // clip srcrect
+  geom::irect const srcrect = geom::intersection(geom::irect(src.get_size()), srcrect1);
+  // clip dstrect like srcrect
+  geom::irect const dstrect(dstrect1.left() + (srcrect.left() - srcrect1.left()) * dstrect1.width() / srcrect1.width(),
+                            dstrect1.top() + (srcrect.top() - srcrect1.top()) * dstrect1.height() / srcrect1.height(),
+                            dstrect1.right() + (srcrect.right() - srcrect1.right()) * dstrect1.width() / srcrect1.width(),
+                            dstrect1.bottom() + (srcrect.bottom() - srcrect1.bottom()) * dstrect1.height() / srcrect1.height());
+#endif
+
+  for (int y = 0; y < dstrect.height(); ++y) {
+    SrcPixel const* const srcrow = src.get_row((y + srcrect.top()) * srcrect.height() / dstrect.height()) + srcrect.left();
+    DstPixel* const dstrow = dst.get_row(y + dstrect.top()) + dstrect.left();
+
+    for (int x = 0; x < dstrect.width(); ++x) {
+      // LUT this?
+      dstrow[x] = convert<SrcPixel, DstPixel>(srcrow[x * srcrect.width() / dstrect.width()]);
+    }
+  }
+}
+
+template<typename SrcPixel, typename DstPixel>
+void blit_scaled(PixelView<SrcPixel> const& src,
+                 PixelView<DstPixel>& dst, geom::irect const& dstrect)
+{
+  blit_scaled(src, geom::irect(dst.get_size()), dst, dstrect);
+}
+
 template<typename SrcPixel, typename DstPixel,
          std::enable_if_t<std::is_same<SrcPixel, DstPixel>::value, int> = 0>
 void blit(PixelView<SrcPixel> const& src, geom::irect const& srcrect,
