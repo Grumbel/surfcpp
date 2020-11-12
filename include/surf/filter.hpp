@@ -77,9 +77,9 @@ void apply_add(PixelView<Pixel>& src, float addend)
   if constexpr (Pixel::is_floating_point()) {
     for_each_pixel(src, [addend_v](Pixel& pixel) {
       pixel = make_pixel<Pixel>(
-        clamp_pixel<Pixel>(red(pixel) + addend_v),
-        clamp_pixel<Pixel>(green(pixel) + addend_v),
-        clamp_pixel<Pixel>(blue(pixel) + addend_v),
+        red(pixel) + addend_v,
+        green(pixel) + addend_v,
+        blue(pixel) + addend_v,
         alpha(pixel));
     });
   } else {
