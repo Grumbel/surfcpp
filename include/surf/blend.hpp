@@ -26,96 +26,111 @@
 namespace surf {
 
 template<typename SrcPixel, typename DstPixel>
-DstPixel pixel_blend(SrcPixel src, DstPixel dst)
+struct pixel_copy
 {
-  using srctype = typename SrcPixel::value_type;
-  using dsttype = typename DstPixel::value_type;
-
-  if constexpr (!SrcPixel::has_alpha()) {
+  inline DstPixel operator()(SrcPixel src, DstPixel dst)
+  {
     return convert<SrcPixel, DstPixel>(src);
-  } else if constexpr (std::is_floating_point<srctype>::value || std::is_floating_point<dsttype>::value) {
-    log_not_implemented();
-    return convert<SrcPixel, DstPixel>(src);
-  } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
-    return DstPixel{
-      static_cast<dsttype>((red(src) * alpha(src) + red(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
-      static_cast<dsttype>((green(src) * alpha(src) + green(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
-      static_cast<dsttype>((blue(src) * alpha(src) + blue(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max())
-    };
-  } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
-    dsttype const out_a = static_cast<dsttype>(alpha(src) + alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max());
-    if (out_a == 0) {
-      return DstPixel{0, 0, 0, 0};
-    } else {
-      return DstPixel{
-        static_cast<dsttype>((red(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + red(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
-        static_cast<dsttype>((green(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + green(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
-        static_cast<dsttype>((blue(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + blue(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
-        out_a
-      };
-    }
-  } else {
-    static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
-                  "blend<>() not implemented for the given types");
-    return DstPixel{};
   }
-}
+};
 
 template<typename SrcPixel, typename DstPixel>
-DstPixel pixel_add(SrcPixel src, DstPixel dst)
+struct pixel_blend
 {
-  using srctype = typename SrcPixel::value_type;
-  using dsttype = typename DstPixel::value_type;
+  inline DstPixel operator()(SrcPixel src, DstPixel dst)
+  {
+    using srctype = typename SrcPixel::value_type;
+    using dsttype = typename DstPixel::value_type;
 
-  if constexpr (std::is_floating_point<srctype>::value && std::is_floating_point<dsttype>::value) {
-    if constexpr (DstPixel::has_alpha()) {
-      if (alpha_f(src) == 0.0f) {
-        return dst;
+    if constexpr (!SrcPixel::has_alpha()) {
+      return convert<SrcPixel, DstPixel>(src);
+    } else if constexpr (std::is_floating_point<srctype>::value || std::is_floating_point<dsttype>::value) {
+      log_not_implemented();
+      return convert<SrcPixel, DstPixel>(src);
+    } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
+      return DstPixel{
+        static_cast<dsttype>((red(src) * alpha(src) + red(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
+        static_cast<dsttype>((green(src) * alpha(src) + green(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
+        static_cast<dsttype>((blue(src) * alpha(src) + blue(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max())
+      };
+    } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
+      dsttype const out_a = static_cast<dsttype>(alpha(src) + alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max());
+      if (out_a == 0) {
+        return DstPixel{0, 0, 0, 0};
       } else {
         return DstPixel{
-          static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
-          static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
-          static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src)),
-          static_cast<dsttype>(alpha_f(dst))
+          static_cast<dsttype>((red(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + red(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
+          static_cast<dsttype>((green(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + green(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
+          static_cast<dsttype>((blue(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + blue(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
+          out_a
         };
       }
     } else {
-      if (alpha_f(src) == 0.0f) {
-        return dst;
-      } else {
-        return DstPixel{
-          static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
-          static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
-          static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src))
-        };
-      }
+      static_assert(!std::is_same<SrcPixel, SrcPixel>::value,
+                    "blend<>() not implemented for the given types");
+      return DstPixel{};
     }
-  } else {
-    if constexpr (DstPixel::has_alpha()) {
-      if (alpha(src) == 0) {
-        return dst;
-      }  else {
-        // FIXME: slow
-        return DstPixel{
-          f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
-          f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
-          f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src)),
-          f2value<DstPixel>(alpha_f(dst))
-        };
+  }
+};
+
+template<typename SrcPixel, typename DstPixel>
+struct pixel_add
+{
+  inline DstPixel operator()(SrcPixel src, DstPixel dst)
+  {
+    using srctype = typename SrcPixel::value_type;
+    using dsttype = typename DstPixel::value_type;
+
+    if constexpr (std::is_floating_point<srctype>::value && std::is_floating_point<dsttype>::value) {
+      if constexpr (DstPixel::has_alpha()) {
+        if (alpha_f(src) == 0.0f) {
+          return dst;
+        } else {
+          return DstPixel{
+            static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
+            static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
+            static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src)),
+            static_cast<dsttype>(alpha_f(dst))
+          };
+        }
+      } else {
+        if (alpha_f(src) == 0.0f) {
+          return dst;
+        } else {
+          return DstPixel{
+            static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
+            static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
+            static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src))
+          };
+        }
       }
     } else {
-      if (alpha(src) == 0) {
-        return dst;
+      if constexpr (DstPixel::has_alpha()) {
+        if (alpha(src) == 0) {
+          return dst;
+        }  else {
+          // FIXME: slow
+          return DstPixel{
+            f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
+            f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
+            f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src)),
+            f2value<DstPixel>(alpha_f(dst))
+          };
+        }
       } else {
-        return DstPixel{
-          f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
-          f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
-          f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src))
-        };
+        if (alpha(src) == 0) {
+          return dst;
+        } else {
+          return DstPixel{
+            f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
+            f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
+            f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src))
+          };
+        }
       }
     }
   }
-}
+};
 
 } // namespace surf
 

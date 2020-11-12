@@ -44,8 +44,9 @@ geom::irect equivalence_clip(geom::irect const& srcrect_unclipped, geom::irect c
                      dstrect_unclipped.bottom() + (srcrect.bottom() - srcrect_unclipped.bottom()) * dstrect_unclipped.height() / srcrect_unclipped.height());
 }
 
-template<typename SrcPixel, typename DstPixel>
-void blit_scaled(PixelView<SrcPixel> const& src, geom::irect const& srcrect_unclipped,
+template<typename BlendFunc, typename SrcPixel, typename DstPixel>
+void blit_scaled(BlendFunc blendfunc,
+                 PixelView<SrcPixel> const& src, geom::irect const& srcrect_unclipped,
                  PixelView<DstPixel>& dst, geom::irect const& dstrect_unclipped)
 {
   geom::irect const dstrect1 = geom::intersection(geom::irect(dst.get_size()), dstrect_unclipped);
@@ -81,16 +82,17 @@ void blit_scaled(PixelView<SrcPixel> const& src, geom::irect const& srcrect_uncl
 
     for (int x = 0; x < dstrect.width(); ++x) {
       // LUT this?
-      dstrow[x] = convert<SrcPixel, DstPixel>(srcrow[x * srcrect.width() / dstrect.width()]);
+      dstrow[x] = blendfunc(srcrow[x * srcrect.width() / dstrect.width()], dstrow[x]);
     }
   }
 }
 
-template<typename SrcPixel, typename DstPixel>
-void blit_scaled(PixelView<SrcPixel> const& src,
+template<typename BlendFunc, typename SrcPixel, typename DstPixel>
+void blit_scaled(BlendFunc blendfunc,
+                 PixelView<SrcPixel> const& src,
                  PixelView<DstPixel>& dst, geom::irect const& dstrect)
 {
-  blit_scaled(src, geom::irect(dst.get_size()), dst, dstrect);
+  blit_scaled(blendfunc, src, geom::irect(dst.get_size()), dst, dstrect);
 }
 
 template<typename SrcPixel, typename DstPixel,

@@ -52,6 +52,8 @@ class IPixelData;
 class SoftwareSurface;
 class SoftwareSurfaceFactory;
 class SoftwareSurfaceLoader;
+
+enum class BlendFunc;
 enum class PixelFormat;
 
 template<typename Pixel> class PixelData;

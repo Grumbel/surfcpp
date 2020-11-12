@@ -21,6 +21,7 @@
 #include <fmt/format.h>
 
 #include <geom/io.hpp>
+#include <surf/blendfunc.hpp>
 #include <surf/surf.hpp>
 #include <surf/io.hpp>
 
@@ -233,9 +234,10 @@ Options parse_args(int argc, char** argv)
         std::string_view rect_str = next_arg();
         geom::irect rect = geom::irect_from_string(std::string(rect_str));
 
-        opts.commands.emplace_back([rect](Context& ctx) {
+        surf::BlendFunc blendfunc = surf::BlendFunc::COPY;
+        opts.commands.emplace_back([blendfunc, rect](Context& ctx) {
           auto img = ctx.pop();
-          blit_scaled(img, ctx.top(), rect);
+          blit_scaled(blendfunc, img, ctx.top(), rect);
         });
       } else if (opt == "--blend") {
         std::string_view pos_str = next_arg();

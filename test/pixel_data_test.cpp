@@ -141,7 +141,7 @@ TEST(PixelDataTest, blend)
 
   for (int y = 0; y < dst.get_height(); y += src.get_height()) {
     for (int x = 0; x < dst.get_width(); x += src.get_width()) {
-      blend(pixel_blend<RGBAPixel, RGBAPixel>, src, dst, geom::ipoint(x, y));
+      blend(pixel_blend<RGBAPixel, RGBAPixel>(), src, dst, geom::ipoint(x, y));
     }
   }
 
