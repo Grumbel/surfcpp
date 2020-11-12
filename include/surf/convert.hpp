@@ -24,7 +24,7 @@
 namespace surf {
 
 template<typename SrcPixel, typename DstPixel> inline
-typename DstPixel::value_type convert_value(typename SrcPixel::value_type v)
+constexpr typename DstPixel::value_type convert_value(typename SrcPixel::value_type v)
 {
   using srctype = typename SrcPixel::value_type;
   using dsttype = typename DstPixel::value_type;
@@ -63,36 +63,20 @@ typename DstPixel::value_type convert_value(typename SrcPixel::value_type v)
 template<typename SrcPixel, typename DstPixel>
 DstPixel convert(SrcPixel src)
 {
-  if constexpr (SrcPixel::has_alpha()) {
-    if constexpr (DstPixel::has_alpha()) {
-      return DstPixel{convert_value<SrcPixel, DstPixel>(red(src)),
-        convert_value<SrcPixel, DstPixel>(green(src)),
-        convert_value<SrcPixel, DstPixel>(blue(src)),
-        convert_value<SrcPixel, DstPixel>(alpha(src))
-      };
-    } else {
-      return DstPixel{
-        convert_value<SrcPixel, DstPixel>(red(src)),
-        convert_value<SrcPixel, DstPixel>(green(src)),
-        convert_value<SrcPixel, DstPixel>(blue(src))
-        /* discard alpha */
-      };
-    }
+  if constexpr (std::is_same<SrcPixel, DstPixel>::value) {
+    return src;
+  } else if constexpr (SrcPixel::has_alpha()) {
+    return make_pixel<DstPixel>(
+      convert_value<SrcPixel, DstPixel>(red(src)),
+      convert_value<SrcPixel, DstPixel>(green(src)),
+      convert_value<SrcPixel, DstPixel>(blue(src)),
+      convert_value<SrcPixel, DstPixel>(alpha(src)));
   } else {
-    if constexpr (DstPixel::has_alpha()) {
-      return DstPixel{
-        convert_value<SrcPixel, DstPixel>(red(src)),
-        convert_value<SrcPixel, DstPixel>(green(src)),
-        convert_value<SrcPixel, DstPixel>(blue(src)),
-        DstPixel::max()
-      };
-    } else {
-      return DstPixel{
-        convert_value<SrcPixel, DstPixel>(red(src)),
-        convert_value<SrcPixel, DstPixel>(green(src)),
-        convert_value<SrcPixel, DstPixel>(blue(src))
-      };
-    }
+    return make_pixel<DstPixel>(
+      convert_value<SrcPixel, DstPixel>(red(src)),
+      convert_value<SrcPixel, DstPixel>(green(src)),
+      convert_value<SrcPixel, DstPixel>(blue(src)),
+      DstPixel::max());
   }
 }
 
