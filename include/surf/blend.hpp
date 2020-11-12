@@ -76,58 +76,35 @@ struct pixel_blend
 template<typename SrcPixel, typename DstPixel>
 struct pixel_add
 {
-  inline DstPixel operator()(SrcPixel src, DstPixel dst)
+  inline constexpr DstPixel operator()(SrcPixel const src, DstPixel const dst)
   {
-    using srctype = typename SrcPixel::value_type;
+    // using srctype = typename SrcPixel::value_type;
     using dsttype = typename DstPixel::value_type;
 
-    if constexpr (std::is_floating_point<srctype>::value && std::is_floating_point<dsttype>::value) {
-      if constexpr (DstPixel::has_alpha()) {
-        if (alpha_f(src) == 0.0f) {
-          return dst;
-        } else {
-          return DstPixel{
-            static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
-            static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
-            static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src)),
-            static_cast<dsttype>(alpha_f(dst))
-          };
-        }
-      } else {
-        if (alpha_f(src) == 0.0f) {
-          return dst;
-        } else {
-          return DstPixel{
-            static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
-            static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
-            static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src))
-          };
-        }
+    if constexpr (SrcPixel::has_alpha()) {
+      if (alpha(src) == 0) {
+        return dst;
       }
+    }
+
+    if constexpr (std::is_floating_point<dsttype>::value) {
+      return make_pixel<DstPixel>(
+        static_cast<dsttype>(red_f(dst) + red_f(src) * alpha_f(src)),
+        static_cast<dsttype>(green_f(dst) + green_f(src) * alpha_f(src)),
+        static_cast<dsttype>(blue_f(dst) + blue_f(src) * alpha_f(src)),
+        static_cast<dsttype>(alpha_f(dst))
+        );
     } else {
-      if constexpr (DstPixel::has_alpha()) {
-        if (alpha(src) == 0) {
-          return dst;
-        }  else {
-          // FIXME: slow
-          return DstPixel{
-            f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
-            f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
-            f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src)),
-            f2value<DstPixel>(alpha_f(dst))
-          };
-        }
-      } else {
-        if (alpha(src) == 0) {
-          return dst;
-        } else {
-          return DstPixel{
-            f2value<DstPixel>(red_f(dst) + red_f(src) * alpha_f(src)),
-            f2value<DstPixel>(green_f(dst) + green_f(src) * alpha_f(src)),
-            f2value<DstPixel>(blue_f(dst) + blue_f(src) * alpha_f(src))
-          };
-        }
-      }
+      dsttype const r = convert_value<SrcPixel, DstPixel>(red(src));
+      dsttype const g = convert_value<SrcPixel, DstPixel>(green(src));
+      dsttype const b = convert_value<SrcPixel, DstPixel>(blue(src));
+      dsttype const a = convert_value<SrcPixel, DstPixel>(alpha(src));
+
+      return make_pixel<DstPixel>(
+        clamp_pixel_max<DstPixel>(red(dst) + r * a / DstPixel::max()),
+        clamp_pixel_max<DstPixel>(green(dst) + g * a / DstPixel::max()),
+        clamp_pixel_max<DstPixel>(blue(dst) + b * a / DstPixel::max()),
+        alpha(dst));
     }
   }
 };

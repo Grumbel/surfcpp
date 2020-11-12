@@ -27,10 +27,10 @@
 namespace surf {
 
 template<typename Pixel> inline
-Pixel make_pixel(typename Pixel::value_type r,
-                 typename Pixel::value_type g,
-                 typename Pixel::value_type b,
-                 typename Pixel::value_type a)
+constexpr Pixel make_pixel(typename Pixel::value_type r,
+                           typename Pixel::value_type g,
+                           typename Pixel::value_type b,
+                           typename Pixel::value_type a = Pixel::max())
 {
   if constexpr (Pixel::has_alpha()) {
     return Pixel{r, g, b, a};
@@ -39,11 +39,11 @@ Pixel make_pixel(typename Pixel::value_type r,
   }
 }
 
-template<typename Pixel> inline typename Pixel::value_type red(Pixel pixel) { return pixel.r; }
-template<typename Pixel> inline typename Pixel::value_type green(Pixel pixel) { return pixel.g; }
-template<typename Pixel> inline typename Pixel::value_type blue(Pixel pixel) { return pixel.b; }
+template<typename Pixel> constexpr inline typename Pixel::value_type red(Pixel pixel) { return pixel.r; }
+template<typename Pixel> constexpr inline typename Pixel::value_type green(Pixel pixel) { return pixel.g; }
+template<typename Pixel> constexpr inline typename Pixel::value_type blue(Pixel pixel) { return pixel.b; }
 
-template<typename Pixel> inline typename Pixel::value_type alpha(Pixel pixel) {
+template<typename Pixel> constexpr inline typename Pixel::value_type alpha(Pixel pixel) {
   if constexpr (Pixel::has_alpha()) {
     return pixel.a;
   } else {
@@ -51,11 +51,11 @@ template<typename Pixel> inline typename Pixel::value_type alpha(Pixel pixel) {
   }
 }
 
-template<typename Pixel> inline float red_f(Pixel pixel) { return static_cast<float>(pixel.r) / static_cast<float>(Pixel::max()); }
-template<typename Pixel> inline float green_f(Pixel pixel) { return static_cast<float>(pixel.g) / static_cast<float>(Pixel::max()); }
-template<typename Pixel> inline float blue_f(Pixel pixel) { return static_cast<float>(pixel.b) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float red_f(Pixel pixel) { return static_cast<float>(pixel.r) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float green_f(Pixel pixel) { return static_cast<float>(pixel.g) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float blue_f(Pixel pixel) { return static_cast<float>(pixel.b) / static_cast<float>(Pixel::max()); }
 
-template<typename Pixel> inline float alpha_f(Pixel pixel) {
+template<typename Pixel> constexpr inline float alpha_f(Pixel pixel) {
   if constexpr (Pixel::has_alpha()) {
     return static_cast<float>(pixel.a) / static_cast<float>(Pixel::max());
   } else {
@@ -85,9 +85,15 @@ typename DstPixel::value_type f2value(float v)
 }
 
 template<typename Pixel, typename T> inline
-typename Pixel::value_type clamp_pixel(T v)
+constexpr typename Pixel::value_type clamp_pixel(T v)
 {
   return static_cast<typename Pixel::value_type>(std::clamp<T>(v, 0, static_cast<T>(Pixel::max())));
+}
+
+template<typename Pixel, typename T> inline
+constexpr typename Pixel::value_type clamp_pixel_max(T v)
+{
+  return static_cast<typename Pixel::value_type>(std::min<T>(v, static_cast<T>(Pixel::max())));
 }
 
 template<typename T>
