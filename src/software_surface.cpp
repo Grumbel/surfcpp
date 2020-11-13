@@ -254,33 +254,6 @@ void blend(SoftwareSurface const& src, geom::irect const& srcrect,
       blend(pixel_blend<srctype, dsttype>(), src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos)));
 }
 
-void blend_add(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
-{
-  PIXELFORMAT_TO_TYPE(
-    src.get_format(),
-    srctype,
-    log_unreachable(),
-    PIXELFORMAT_TO_TYPE(
-      dst.get_format(),
-      dsttype,
-      log_unreachable(),
-      blend(pixel_add<srctype, dsttype>(), src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos)));
-}
-
-void blend_add(SoftwareSurface const& src, geom::irect const& srcrect,
-               SoftwareSurface& dst, geom::ipoint const& pos)
-{
-  PIXELFORMAT_TO_TYPE(
-    src.get_format(),
-    srctype,
-    log_unreachable(),
-    PIXELFORMAT_TO_TYPE(
-      dst.get_format(),
-      dsttype,
-      log_unreachable(),
-      blend(pixel_add<srctype, dsttype>(), src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos)));
-}
-
 void fill(SoftwareSurface& dst, Color const& color)
 {
   PIXELFORMAT_TO_TYPE(

@@ -156,7 +156,6 @@ void print_usage(int argc, char** argv)
     << "  --blit POS           Blit image\n"
     << "  --blit-scaled RECT   Blit image scaled\n"
     << "  --blend POS          Blend image\n"
-    << "  --blend-add POS      Add image\n"
     << "  --blendfunc FUNC     Switch blendfunc to FUNC\n"
     << "  --multiply VALUE     Multiply the image by value\n"
     << "  --add VALUE          Add value to pixels\n"
@@ -297,14 +296,6 @@ Options parse_args(int argc, char** argv)
         opts.commands.emplace_back([pos](Context& ctx) {
           auto img = ctx.pop();
           blend(img, ctx.top(), pos);
-        });
-      } else if (opt == "--blend-add") {
-        std::string_view pos_str = next_arg();
-        geom::ipoint pos = geom::ipoint_from_string(std::string(pos_str));
-
-        opts.commands.emplace_back([pos](Context& ctx) {
-          auto img = ctx.pop();
-          blend_add(img, ctx.top(), pos);
         });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
