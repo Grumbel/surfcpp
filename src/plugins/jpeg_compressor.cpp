@@ -35,7 +35,7 @@ JPEGCompressor::~JPEGCompressor()
 }
 
 void
-JPEGCompressor::save(PixelView<RGBPixel> const& pixel_data, int quality)
+JPEGCompressor::save(PixelView<RGB8Pixel> const& pixel_data, int quality)
 {
   m_cinfo.image_width = static_cast<JDIMENSION>(pixel_data.get_width());
   m_cinfo.image_height = static_cast<JDIMENSION>(pixel_data.get_height());

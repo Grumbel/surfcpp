@@ -64,7 +64,7 @@ JPEGDecompressor::read_size()
                      static_cast<int>(m_cinfo.image_height));
 }
 
-PixelData<RGBPixel>
+PixelData<RGB8Pixel>
 JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 {
   if (!(scale == 1 ||
@@ -102,7 +102,7 @@ JPEGDecompressor::read_image(int scale, geom::isize* image_size)
 
   jpeg_start_decompress(&m_cinfo);
 
-  PixelData<RGBPixel> dst(geom::isize(static_cast<int>(m_cinfo.output_width),
+  PixelData<RGB8Pixel> dst(geom::isize(static_cast<int>(m_cinfo.output_width),
                                       static_cast<int>(m_cinfo.output_height)));
 
   if (m_cinfo.out_color_space == JCS_RGB &&

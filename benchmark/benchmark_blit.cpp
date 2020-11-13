@@ -16,8 +16,8 @@ const geom::isize DSTSIZE(1024, 1024);
 
 void BM_blit(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
@@ -30,8 +30,8 @@ void BM_blit(benchmark::State& state)
 
 void BM_blit__copy(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
@@ -44,13 +44,13 @@ void BM_blit__copy(benchmark::State& state)
 
 void BM_blit__blend(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blend(pixel_copy<RGBPixel, RGBPixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
+        blend(pixel_copy<RGB8Pixel, RGB8Pixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
       }
     }
   }
@@ -58,13 +58,13 @@ void BM_blit__blend(benchmark::State& state)
 
 void BM_blit__blend_blend(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blend(pixel_blend<RGBPixel, RGBPixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
+        blend(pixel_blend<RGB8Pixel, RGB8Pixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
       }
     }
   }
@@ -72,13 +72,13 @@ void BM_blit__blend_blend(benchmark::State& state)
 
 void BM_blit__blend_add(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blend(pixel_add<RGBPixel, RGBPixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
+        blend(pixel_add<RGB8Pixel, RGB8Pixel>(), src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
       }
     }
   }
@@ -86,8 +86,8 @@ void BM_blit__blend_add(benchmark::State& state)
 
 void BM_blit__slow(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
@@ -100,8 +100,8 @@ void BM_blit__slow(benchmark::State& state)
 
 void BM_blit__convert(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGBA8Pixel> dst(DSTSIZE, RGBA8Pixel{0, 0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
@@ -114,8 +114,8 @@ void BM_blit__convert(benchmark::State& state)
 
 void BM_blit__slow_convert(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{0, 0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGBA8Pixel> dst(DSTSIZE, RGBA8Pixel{0, 0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
@@ -128,8 +128,8 @@ void BM_blit__slow_convert(benchmark::State& state)
 
 void BM_blit__slow_convert_self(benchmark::State& state)
 {
-  PixelData<RGBPixel> src(SRCSIZE, RGBPixel{255, 255, 255});
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{0, 0, 0});
+  PixelData<RGB8Pixel> src(SRCSIZE, RGB8Pixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{0, 0, 0});
 
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {

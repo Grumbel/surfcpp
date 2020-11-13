@@ -36,7 +36,7 @@ protected:
 public:
   virtual ~JPEGCompressor();
 
-  void save(PixelView<RGBPixel> const& pixel_data, int quality);
+  void save(PixelView<RGB8Pixel> const& pixel_data, int quality);
 
 private:
   JPEGCompressor(const JPEGCompressor&);

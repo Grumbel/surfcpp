@@ -66,52 +66,52 @@ TEST(SoftwareSurfaceTest, move)
 TEST(SoftwareSurfaceTest, convert)
 {
   SoftwareSurface const lhs(PixelData<RGBPixel>(geom::isize(32, 16)));
-  SoftwareSurface rhs = convert(lhs, PixelFormat::RGBA);
+  SoftwareSurface rhs = convert(lhs, PixelFormat::RGBA8);
 
   EXPECT_EQ(lhs.get_size(), rhs.get_size());
 }
 
 TEST(SoftwareSurfaceTest, blit)
 {
-  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
-  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+  SoftwareSurface const src(PixelData<RGB8Pixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBA8Pixel>(geom::isize(8, 4), {0, 0, 0, 0}));
 
   blit(src, dst, geom::ipoint(1, 2));
 }
 
 TEST(SoftwareSurfaceTest, fill)
 {
-  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
-  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+  SoftwareSurface const src(PixelData<RGB8Pixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBA8Pixel>(geom::isize(8, 4), {0, 0, 0, 0}));
 
   fill(dst, palette::white);
 }
 
 TEST(SoftwareSurfaceTest, fill_rect)
 {
-  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(4, 2), {255, 0, 0}));
-  SoftwareSurface dst(PixelData<RGBAPixel>(geom::isize(8, 4), {0, 0, 0, 0}));
+  SoftwareSurface const src(PixelData<RGB8Pixel>(geom::isize(4, 2), {255, 0, 0}));
+  SoftwareSurface dst(PixelData<RGBA8Pixel>(geom::isize(8, 4), {0, 0, 0, 0}));
 
   fill_rect(dst, geom::irect(1, 2, 4, 4), palette::white);
 }
 
 TEST(SoftwareSurfaceTest, get_view)
 {
-  SoftwareSurface const src(PixelData<RGBPixel>(geom::isize(8, 6), {255, 0, 0}));
+  SoftwareSurface const src(PixelData<RGB8Pixel>(geom::isize(8, 6), {255, 0, 0}));
   SoftwareSurface view(src.get_view(geom::irect(2, 2, 5, 5)));
   fill(view, Color(0, 0, 0, 0));
 }
 
 TEST(SoftwareSurfaceTest, create_view)
 {
-  PixelData<RGBPixel> pixeldata(geom::isize(8, 4), {255, 0, 0});
+  PixelData<RGB8Pixel> pixeldata(geom::isize(8, 4), {255, 0, 0});
   SoftwareSurface view = SoftwareSurface::create_view(pixeldata);
   fill(view, Color(0, 0, 0, 0));
 }
 
 TEST(SoftwareSurfaceTest, create_view__const)
 {
-  PixelData<RGBPixel> const pixeldata(geom::isize(8, 4), {255, 0, 0});
+  PixelData<RGB8Pixel> const pixeldata(geom::isize(8, 4), {255, 0, 0});
   SoftwareSurface view = SoftwareSurface::create_view(pixeldata);
   fill(view, Color(0, 0, 0, 0));
 }

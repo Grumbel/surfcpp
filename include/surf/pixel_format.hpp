@@ -37,8 +37,6 @@ enum class PixelFormat
   RGB64f,
   RGBA64f,
 
-  RGB = RGB8,
-  RGBA = RGBA8
 };
 
 std::string to_string(PixelFormat format);

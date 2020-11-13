@@ -5,17 +5,19 @@
 TEST(PixelTest, validate_sizeof)
 {
   EXPECT_EQ(1, sizeof(surf::GreyscalePixel));
-  EXPECT_EQ(3, sizeof(surf::RGBPixel));
-  EXPECT_EQ(4, sizeof(surf::RGBAPixel));
+  EXPECT_EQ(3, sizeof(surf::RGB8Pixel));
+  EXPECT_EQ(4, sizeof(surf::RGBA8Pixel));
+  EXPECT_TRUE(std::is_trivial<surf::RGB8Pixel>::value);
+  EXPECT_TRUE(std::is_trivial<surf::RGBA8Pixel>::value);
 }
 
 TEST(PixelTest, equality)
 {
-  EXPECT_EQ((surf::RGBPixel{1, 2, 3}), (surf::RGBPixel{1, 2, 3}));
-  EXPECT_NE((surf::RGBPixel{1, 2, 3}), (surf::RGBPixel{3, 2, 1}));
+  EXPECT_EQ((surf::RGB8Pixel{1, 2, 3}), (surf::RGB8Pixel{1, 2, 3}));
+  EXPECT_NE((surf::RGB8Pixel{1, 2, 3}), (surf::RGB8Pixel{3, 2, 1}));
 
-  EXPECT_EQ((surf::RGBAPixel{1, 2, 3, 4}), (surf::RGBAPixel{1, 2, 3, 4}));
-  EXPECT_NE((surf::RGBAPixel{1, 2, 3, 4}), (surf::RGBAPixel{4, 3, 2, 1}));
+  EXPECT_EQ((surf::RGBA8Pixel{1, 2, 3, 4}), (surf::RGBA8Pixel{1, 2, 3, 4}));
+  EXPECT_NE((surf::RGBA8Pixel{1, 2, 3, 4}), (surf::RGBA8Pixel{4, 3, 2, 1}));
 
   EXPECT_EQ((surf::GreyscalePixel{1}), (surf::GreyscalePixel{1}));
   EXPECT_NE((surf::GreyscalePixel{1}), (surf::GreyscalePixel{4}));

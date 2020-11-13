@@ -15,52 +15,52 @@ const geom::isize DSTSIZE(1024, 1024);
 
 void BM_fill(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    surf::detail::fill__slow(dst, RGBPixel{12, 34, 56});
+    surf::detail::fill__slow(dst, RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill__filln(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    detail::fill__filln(dst, RGBPixel{12, 34, 56});
+    detail::fill__filln(dst, RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill__slow(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    detail::fill__slow(dst, RGBPixel{12, 34, 56});
+    detail::fill__slow(dst, RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill__slow_rgba(::benchmark::State& state)
 {
-  PixelData<RGBAPixel> dst(DSTSIZE, RGBAPixel{255, 255, 255, 255});
+  PixelData<RGBA8Pixel> dst(DSTSIZE, RGBA8Pixel{255, 255, 255, 255});
 
   while (state.KeepRunning()) {
-    detail::fill__slow(dst, RGBAPixel{12, 34, 56, 123});
+    detail::fill__slow(dst, RGBA8Pixel{12, 34, 56, 123});
   }
 }
 
 void BM_fill__fast(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
-    detail::fill__fast(dst, RGBPixel{12, 34, 56});
+    detail::fill__fast(dst, RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill__memset(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE);
+  PixelData<RGB8Pixel> dst(DSTSIZE);
 
   while (state.KeepRunning()) {
     detail::fill__memset(dst);
@@ -69,34 +69,34 @@ void BM_fill__memset(::benchmark::State& state)
 
 void BM_fill_rect(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
     surf::fill_rect(
       dst, geom::irect(1, 1, dst.get_width() - 2, dst.get_height() - 2),
-      RGBPixel{12, 34, 56});
+      RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill_rect__slow(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
     surf::detail::fill_rect__slow(
       dst, geom::irect(1, 1, dst.get_width() - 2, dst.get_height() - 2),
-      RGBPixel{12, 34, 56});
+      RGB8Pixel{12, 34, 56});
   }
 }
 
 void BM_fill_rect__filln(::benchmark::State& state)
 {
-  PixelData<RGBPixel> dst(DSTSIZE, RGBPixel{255, 255, 255});
+  PixelData<RGB8Pixel> dst(DSTSIZE, RGB8Pixel{255, 255, 255});
 
   while (state.KeepRunning()) {
     surf::detail::fill_rect__filln(
       dst, geom::irect(1, 1, dst.get_width() - 2, dst.get_height() - 2),
-      RGBPixel{12, 34, 56});
+      RGB8Pixel{12, 34, 56});
   }
 }
 
