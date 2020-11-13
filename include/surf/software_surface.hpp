@@ -112,11 +112,11 @@ private:
 void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
 void blit(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
 
-void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect);
-void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect);
+void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect);
+void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect);
 
-void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
-void blend(SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
+void blend(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos);
+void blend(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::ipoint const& pos);
 
 void fill(SoftwareSurface& dst, Color const& color);
 void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color);

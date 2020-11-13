@@ -211,47 +211,36 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
       blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
 }
 
-void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect)
+void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect)
 {
   PIXELFORMAT2_TO_TYPE(
     src.get_format(), srctype,
     dst.get_format(), dsttype,
     log_unreachable(),
-    blit_scaled_wrap(blendfunc,
-                     src.as_pixelview<srctype>(), srcrect,
-                     dst.as_pixelview<dsttype>(), dstrect));
+    blend_scaled_wrap(blendfunc,
+                      src.as_pixelview<srctype>(), srcrect,
+                      dst.as_pixelview<dsttype>(), dstrect));
 }
 
-void blit_scaled(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect)
+void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::irect const& dstrect)
 {
-  blit_scaled(blendfunc, src, geom::irect(src.get_size()), dst, dstrect);
+  blend_scaled(blendfunc, src, geom::irect(src.get_size()), dst, dstrect);
 }
 
-void blend(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
-{
-  PIXELFORMAT_TO_TYPE(
-    src.get_format(),
-    srctype,
-    log_unreachable(),
-    PIXELFORMAT_TO_TYPE(
-      dst.get_format(),
-      dsttype,
-      log_unreachable(),
-      blend(pixel_blend<srctype, dsttype>(), src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos)));
-}
-
-void blend(SoftwareSurface const& src, geom::irect const& srcrect,
+void blend(BlendFunc blendfunc,
+           SoftwareSurface const& src, geom::irect const& srcrect,
            SoftwareSurface& dst, geom::ipoint const& pos)
 {
-  PIXELFORMAT_TO_TYPE(
-    src.get_format(),
-    srctype,
+  PIXELFORMAT2_TO_TYPE(
+    src.get_format(), srctype,
+    dst.get_format(), dsttype,
     log_unreachable(),
-    PIXELFORMAT_TO_TYPE(
-      dst.get_format(),
-      dsttype,
-      log_unreachable(),
-      blend(pixel_blend<srctype, dsttype>(), src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos)));
+    blend_wrap(blendfunc, src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos));
+}
+
+void blend(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
+{
+  blend(blendfunc, src, geom::irect(src.get_size()), dst, pos);
 }
 
 void fill(SoftwareSurface& dst, Color const& color)

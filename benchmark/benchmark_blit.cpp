@@ -36,7 +36,7 @@ void BM_blit__copy(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blit__copy(src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
+        experimental::blit__copy(src, geom::irect(src.get_size()), dst, geom::ipoint(x, y));
       }
     }
   }
@@ -92,7 +92,7 @@ void BM_blit__slow(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blit__slow(src, dst, geom::ipoint(x, y));
+        experimental::blit__slow(src, dst, geom::ipoint(x, y));
       }
     }
   }
@@ -120,7 +120,7 @@ void BM_blit__slow_convert(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blit__slow(src, dst, geom::ipoint(x, y));
+        experimental::blit__slow(src, dst, geom::ipoint(x, y));
       }
     }
   }
@@ -134,7 +134,7 @@ void BM_blit__slow_convert_self(benchmark::State& state)
   while (state.KeepRunning()) {
     for (int y = 0; y < 1024; y += 100) {
       for (int x = 0; x < 1024; x += 100) {
-        blit__slow(src, dst, geom::ipoint(x, y));
+        experimental::blit__slow(src, dst, geom::ipoint(x, y));
       }
     }
   }

@@ -142,6 +142,7 @@ void print_usage(int argc, char** argv)
     << "Image Commands:\n"
     << "  --output FILE        Output filename\n"
     //<< "  --output-dir DIR     Output directory\n"
+    << "  --fill COLOR         Fill the image with COLOR\n"
     << "  --invert             Invert the image\n"
     << "  --gamma VALUE        Apply gamma correction\n"
     << "  --brightness VALUE   Adjust brightness\n"
@@ -154,9 +155,9 @@ void print_usage(int argc, char** argv)
     << "  --hsv H:S:V          Apply hue/saturation/value\n"
     << "  --convert FORMAT     Convert internal format to FORMAT\n"
     << "  --blit POS           Blit image\n"
-    << "  --blit-scaled RECT   Blit image scaled\n"
-    << "  --blend POS          Blend image\n"
     << "  --blendfunc FUNC     Switch blendfunc to FUNC\n"
+    << "  --blend POS          Blend image\n"
+    << "  --blend-scaled RECT  Blit image scaled\n"
     << "  --multiply VALUE     Multiply the image by value\n"
     << "  --add VALUE          Add value to pixels\n"
     << "\n"
@@ -281,13 +282,13 @@ Options parse_args(int argc, char** argv)
           auto img = ctx.pop();
           blit(img, ctx.top(), pos);
         });
-      } else if (opt == "--blit-scaled") {
+      } else if (opt == "--blend-scaled") {
         std::string_view rect_str = next_arg();
         geom::irect rect = geom::irect_from_string(std::string(rect_str));
 
         opts.commands.emplace_back([rect](Context& ctx) {
           auto img = ctx.pop();
-          blit_scaled(ctx.blendfunc(), img, ctx.top(), rect);
+          blend_scaled(ctx.blendfunc(), img, ctx.top(), rect);
         });
       } else if (opt == "--blend") {
         std::string_view pos_str = next_arg();
@@ -295,7 +296,7 @@ Options parse_args(int argc, char** argv)
 
         opts.commands.emplace_back([pos](Context& ctx) {
           auto img = ctx.pop();
-          blend(img, ctx.top(), pos);
+          blend(ctx.blendfunc(), img, ctx.top(), pos);
         });
       } else if (opt == "--scale") {
         std::string_view arg = next_arg();
