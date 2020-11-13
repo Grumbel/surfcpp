@@ -57,7 +57,6 @@ SoftwareSurface::create(PixelFormat format, geom::isize const& size, Color const
   PIXELFORMAT_TO_TYPE(
     format,
     pixeltype,
-    throw std::runtime_error("unsupported PixelFormat"),
     return SoftwareSurface(PixelData<pixeltype>(size, convert<Color, pixeltype>(color))));
 }
 
@@ -67,7 +66,6 @@ SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void* 
   PIXELFORMAT_TO_TYPE(
     format,
     pixeltype,
-    log_unreachable(); return {},
     return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
                              size, static_cast<pixeltype*>(ptr), pitch / sizeof(pixeltype))));
 }
@@ -78,7 +76,6 @@ SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void c
   PIXELFORMAT_TO_TYPE(
     format,
     pixeltype,
-    log_unreachable(); return {},
     return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
                              size, static_cast<pixeltype const*>(ptr), pitch / sizeof(pixeltype))));
 }
@@ -189,7 +186,6 @@ void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& 
   PIXELFORMAT2_TO_TYPE(
     src.get_format(), srctype,
     dst.get_format(), dsttype,
-    log_unreachable(),
     blit(src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos));
 }
 
@@ -199,7 +195,6 @@ void blit(SoftwareSurface const& src, geom::irect const& srcrect,
   PIXELFORMAT2_TO_TYPE(
     src.get_format(), srctype,
     dst.get_format(), dsttype,
-    log_unreachable(),
     blit(src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos));
 }
 
@@ -208,7 +203,6 @@ void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect c
   PIXELFORMAT2_TO_TYPE(
     src.get_format(), srctype,
     dst.get_format(), dsttype,
-    log_unreachable(),
     blend_scaled_wrap(blendfunc,
                       src.as_pixelview<srctype>(), srcrect,
                       dst.as_pixelview<dsttype>(), dstrect));
@@ -226,7 +220,6 @@ void blend(BlendFunc blendfunc,
   PIXELFORMAT2_TO_TYPE(
     src.get_format(), srctype,
     dst.get_format(), dsttype,
-    log_unreachable(),
     blend_wrap(blendfunc, src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos));
 }
 
@@ -238,32 +231,23 @@ void blend(BlendFunc blendfunc, SoftwareSurface const& src, SoftwareSurface& dst
 void fill(SoftwareSurface& dst, Color const& color)
 {
   PIXELFORMAT_TO_TYPE(
-    dst.get_format(),
-    dsttype,
-    log_unreachable(),
+    dst.get_format(), dsttype,
     fill(dst.as_pixelview<dsttype>(), convert<Color, dsttype>(color)));
 }
 
 void fill_rect(SoftwareSurface& dst, geom::irect const& rect, Color const& color)
 {
   PIXELFORMAT_TO_TYPE(
-    dst.get_format(),
-    dsttype,
-    log_unreachable(),
+    dst.get_format(), dsttype,
     fill_rect(dst.as_pixelview<dsttype>(), rect, convert<Color, dsttype>(color)));
 }
 
 SoftwareSurface convert(SoftwareSurface const& src, PixelFormat format)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    src,
-    src_as_pixelview,
-    return {},
-    PIXELFORMAT_TO_TYPE(
-      format,
-      pixel_type,
-      log_unreachable(); return {},
-      return SoftwareSurface(src_as_pixelview.template convert_to<pixel_type>())));
+  PIXELFORMAT2_TO_TYPE(
+    src.get_format(), srctype,
+    format, dsttype,
+    return SoftwareSurface(src.as_pixelview<srctype>().template convert_to<dsttype>()));
 }
 
 } // namespace surf

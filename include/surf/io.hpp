@@ -233,12 +233,9 @@ std::ostream& operator<<(std::ostream& os, PixelView<Pixel> const& pixeldata)
 inline
 std::ostream& operator<<(std::ostream& os, SoftwareSurface const& surface)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    surface,
-    src_as_pixeldata,
-    /* nothing */,
-    os << src_as_pixeldata);
-
+  PIXELFORMAT_TO_TYPE(
+    surface.get_format(), srctype,
+    os << surface.as_pixelview<srctype>());
   return os;
 }
 
