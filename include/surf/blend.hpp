@@ -48,22 +48,22 @@ struct pixel_blend
       log_not_implemented();
       return convert<SrcPixel, DstPixel>(src);
     } else if constexpr (SrcPixel::has_alpha() && !DstPixel::has_alpha()) {
-      return DstPixel{
+      return make_pixel<DstPixel>(
         static_cast<dsttype>((red(src) * alpha(src) + red(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
         static_cast<dsttype>((green(src) * alpha(src) + green(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max()),
         static_cast<dsttype>((blue(src) * alpha(src) + blue(dst) * (SrcPixel::max() - alpha(src))) / SrcPixel::max())
-      };
+        );
     } else if constexpr (SrcPixel::has_alpha() && DstPixel::has_alpha()) {
       dsttype const out_a = static_cast<dsttype>(alpha(src) + alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max());
       if (out_a == 0) {
-        return DstPixel{0, 0, 0, 0};
+        return make_pixel<DstPixel>(0, 0, 0, 0);
       } else {
-        return DstPixel{
+        return make_pixel<DstPixel>(
           static_cast<dsttype>((red(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + red(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
           static_cast<dsttype>((green(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + green(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
           static_cast<dsttype>((blue(src) * alpha(src) * DstPixel::max() / SrcPixel::max() + blue(dst) * alpha(dst) * (SrcPixel::max() - alpha(src)) / SrcPixel::max()) / out_a),
           out_a
-        };
+          );
       }
     } else {
       static_assert(!std::is_same<SrcPixel, SrcPixel>::value,

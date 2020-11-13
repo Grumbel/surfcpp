@@ -37,6 +37,17 @@ enum class PixelFormat
   RGB64f,
   RGBA64f,
 
+  L8,
+  LA8,
+  L16,
+  LA16,
+  L32,
+  LA32,
+
+  L32f,
+  LA32f,
+  L64f,
+  LA64f,
 };
 
 std::string to_string(PixelFormat format);

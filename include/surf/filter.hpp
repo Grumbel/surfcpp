@@ -167,9 +167,9 @@ void apply_threshold(PixelView<Pixel>& src, Color threshold)
   for(int y = 0; y < src.get_height(); ++y) {
     Pixel* row = src.get_row(y);
     for(int x = 0; x < src.get_width(); ++x) {
-      row[x].r = row[x].r > irthreshold ? max_val : min_val;
-      row[x].g = row[x].g > igthreshold ? max_val : min_val;
-      row[x].b = row[x].b > ibthreshold ? max_val : min_val;
+      row[x] = make_pixel<Pixel>(red(row[x]) > irthreshold ? max_val : min_val,
+                                 green(row[x]) > igthreshold ? max_val : min_val,
+                                 blue(row[x]) > ibthreshold ? max_val : min_val);
     }
   }
 }
@@ -180,10 +180,8 @@ void apply_grayscale(PixelView<Pixel>& src)
   for(int y = 0; y < src.get_height(); ++y) {
     Pixel* row = src.get_row(y);
     for(int x = 0; x < src.get_width(); ++x) {
-      typename Pixel::value_type v = static_cast<typename Pixel::value_type>((row[x].r + row[x].g + row[x].b) / 3);
-      row[x].r = v;
-      row[x].g = v;
-      row[x].b = v;
+      typename Pixel::value_type v = static_cast<typename Pixel::value_type>((red(row[x]) + green(row[x]) + blue(row[x])) / 3);
+      row[x] = make_pixel<Pixel>(v, v, v);
     }
   }
 }

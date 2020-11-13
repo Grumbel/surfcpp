@@ -26,22 +26,169 @@
 
 namespace surf {
 
+template<typename T>
+struct tRGBPixel
+{
+  using value_type = T;
+  static constexpr bool has_alpha() { return false; }
+  static constexpr bool has_rgb() { return true; }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
+
+  T r;
+  T g;
+  T b;
+
+  inline bool operator==(tRGBPixel<T> const& rhs) const = default;
+};
+
+template<typename T>
+struct tRGBAPixel
+{
+  using value_type = T;
+  static constexpr bool has_alpha() { return true; }
+  static constexpr bool has_rgb() { return true; }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
+
+  T r;
+  T g;
+  T b;
+  T a;
+
+  inline bool operator==(tRGBAPixel<T> const& rhs) const = default;
+};
+
+template<typename T>
+struct tLPixel
+{
+  using value_type = T;
+  static constexpr bool has_alpha() { return false; }
+  static constexpr bool has_rgb() { return false; }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
+
+  T l;
+
+  inline bool operator==(tLPixel<T> const& rhs) const = default;
+};
+
+template<typename T>
+struct tLAPixel
+{
+  using value_type = T;
+  static constexpr bool has_alpha() { return true; }
+  static constexpr bool has_rgb() { return false; }
+  static constexpr T max() {
+    if constexpr (std::is_floating_point<T>::value) {
+      return 1.0;
+    } else {
+      return std::numeric_limits<T>::max();
+    }
+  }
+  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
+
+  T l;
+  T a;
+
+  inline bool operator==(tLAPixel<T> const& rhs) const = default;
+};
+
+using RGB8Pixel = tRGBPixel<uint8_t>;
+using RGBA8Pixel = tRGBAPixel<uint8_t>;
+
+using RGB16Pixel = tRGBPixel<uint16_t>;
+using RGBA16Pixel = tRGBAPixel<uint16_t>;
+
+using RGB32Pixel = tRGBPixel<uint32_t>;
+using RGBA32Pixel = tRGBAPixel<uint32_t>;
+
+using RGB32fPixel = tRGBPixel<float>;
+using RGBA32fPixel = tRGBAPixel<float>;
+
+using RGB64fPixel = tRGBPixel<double>;
+using RGBA64fPixel = tRGBAPixel<double>;
+
+using L8Pixel = tLPixel<uint8_t>;
+using LA8Pixel = tLAPixel<uint8_t>;
+
+using L16Pixel = tLPixel<uint16_t>;
+using LA16Pixel = tLAPixel<uint16_t>;
+
+using L32Pixel = tLPixel<uint32_t>;
+using LA32Pixel = tLAPixel<uint32_t>;
+
+using L32fPixel = tLPixel<float>;
+using LA32fPixel = tLAPixel<float>;
+
+using L64fPixel = tLPixel<double>;
+using LA64fPixel = tLAPixel<double>;
+
 template<typename Pixel> inline
 constexpr Pixel make_pixel(typename Pixel::value_type r,
                            typename Pixel::value_type g,
                            typename Pixel::value_type b,
                            typename Pixel::value_type a = Pixel::max())
 {
-  if constexpr (Pixel::has_alpha()) {
-    return Pixel{r, g, b, a};
+  if constexpr (Pixel::has_rgb()) {
+    if constexpr (Pixel::has_alpha()) {
+      return Pixel{r, g, b, a};
+    } else {
+      return Pixel{r, g, b};
+    }
   } else {
-    return Pixel{r, g, b};
+    if constexpr (Pixel::has_alpha()) {
+      return Pixel{static_cast<typename Pixel::value_type>((r + g + b) / 3), a};
+    } else {
+      return Pixel{static_cast<typename Pixel::value_type>((r + g + b) / 3)};
+    }
   }
 }
 
-template<typename Pixel> constexpr inline typename Pixel::value_type red(Pixel pixel) { return pixel.r; }
-template<typename Pixel> constexpr inline typename Pixel::value_type green(Pixel pixel) { return pixel.g; }
-template<typename Pixel> constexpr inline typename Pixel::value_type blue(Pixel pixel) { return pixel.b; }
+template<typename Pixel> constexpr inline typename Pixel::value_type red(Pixel pixel)
+{
+  if constexpr (Pixel::has_rgb()) {
+    return pixel.r;
+  } else {
+    return pixel.l;
+  }
+}
+
+template<typename Pixel> constexpr inline typename Pixel::value_type green(Pixel pixel)
+{
+  if constexpr (Pixel::has_rgb()) {
+    return pixel.g;
+  } else {
+    return pixel.l;
+  }
+}
+
+template<typename Pixel> constexpr inline typename Pixel::value_type blue(Pixel pixel)
+{
+  if constexpr (Pixel::has_rgb()) {
+    return pixel.b;
+  } else {
+    return pixel.l;
+  }
+}
 
 template<typename Pixel> constexpr inline typename Pixel::value_type alpha(Pixel pixel) {
   if constexpr (Pixel::has_alpha()) {
@@ -51,9 +198,9 @@ template<typename Pixel> constexpr inline typename Pixel::value_type alpha(Pixel
   }
 }
 
-template<typename Pixel> constexpr inline float red_f(Pixel pixel) { return static_cast<float>(pixel.r) / static_cast<float>(Pixel::max()); }
-template<typename Pixel> constexpr inline float green_f(Pixel pixel) { return static_cast<float>(pixel.g) / static_cast<float>(Pixel::max()); }
-template<typename Pixel> constexpr inline float blue_f(Pixel pixel) { return static_cast<float>(pixel.b) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float red_f(Pixel pixel) { return static_cast<float>(red(pixel)) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float green_f(Pixel pixel) { return static_cast<float>(green(pixel)) / static_cast<float>(Pixel::max()); }
+template<typename Pixel> constexpr inline float blue_f(Pixel pixel) { return static_cast<float>(blue(pixel)) / static_cast<float>(Pixel::max()); }
 
 template<typename Pixel> constexpr inline float alpha_f(Pixel pixel) {
   if constexpr (Pixel::has_alpha()) {
@@ -95,89 +242,6 @@ constexpr typename Pixel::value_type clamp_pixel_max(T v)
 {
   return static_cast<typename Pixel::value_type>(std::min<T>(v, static_cast<T>(Pixel::max())));
 }
-
-template<typename T>
-struct tRGBPixel
-{
-  using value_type = T;
-  static constexpr bool has_alpha() { return false; }
-  static constexpr T max() {
-    if constexpr (std::is_floating_point<T>::value) {
-      return 1.0;
-    } else {
-      return std::numeric_limits<T>::max();
-    }
-  }
-  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
-
-  T r;
-  T g;
-  T b;
-
-  inline bool operator==(tRGBPixel<T> const& rhs) const = default;
-};
-
-template<typename T>
-struct tRGBAPixel
-{
-  using value_type = T;
-  static constexpr bool has_alpha() { return true; }
-  static constexpr T max() {
-    if constexpr (std::is_floating_point<T>::value) {
-      return 1.0;
-    } else {
-      return std::numeric_limits<T>::max();
-    }
-  }
-  static constexpr bool is_floating_point() { return std::is_floating_point<T>::value; }
-
-  T r;
-  T g;
-  T b;
-  T a;
-
-  inline bool operator==(tRGBAPixel<T> const& rhs) const = default;
-};
-
-using RGB8Pixel = tRGBPixel<uint8_t>;
-using RGBA8Pixel = tRGBAPixel<uint8_t>;
-
-using RGB16Pixel = tRGBPixel<uint16_t>;
-using RGBA16Pixel = tRGBAPixel<uint16_t>;
-
-using RGB32Pixel = tRGBPixel<uint32_t>;
-using RGBA32Pixel = tRGBAPixel<uint32_t>;
-
-using RGB32fPixel = tRGBPixel<float>;
-using RGBA32fPixel = tRGBAPixel<float>;
-
-using RGB64fPixel = tRGBPixel<double>;
-using RGBA64fPixel = tRGBAPixel<double>;
-
-using RGBPixel = RGB8Pixel;
-using RGBAPixel = RGBA8Pixel;
-
-static_assert(sizeof(RGBAPixel) == 4);
-static_assert(std::is_trivial<RGBAPixel>::value);
-
-static_assert(sizeof(RGBPixel) == 3);
-static_assert(std::is_trivial<RGBPixel>::value);
-
-template<typename T>
-struct tGreyscalePixel
-{
-  using value_type = T;
-  static constexpr T max() { return std::numeric_limits<T>::max(); }
-
-  T value;
-
-  inline bool operator==(tGreyscalePixel<T> const& rhs) const = default;
-};
-
-using GreyscalePixel = tGreyscalePixel<uint8_t>;
-
-static_assert(sizeof(GreyscalePixel) == 1);
-static_assert(std::is_trivial<GreyscalePixel>::value);
 
 template<typename Pixel>
 struct PPixelFormat
@@ -273,14 +337,76 @@ struct PPixelFormat<RGBA64fPixel>
 };
 
 template<>
-struct PPixelFormat<GreyscalePixel>
+struct PPixelFormat<L8Pixel>
 {
+  static constexpr PixelFormat format = PixelFormat::L8;
   static constexpr int bits_per_pixel = 8;
   static constexpr int bytes_per_pixel = 1;
   static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
   static constexpr uint32_t gmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
   static constexpr uint32_t bmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
   static constexpr uint32_t amask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
+};
+
+
+template<>
+struct PPixelFormat<LA8Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::LA8;
+  static constexpr int bits_per_pixel = 16;
+  static constexpr int bytes_per_pixel = 2;
+  static constexpr uint32_t rmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
+  static constexpr uint32_t gmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
+  static constexpr uint32_t bmask = std::endian::native == std::endian::big ? 0xff000000 : 0x000000ff;
+  static constexpr uint32_t amask = std::endian::native == std::endian::big ? 0x00ff0000 : 0x0000ff00;
+};
+
+template<>
+struct PPixelFormat<L16Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::L16;
+};
+
+template<>
+struct PPixelFormat<LA16Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::LA16;
+};
+
+template<>
+struct PPixelFormat<L32Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::L32;
+};
+
+template<>
+struct PPixelFormat<LA32Pixel>
+{
+  static constexpr PixelFormat format = PixelFormat::LA32;
+};
+
+template<>
+struct PPixelFormat<L32fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::L32f;
+};
+
+template<>
+struct PPixelFormat<LA32fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::LA32f;
+};
+
+template<>
+struct PPixelFormat<L64fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::L64f;
+};
+
+template<>
+struct PPixelFormat<LA64fPixel>
+{
+  static constexpr PixelFormat format = PixelFormat::LA64f;
 };
 
 } // namespace surf

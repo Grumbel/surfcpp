@@ -81,21 +81,21 @@ DstPixel convert(SrcPixel src)
 }
 
 template<> inline
-GreyscalePixel convert<RGBPixel, GreyscalePixel>(RGBPixel src) {
+L8Pixel convert<RGB8Pixel, L8Pixel>(RGB8Pixel src) {
   // FIXME: add proper weighting of colors here
   return {static_cast<uint8_t>((red(src) + green(src) + blue(src)) / 3)};
 }
 
 template<> inline
-RGBPixel convert<GreyscalePixel, RGBPixel>(GreyscalePixel src) {
+RGB8Pixel convert<L8Pixel, RGB8Pixel>(L8Pixel src) {
   // FIXME: add proper weighting of colors here
-  return {src.value, src.value, src.value};
+  return {src.l, src.l, src.l};
 }
 
 template<> inline
-RGBAPixel convert<GreyscalePixel, RGBAPixel>(GreyscalePixel src) {
+RGBA8Pixel convert<L8Pixel, RGBA8Pixel>(L8Pixel src) {
   // FIXME: add proper weighting of colors here
-  return {src.value, src.value, src.value, 255};
+  return {src.l, src.l, src.l, RGBA8Pixel::max()};
 }
 
 } // namespace surf

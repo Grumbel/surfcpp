@@ -59,6 +59,36 @@ std::string to_string(PixelFormat format)
     case PixelFormat::RGBA64f:
       return "RGBA64f";
 
+    case PixelFormat::L8:
+      return "L8";
+
+    case PixelFormat::LA8:
+      return "LA8";
+
+    case PixelFormat::L16:
+      return "L16";
+
+    case PixelFormat::LA16:
+      return "LA16";
+
+    case PixelFormat::L32:
+      return "L32";
+
+    case PixelFormat::LA32:
+      return "LA32";
+
+    case PixelFormat::L32f:
+      return "L32f";
+
+    case PixelFormat::LA32f:
+      return "LA32f";
+
+    case PixelFormat::L64f:
+      return "L64f";
+
+    case PixelFormat::LA64f:
+      return "LA64f";
+
     default:
       throw std::invalid_argument("unknown PixelFormat");
   }
@@ -86,6 +116,26 @@ PixelFormat pixelformat_from_string(std::string_view text)
     return PixelFormat::RGB64f;
   } else if (text == "rgba64f") {
     return PixelFormat::RGBA64f;
+  } else if (text == "l8") {
+    return PixelFormat::L8;
+  } else if (text == "la8") {
+    return PixelFormat::LA8;
+  } else if (text == "l16") {
+    return PixelFormat::L16;
+  } else if (text == "la16") {
+    return PixelFormat::LA16;
+  } else if (text == "l32") {
+    return PixelFormat::L32;
+  } else if (text == "la32") {
+    return PixelFormat::LA32;
+  } else if (text == "l32f") {
+    return PixelFormat::L32f;
+  } else if (text == "la32f") {
+    return PixelFormat::LA32f;
+  } else if (text == "l64f") {
+    return PixelFormat::L64f;
+  } else if (text == "la64f") {
+    return PixelFormat::LA64f;
   } else {
     throw std::invalid_argument(fmt::format("unknown PixelFormat: '{}'", text));
   }

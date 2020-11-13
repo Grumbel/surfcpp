@@ -186,29 +186,21 @@ SoftwareSurface::get_view(geom::irect const& rect) const
 
 void blit(SoftwareSurface const& src, SoftwareSurface& dst, geom::ipoint const& pos)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    src,
-    src_as_pixeldata,
+  PIXELFORMAT2_TO_TYPE(
+    src.get_format(), srctype,
+    dst.get_format(), dsttype,
     log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
-      log_unreachable(),
-      blit(src_as_pixeldata, dst_as_pixeldata, pos)));
+    blit(src.as_pixelview<srctype>(), dst.as_pixelview<dsttype>(), pos));
 }
 
 void blit(SoftwareSurface const& src, geom::irect const& srcrect,
           SoftwareSurface& dst, geom::ipoint const& pos)
 {
-  SOFTWARE_SURFACE_UNWRAP(
-    src,
-    src_as_pixeldata,
+  PIXELFORMAT2_TO_TYPE(
+    src.get_format(), srctype,
+    dst.get_format(), dsttype,
     log_unreachable(),
-    SOFTWARE_SURFACE_UNWRAP(
-      dst,
-      dst_as_pixeldata,
-      log_unreachable(),
-      blit(src_as_pixeldata, srcrect, dst_as_pixeldata, pos)));
+    blit(src.as_pixelview<srctype>(), srcrect, dst.as_pixelview<dsttype>(), pos));
 }
 
 void blend_scaled(BlendFunc blendfunc, SoftwareSurface const& src, geom::irect const& srcrect, SoftwareSurface& dst, geom::irect const& dstrect)

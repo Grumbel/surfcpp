@@ -26,6 +26,7 @@ class Color
 public:
   using value_type = float;
   static constexpr bool has_alpha() { return true; }
+  static constexpr bool has_rgb() { return true; }
   static constexpr float max() { return 1.0f; }
 
   static constexpr Color from_rgba8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

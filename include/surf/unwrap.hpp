@@ -90,7 +90,67 @@
         expr;                                                   \
         break;                                                  \
       }                                                         \
-    }                                           \
+                                                                \
+      case PixelFormat::L8: {                                   \
+        using type = L8Pixel; /* NOLINT */                      \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::LA8: {                                  \
+        using type = LA8Pixel; /* NOLINT */                     \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::L16: {                                  \
+        using type = L16Pixel; /* NOLINT */                     \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::LA16: {                                 \
+        using type = LA16Pixel; /* NOLINT */                    \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::L32: {                                  \
+        using type = L32Pixel; /* NOLINT */                     \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::LA32: {                                 \
+        using type = LA32Pixel; /* NOLINT */                    \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::L32f: {                                 \
+        using type = L32fPixel; /* NOLINT */                    \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::LA32f: {                                \
+        using type = LA32fPixel; /* NOLINT */                   \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::L64f: {                                 \
+        using type = L64fPixel; /* NOLINT */                    \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+                                                                \
+      case PixelFormat::LA64f: {                                \
+        using type = LA64fPixel; /* NOLINT */                   \
+        expr;                                                   \
+        break;                                                  \
+      }                                                         \
+    }                                                           \
   } while (false)
 
 #define PIXELFORMAT2_TO_TYPE(srcformat, srctype, dstformat, dsttype, fail_expr, expr) \
