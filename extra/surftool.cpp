@@ -66,6 +66,7 @@ class Context
 {
 public:
   Context() :
+    m_verbose(false),
     m_blendfunc(surf::BlendFunc::COPY),
     m_stack()
   {}
@@ -82,6 +83,10 @@ public:
   }
 
   SoftwareSurface pop() {
+    if (m_verbose) {
+      std::cout << "pop surface\n";
+    }
+
     if (m_stack.empty()) {
       throw std::runtime_error("can't pop(), stack empty");
     }
@@ -92,10 +97,17 @@ public:
   }
 
   void push(SoftwareSurface&& img) {
+    if (m_verbose) {
+      std::cout << "push surface\n";
+    }
     m_stack.push(img);
   }
 
   void set_blendfunc(surf::BlendFunc func) {
+    if (m_verbose) {
+      std::cout << "set_blendfunc: " << int(func) << "\n";
+    }
+
     m_blendfunc = func;
   }
 
@@ -103,13 +115,18 @@ public:
     return m_blendfunc;
   }
 
+  void set_verbose(bool v) { m_verbose = v; }
+  //bool verbose() const { return m_verbose; }
+
 private:
+  bool m_verbose;
   surf::BlendFunc m_blendfunc;
   std::stack<SoftwareSurface> m_stack;
 };
 
 struct Options
 {
+  bool verbose = false;
   std::vector<ContextCommand> commands = {};
 };
 
@@ -119,9 +136,10 @@ void print_usage(int argc, char** argv)
     << argv[0] << " ( [IMGFILE] [OPTION] )...\n"
     << "\n"
     << "General Options:\n"
-    << " -h, --help   Display this text\n"
+    << " -h, --help      Display this text\n"
+    << " -v, --verbose   Be verbose\n"
     << "\n"
-    << "Commands:\n"
+    << "Image Commands:\n"
     << "  --output FILE        Output filename\n"
     //<< "  --output-dir DIR     Output directory\n"
     << "  --invert             Invert the image\n"
@@ -141,7 +159,12 @@ void print_usage(int argc, char** argv)
     << "  --blend-add POS      Add image\n"
     << "  --blendfunc FUNC     Switch blendfunc to FUNC\n"
     << "  --multiply VALUE     Multiply the image by value\n"
-    << "  --add VALUE          Add value to pixels\n";
+    << "  --add VALUE          Add value to pixels\n"
+    << "\n"
+    << "Stack Commands:\n"
+    << "  --dup                Duplicate the top image\n"
+    << "  --drop               Remove the top image\n"
+    << "\n";
 }
 
 Options parse_args(int argc, char** argv)
@@ -168,6 +191,17 @@ Options parse_args(int argc, char** argv)
       if (opt == "--help" || opt == "-h") {
         print_usage(argc, argv);
         exit(EXIT_SUCCESS);
+      } else if (opt == "-v" || opt == "--verbose") {
+        opts.verbose = true;
+      } else if (opt == "--dup") {
+        opts.commands.emplace_back([](Context& ctx) {
+          SoftwareSurface img(ctx.top());
+          ctx.push(std::move(img));
+        });
+      } else if (opt == "--drop") {
+        opts.commands.emplace_back([](Context& ctx) {
+          ctx.pop();
+        });
       } else if (opt == "--invert") {
         opts.commands.emplace_back([](Context& ctx) {
           surf::apply_invert(ctx.top());
@@ -337,6 +371,7 @@ void run(int argc, char** argv)
   Options opts = parse_args(argc, argv);
 
   Context ctx;
+  ctx.set_verbose(opts.verbose);
   for (auto&& cmd : opts.commands) {
     ctx.eval(cmd);
   }
