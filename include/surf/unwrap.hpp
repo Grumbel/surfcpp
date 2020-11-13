@@ -21,7 +21,7 @@
 
 #include "software_surface.hpp"
 
-#define PIXELFORMAT_TO_TYPE(format, type, expr)      \
+#define PIXELFORMAT_TO_TYPE(format, type, expr)                 \
   do {                                                          \
     switch (format)                                             \
     {                                                           \
@@ -162,60 +162,42 @@
       dsttype,                                                          \
       expr))
 
-#define SOFTWARE_SURFACE_UNWRAP(surface, pixelview, fail_expr, expr)    \
-  PIXELFORMAT_TO_TYPE(                                                  \
-    (surface).get_format(),                                             \
-    pixelview##pixeltype,                                               \
-    auto&& pixelview = (surface).as_pixelview<pixelview##pixeltype>(); /* NOLINT */ \
-    expr                                                                \
-    )
-
-#define SOFTWARE_SURFACE_LIFT_VOID(function)    \
-  template<typename ...Args>                    \
-  void function(SoftwareSurface& surface,       \
-                Args&&... args)                 \
-  {                                             \
-    SOFTWARE_SURFACE_UNWRAP(                    \
-      surface,                                  \
-      pixelview,                                \
-      log_unreachable(),                        \
-      function(pixelview,                       \
-               std::forward<Args>(args)...));   \
+#define SOFTWARE_SURFACE_LIFT_VOID(function)                        \
+  template<typename ...Args>                                        \
+  void function(SoftwareSurface& src,                               \
+                Args&&... args)                                     \
+  {                                                                 \
+    PIXELFORMAT_TO_TYPE(                                            \
+      src.get_format(), srctype,                                    \
+      function(src.as_pixelview<srctype>(),                         \
+               std::forward<Args>(args)...));                       \
   }
 
-#define SOFTWARE_SURFACE_LIFT_N(name, function)         \
-  template<typename ...Args>                            \
-  SoftwareSurface name(SoftwareSurface const& surface,  \
-                       Args&&... args)                  \
-  {                                                     \
-    SOFTWARE_SURFACE_UNWRAP(                            \
-      surface,                                          \
-      pixelview,                                        \
-      return {},                                        \
-      return SoftwareSurface(                           \
-        function(pixelview,                             \
-                 std::forward<Args>(args)...)));        \
+#define SOFTWARE_SURFACE_LIFT(function)                        \
+  template<typename ...Args>                                   \
+  SoftwareSurface function(SoftwareSurface const& src,         \
+                           Args&&... args)                     \
+  {                                                            \
+    PIXELFORMAT_TO_TYPE(                                       \
+      src.get_format(), srctype,                               \
+      return SoftwareSurface(                                  \
+        function(src.as_pixelview<srctype>(),                  \
+                 std::forward<Args>(args)...)));               \
   }
 
-#define SOFTWARE_SURFACE_LIFT(function)         \
-  SOFTWARE_SURFACE_LIFT_N(function, function)
-
-#define SOFTWARE_SURFACE_LIFT2(function)                        \
-  template<typename ...Args>                                    \
-  SoftwareSurface function(SoftwareSurface const& lhs,          \
-                           SoftwareSurface const& rhs,          \
-                           Args&&... args)                      \
-  {                                                             \
-    SOFTWARE_SURFACE_UNWRAP(                                    \
-      lhs,                                                      \
-      lhs_pixelview,                                            \
-      return {},                                                \
-      SOFTWARE_SURFACE_UNWRAP(                                  \
-        rhs,                                                    \
-        rhs_pixelbuffer,                                        \
-        log_unreachable(),                                      \
-        function(lhs, rhs, std::forward<Args>(args)...))        \
-      );                                                        \
+#define SOFTWARE_SURFACE_LIFT2(function)                                \
+  template<typename ...Args>                                            \
+  SoftwareSurface function(SoftwareSurface const& src,                  \
+                           SoftwareSurface const& dst,                  \
+                           Args&&... args)                              \
+  {                                                                     \
+    PIXELFORMAT2_TO_TYPE(                                               \
+      src.get_format(), srctype,                                        \
+      dst.get_format(), dsttype,                                        \
+      function(src.as_pixelview<srctype>(),                             \
+               dst.as_pixelview<dsttype>(),                             \
+               std::forward<Args>(args)...))                            \
+      );                                                                \
   }
 
 #endif
