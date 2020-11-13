@@ -142,6 +142,7 @@ void print_usage(int argc, char** argv)
     << "Image Commands:\n"
     << "  --output FILE        Output filename\n"
     //<< "  --output-dir DIR     Output directory\n"
+    << "  --create WxH COLOR   Create a new empty image\n"
     << "  --fill COLOR         Fill the image with COLOR\n"
     << "  --invert             Invert the image\n"
     << "  --gamma VALUE        Apply gamma correction\n"
@@ -201,6 +202,13 @@ Options parse_args(int argc, char** argv)
       } else if (opt == "--drop") {
         opts.commands.emplace_back([](Context& ctx) {
           ctx.pop();
+        });
+      } else if (opt == "--create") {
+        surf::PixelFormat format = surf::pixelformat_from_string(next_arg());
+        geom::isize const size = geom::isize_from_string(std::string(next_arg()));
+        surf::Color const color = surf::Color::from_string(next_arg());
+        opts.commands.emplace_back([format, size, color](Context& ctx) {
+          ctx.push(SoftwareSurface::create(format, size, color));
         });
       } else if (opt == "--invert") {
         opts.commands.emplace_back([](Context& ctx) {
