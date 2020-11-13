@@ -135,6 +135,8 @@ if(BUILD_EXTRA)
       CXX_EXTENSIONS OFF)
     target_compile_options(${SRC_BASENAME} PRIVATE ${WARNINGS_CXX_FLAGS})
     target_link_libraries(${SRC_BASENAME} surf)
+    install(TARGETS ${SRC_BASENAME}
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
   endforeach(SRC)
 endif()
 
