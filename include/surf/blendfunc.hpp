@@ -27,7 +27,8 @@ enum class BlendFunc
 {
   COPY,
   BLEND,
-  ADD
+  ADD,
+  MULTIPLY,
 };
 
 BlendFunc BlendFunc_from_string(std::string_view blendfunc_str);
@@ -47,6 +48,11 @@ BlendFunc BlendFunc_from_string(std::string_view blendfunc_str);
       }                                                                 \
       case BlendFunc::BLEND: {                                          \
         using blendfunc_t = pixel_blend<srctype, dsttype>; /* NOLINT */ \
+        expr;                                                           \
+        break;                                                          \
+      }                                                                 \
+      case BlendFunc::MULTIPLY: {                                       \
+        using blendfunc_t = pixel_multiply<srctype, dsttype>; /* NOLINT */ \
         expr;                                                           \
         break;                                                          \
       }                                                                 \

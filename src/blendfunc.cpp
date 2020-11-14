@@ -26,6 +26,8 @@ BlendFunc BlendFunc_from_string(std::string_view blendfunc_str)
     return BlendFunc::BLEND;
   } else if (blendfunc_str == "ADD") {
     return BlendFunc::ADD;
+  } else if (blendfunc_str == "MULTIPLY") {
+    return BlendFunc::MULTIPLY;
   } else {
     throw std::invalid_argument("invalid BlendFunc");
   }
