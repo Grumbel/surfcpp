@@ -65,6 +65,11 @@ public:
     m_pixel_data(std::make_unique<PixelData<Pixel>>(std::move(data)))
   {}
 
+  template<typename Pixel>
+  explicit SoftwareSurface(PixelView<Pixel> const& data) :
+    m_pixel_data(std::make_unique<PixelData<Pixel>>(data))
+  {}
+
   SoftwareSurface& operator=(SoftwareSurface const& other);
   SoftwareSurface& operator=(SoftwareSurface&& other) = default;
 
