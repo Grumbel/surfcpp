@@ -17,6 +17,8 @@
 #ifndef HEADER_SURF_FILL_HPP
 #define HEADER_SURF_FILL_HPP
 
+#include <cstring>
+
 #include "pixel.hpp"
 #include "pixel_data.hpp"
 
