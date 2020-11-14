@@ -22,8 +22,9 @@
 
 #include <geom/io.hpp>
 #include <surf/blendfunc.hpp>
-#include <surf/surf.hpp>
+#include <surf/channel.hpp>
 #include <surf/io.hpp>
+#include <surf/surf.hpp>
 
 using surf::SoftwareSurface;
 
@@ -161,6 +162,7 @@ void print_usage(int argc, char** argv)
     << "  --blend-scaled RECT  Blit image scaled\n"
     << "  --multiply VALUE     Multiply the image by value\n"
     << "  --add VALUE          Add value to pixels\n"
+    << "  --split              Split image into channels\n"
     << "\n"
     << "Stack Commands:\n"
     << "  --dup                Duplicate the top image\n"
@@ -345,6 +347,13 @@ Options parse_args(int argc, char** argv)
         surf::Color const color = surf::Color::from_string(arg);
         opts.commands.emplace_back([color](Context& ctx) {
           surf::fill(ctx.top(), color);
+        });
+      } else if (opt == "--split") {
+        opts.commands.emplace_back([](Context& ctx) {
+          auto res = surf::split_channel(ctx.pop());
+          for (auto&& item : res) {
+            ctx.push(std::move(item));
+          }
         });
       } else if (opt == "--output" || opt == "-o") {
         std::filesystem::path output_filename = next_arg();
