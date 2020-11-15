@@ -68,9 +68,15 @@ class Context
 public:
   Context() :
     m_verbose(false),
+    m_file_index(0),
     m_blendfunc(surf::BlendFunc::COPY),
     m_stack()
   {}
+
+  void clear() {
+    m_blendfunc = surf::BlendFunc::COPY;
+    m_stack.clear();
+  }
 
   void eval(ContextCommand const& cmd) {
     cmd(*this);
@@ -80,7 +86,7 @@ public:
     if (m_stack.empty()) {
       throw std::runtime_error("can't top(), stack empty");
     }
-    return m_stack.top();
+    return m_stack.back();
   }
 
   SoftwareSurface pop() {
@@ -92,8 +98,8 @@ public:
       throw std::runtime_error("can't pop(), stack empty");
     }
 
-    SoftwareSurface surface = std::move(m_stack.top());
-    m_stack.pop();
+    SoftwareSurface surface = std::move(m_stack.back());
+    m_stack.pop_back();
     return surface;
   }
 
@@ -101,7 +107,7 @@ public:
     if (m_verbose) {
       std::cout << "push surface\n";
     }
-    m_stack.push(img);
+    m_stack.emplace_back(img);
   }
 
   void set_blendfunc(surf::BlendFunc func) {
@@ -116,18 +122,34 @@ public:
     return m_blendfunc;
   }
 
+  int file_index() const {
+    return m_file_index;
+  }
+
+  void set_file_index(int v) {
+    m_file_index = v;
+  }
+
+  void message(std::string const& msg) { // NOLINT
+    if (m_verbose) {
+      std::cout << msg << std::endl;
+    }
+  }
+
   void set_verbose(bool v) { m_verbose = v; }
   //bool verbose() const { return m_verbose; }
 
 private:
   bool m_verbose;
+  int m_file_index = 0;
   surf::BlendFunc m_blendfunc;
-  std::stack<SoftwareSurface> m_stack;
+  std::vector<SoftwareSurface> m_stack;
 };
 
 struct Options
 {
   bool verbose = false;
+  std::vector<ContextCommand> foreach_commands = {};
   std::vector<ContextCommand> commands = {};
 };
 
@@ -140,9 +162,13 @@ void print_usage(int argc, char** argv)
     << " -h, --help      Display this text\n"
     << " -v, --verbose   Be verbose\n"
     << "\n"
-    << "Image Commands:\n"
-    << "  --output FILE        Output filename\n"
+    << "File Commands:\n"
+    << "  --foreach                 Process each image individually\n"
+    << "  -o, --output FILE         Output filename\n"
+    << "  -O, --output-pattern PAT  Output filename with pattern\n"
     //<< "  --output-dir DIR     Output directory\n"
+    << "\n"
+    << "Image Commands:\n"
     << "  --create WxH COLOR   Create a new empty image\n"
     << "  --fill COLOR         Fill the image with COLOR\n"
     << "  --invert             Invert the image\n"
@@ -372,9 +398,20 @@ Options parse_args(int argc, char** argv)
 
           ctx.push(surf::join_channel({red, green, blue}));
         });
-      } else if (opt == "--output" || opt == "-o") {
+      } else if (opt == "--foreach") {
+        opts.foreach_commands = std::move(opts.commands);
+        opts.commands.clear();
+      } else if (opt == "-o" || opt == "--output") {
         std::filesystem::path output_filename = next_arg();
         opts.commands.emplace_back([output_filename](Context& ctx) {
+          surf::save(ctx.top(), output_filename);
+        });
+      } else if (opt == "-O" || opt == "--output-pattern") {
+        std::filesystem::path output_pattern = next_arg();
+        opts.commands.emplace_back([output_pattern](Context& ctx) {
+          std::string output_filename = fmt::format(std::string(output_pattern),
+                                                    fmt::arg("index", ctx.file_index()));
+          ctx.message(fmt::format("saving {}", output_filename));
           surf::save(ctx.top(), output_filename);
         });
       } else {
@@ -398,8 +435,21 @@ void run(int argc, char** argv)
 
   Context ctx;
   ctx.set_verbose(opts.verbose);
-  for (auto&& cmd : opts.commands) {
-    ctx.eval(cmd);
+  if (opts.foreach_commands.empty()) {
+    for (auto&& cmd : opts.commands) {
+      ctx.eval(cmd);
+    }
+  } else {
+    int index = 0;
+    for (auto&& foreachcmd : opts.foreach_commands) {
+      ctx.clear();
+      ctx.set_file_index(index);
+      ctx.eval(foreachcmd);
+      for (auto&& cmd : opts.commands) {
+        ctx.eval(cmd);
+      }
+      index += 1;
+    }
   }
 }
 
