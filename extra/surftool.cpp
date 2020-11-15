@@ -355,6 +355,23 @@ Options parse_args(int argc, char** argv)
             ctx.push(std::move(item));
           }
         });
+      } else if (opt == "--join-rgba") {
+        opts.commands.emplace_back([](Context& ctx) {
+          SoftwareSurface alpha = ctx.pop();
+          SoftwareSurface blue = ctx.pop();
+          SoftwareSurface green = ctx.pop();
+          SoftwareSurface red = ctx.pop();
+
+          ctx.push(surf::join_channel({red, green, blue, alpha}));
+        });
+      } else if (opt == "--join-rgb") {
+        opts.commands.emplace_back([](Context& ctx) {
+          SoftwareSurface blue = ctx.pop();
+          SoftwareSurface green = ctx.pop();
+          SoftwareSurface red = ctx.pop();
+
+          ctx.push(surf::join_channel({red, green, blue}));
+        });
       } else if (opt == "--output" || opt == "-o") {
         std::filesystem::path output_filename = next_arg();
         opts.commands.emplace_back([output_filename](Context& ctx) {

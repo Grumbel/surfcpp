@@ -46,7 +46,37 @@ PixelData<tRGBPixel<T>> join_channel(PixelView<tLPixel<T>> const& red,
     tLPixel<T> const* blue_r = blue.get_row(y);
 
     for (int x = 0; x < size.width(); ++x) {
-      dst_r[x] = make_pixel(red_r[x], green_r[x], blue_r[x]);
+      dst_r[x] = make_pixel<tRGBPixel<T>>(red_r[x].l, green_r[x].l, blue_r[x].l);
+    }
+  }
+
+  return dst;
+}
+
+template<typename T>
+PixelData<tRGBAPixel<T>> join_channel(PixelView<tLPixel<T>> const& red,
+                                      PixelView<tLPixel<T>> const& green,
+                                      PixelView<tLPixel<T>> const& blue,
+                                      PixelView<tLPixel<T>> const& alpha)
+{
+  geom::isize const size = red.get_size();
+  if (size != green.get_size() ||
+      size != blue.get_size() ||
+      size != alpha.get_size()) {
+    throw std::invalid_argument("channels must be the same size");
+  }
+
+  PixelData<tRGBAPixel<T>> dst(size);
+
+  for (int y = 0; y < size.height(); ++y) {
+    tRGBAPixel<T>* dst_r = dst.get_row(y);
+    tLPixel<T> const* red_r = red.get_row(y);
+    tLPixel<T> const* green_r = green.get_row(y);
+    tLPixel<T> const* blue_r = blue.get_row(y);
+    tLPixel<T> const* alpha_r = alpha.get_row(y);
+
+    for (int x = 0; x < size.width(); ++x) {
+      dst_r[x] = make_pixel<tRGBAPixel<T>>(red_r[x].l, green_r[x].l, blue_r[x].l, alpha_r[x].l);
     }
   }
 
@@ -109,6 +139,7 @@ split_channel(PixelView<tRGBAPixel<T>> const& src)
 }
 
 std::vector<SoftwareSurface> split_channel(SoftwareSurface const& src);
+SoftwareSurface join_channel(std::vector<SoftwareSurface> channels);
 
 } // namespace surf
 

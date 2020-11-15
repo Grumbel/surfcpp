@@ -62,6 +62,23 @@ split_channel_to_software_surface(PixelView<tRGBAPixel<T>> const& src)
   };
 }
 
+template<typename T>
+SoftwareSurface join_channel_to_software_surface(PixelView<tLPixel<T>> red_c,
+                                                 PixelView<tLPixel<T>> green_c,
+                                                 PixelView<tLPixel<T>> blue_c)
+{
+  return SoftwareSurface(join_channel(red_c, green_c, blue_c));
+}
+
+template<typename T>
+SoftwareSurface join_channel_to_software_surface(PixelView<tLPixel<T>> red_c,
+                                                 PixelView<tLPixel<T>> green_c,
+                                                 PixelView<tLPixel<T>> blue_c,
+                                                 PixelView<tLPixel<T>> alpha_c)
+{
+  return SoftwareSurface(join_channel(red_c, green_c, blue_c, alpha_c));
+}
+
 } // namespace
 
 std::vector<SoftwareSurface>
@@ -70,6 +87,29 @@ split_channel(SoftwareSurface const& src)
   PIXELFORMAT_TO_TYPE(
     src.get_format(), srctype,
     return split_channel_to_software_surface(src.as_pixelview<srctype>()););
+}
+
+SoftwareSurface
+join_channel(std::vector<SoftwareSurface> channels)
+{
+  if (channels.size() == 1) {
+    return channels[0];
+  } else if (channels.size() == 3) {
+      PIXELFORMAT_TO_TYPE(
+        channels[0].get_format(), srctype,
+        return join_channel_to_software_surface(channels[0].as_pixelview<tLPixel<typename srctype::value_type>>(),
+                                                channels[1].as_pixelview<tLPixel<typename srctype::value_type>>(),
+                                                channels[2].as_pixelview<tLPixel<typename srctype::value_type>>()));
+  } else if (channels.size() == 4) {
+      PIXELFORMAT_TO_TYPE(
+        channels[0].get_format(), srctype,
+        return join_channel_to_software_surface(channels[0].as_pixelview<tLPixel<typename srctype::value_type>>(),
+                                                channels[1].as_pixelview<tLPixel<typename srctype::value_type>>(),
+                                                channels[2].as_pixelview<tLPixel<typename srctype::value_type>>(),
+                                                channels[3].as_pixelview<tLPixel<typename srctype::value_type>>()));
+  } else {
+    throw std::invalid_argument("invalid number of channels");
+  }
 }
 
 } // namespace surf
