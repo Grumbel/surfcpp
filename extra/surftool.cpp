@@ -82,11 +82,29 @@ public:
     cmd(*this);
   }
 
+  size_t idx(int n) const {
+    if (n >= 0) {
+      return n;
+    } else {
+      return static_cast<int>(m_stack.size()) + n;
+    }
+  }
+
+  SoftwareSurface& get(int n) {
+    return m_stack[idx(n)];
+  }
+
   SoftwareSurface& top() {
     if (m_stack.empty()) {
       throw std::runtime_error("can't top(), stack empty");
     }
     return m_stack.back();
+  }
+
+  SoftwareSurface drop(int n) {
+    SoftwareSurface sur = std::move(m_stack[idx(n)]);
+    m_stack.erase(m_stack.begin() + idx(n));
+    return sur;
   }
 
   SoftwareSurface pop() {
@@ -193,6 +211,10 @@ void print_usage(int argc, char** argv)
     << "Stack Commands:\n"
     << "  --dup                Duplicate the top image\n"
     << "  --drop               Remove the top image\n"
+    << "  --dupi INDEX         Duplicate INDEX\n"
+    << "  --dropi INDEX        Remove INDEX\n"
+    << "  --movei INDEX        Move INDEX to top\n"
+    << "  --swap               Swap the two top most items\n"
     << "\n";
 }
 
@@ -230,6 +252,32 @@ Options parse_args(int argc, char** argv)
       } else if (opt == "--drop") {
         opts.commands.emplace_back([](Context& ctx) {
           ctx.pop();
+        });
+      } else if (opt == "--swap") {
+        opts.commands.emplace_back([](Context& ctx) {
+          SoftwareSurface one = ctx.pop();
+          SoftwareSurface two = ctx.pop();
+          ctx.push(std::move(one));
+          ctx.push(std::move(two));
+        });
+      } else if (opt == "--dupi") {
+        int idx = std::stoi(std::string(next_arg()));
+        opts.commands.emplace_back([idx](Context& ctx) {
+          ctx.message(fmt::format("dup {}", idx));
+          SoftwareSurface copy(ctx.get(idx));
+          ctx.push(std::move(copy)); // NOLINT
+        });
+      } else if (opt == "--dropi") {
+        int idx = std::stoi(std::string(next_arg()));
+        opts.commands.emplace_back([idx](Context& ctx) {
+          ctx.message(fmt::format("drop {}", idx));
+          ctx.drop(idx);
+        });
+      } else if (opt == "--movei") {
+        int idx = std::stoi(std::string(next_arg()));
+        opts.commands.emplace_back([idx](Context& ctx) {
+          ctx.message(fmt::format("move {}", idx));
+          ctx.push(ctx.drop(idx));
         });
       } else if (opt == "--create") {
         surf::PixelFormat format = surf::pixelformat_from_string(next_arg());
