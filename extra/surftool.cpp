@@ -31,35 +31,6 @@ using surf::SoftwareSurface;
 
 namespace {
 
-surf::Transform transform_from_string(std::string_view text)
-{
-  if (text == "0") {
-    return surf::Transform::ROTATE_0;
-  } else if (text == "90") {
-    return surf::Transform::ROTATE_90;
-  } else if (text == "180") {
-    return surf::Transform::ROTATE_180;
-  } else if (text == "270") {
-    return surf::Transform::ROTATE_270;
-  } else if (text == "0flip") {
-    return surf::Transform::ROTATE_0_FLIP;
-  } else if (text == "90flip") {
-    return surf::Transform::ROTATE_90_FLIP;
-  } else if (text == "180flip") {
-    return surf::Transform::ROTATE_180_FLIP;
-  } else if (text == "270flip") {
-    return surf::Transform::ROTATE_270_FLIP;
-  } else if (text == "flip") {
-    return surf::Transform::ROTATE_0_FLIP;
-  } else if (text == "vflip") {
-    return surf::Transform::FLIP_VERTICAL;
-  } else if (text == "hflip") {
-    return surf::Transform::FLIP_HORIZONTAL;
-  } else {
-    throw std::invalid_argument(fmt::format("not a valid transform: {}", text));
-  }
-}
-
 class Context;
 
 using ContextCommand = std::function<void(Context& ctx)>;
@@ -433,7 +404,7 @@ Options parse_args(int argc, char** argv)
         });
       } else if (opt == "--transform") {
         std::string_view arg = next_arg();
-        surf::Transform const transf = transform_from_string(arg);
+        surf::Transform const transf = surf::transform_from_string(arg);
         opts.commands.emplace_back([transf](Context& ctx) {
           ctx.top() = surf::transform(ctx.top(), transf);
         });

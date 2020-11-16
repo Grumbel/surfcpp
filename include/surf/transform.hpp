@@ -41,6 +41,8 @@ enum class Transform
   FLIP_HORIZONTAL = ROTATE_180_FLIP,
 };
 
+Transform transform_from_string(std::string_view text);
+
 template<typename Pixel>
 PixelData<Pixel> transform(PixelView<Pixel> const& src, Transform mod)
 {
