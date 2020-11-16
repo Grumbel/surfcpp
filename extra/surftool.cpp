@@ -16,6 +16,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <memory>
 #include <stack>
 
 #include <fmt/format.h>
@@ -91,20 +92,18 @@ public:
   }
 
   SoftwareSurface& get(int n) {
-    return m_stack[idx(n)];
+    return *m_stack[idx(n)];
   }
 
   SoftwareSurface& top() {
     if (m_stack.empty()) {
       throw std::runtime_error("can't top(), stack empty");
     }
-    return m_stack.back();
+    return *m_stack.back();
   }
 
-  SoftwareSurface drop(int n) {
-    SoftwareSurface sur = std::move(m_stack[idx(n)]);
+  void drop(int n) {
     m_stack.erase(m_stack.begin() + idx(n));
-    return sur;
   }
 
   SoftwareSurface pop() {
@@ -116,16 +115,29 @@ public:
       throw std::runtime_error("can't pop(), stack empty");
     }
 
-    SoftwareSurface surface = std::move(m_stack.back());
+    SoftwareSurface sur;
+    if (m_stack.back().use_count() == 1) {
+      sur = std::move(*m_stack.back());
+    } else {
+      // FIXME: potentially useless copy
+      sur = *m_stack.back();
+    }
     m_stack.pop_back();
-    return surface;
+    return sur;
   }
 
   void push(SoftwareSurface&& img) {
     if (m_verbose) {
       std::cout << "push surface\n";
     }
-    m_stack.emplace_back(img);
+    m_stack.emplace_back(std::make_shared<SoftwareSurface>(std::move(img)));
+  }
+
+  void push_ref(int n) {
+    if (m_verbose) {
+      std::cout << "push_ref surface\n";
+    }
+    m_stack.push_back(m_stack[idx(n)]);
   }
 
   void set_blendfunc(surf::BlendFunc func) {
@@ -161,7 +173,7 @@ private:
   bool m_verbose;
   int m_file_index = 0;
   surf::BlendFunc m_blendfunc;
-  std::vector<SoftwareSurface> m_stack;
+  std::vector<std::shared_ptr<SoftwareSurface>> m_stack;
 };
 
 struct Options
@@ -215,6 +227,7 @@ void print_usage(int argc, char** argv)
     << "  --dropi INDEX        Remove INDEX\n"
     << "  --movei INDEX        Move INDEX to top\n"
     << "  --swap               Swap the two top most items\n"
+    << "  --withi INDEX        Push a view on INDEX on the top\n"
     << "\n";
 }
 
@@ -277,7 +290,15 @@ Options parse_args(int argc, char** argv)
         int idx = std::stoi(std::string(next_arg()));
         opts.commands.emplace_back([idx](Context& ctx) {
           ctx.message(fmt::format("move {}", idx));
-          ctx.push(ctx.drop(idx));
+          SoftwareSurface sur = ctx.get(idx);
+          ctx.drop(idx);
+          ctx.push(std::move(sur));
+        });
+      } else if (opt == "--withi") {
+        int idx = std::stoi(std::string(next_arg()));
+        opts.commands.emplace_back([idx](Context& ctx) {
+          ctx.message(fmt::format("view {}", idx));
+          ctx.push_ref(idx);
         });
       } else if (opt == "--create") {
         surf::PixelFormat format = surf::pixelformat_from_string(next_arg());
