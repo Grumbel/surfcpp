@@ -18,6 +18,7 @@
 #include <iostream>
 #include <memory>
 #include <stack>
+#include <variant>
 
 #include <fmt/format.h>
 
@@ -33,14 +34,21 @@ namespace {
 
 class Context;
 
-using ContextCommand = std::function<void(Context& ctx)>;
+using ContextCommand = std::variant<std::function<void(Context& ctx)>,
+                                    std::filesystem::path>;
 
 class Context
 {
 public:
+  struct FileInfo {
+    int index = 0;
+    std::filesystem::path filename = {};
+  };
+
+public:
   Context() :
     m_verbose(false),
-    m_file_index(0),
+    m_file_info(),
     m_blendfunc(surf::BlendFunc::COPY),
     m_stack()
   {}
@@ -51,7 +59,11 @@ public:
   }
 
   void eval(ContextCommand const& cmd) {
-    cmd(*this);
+    if (cmd.index() == 0) {
+      std::get<0>(cmd)(*this);
+    } else {
+      push(SoftwareSurface::from_file(std::get<1>(cmd)));
+    }
   }
 
   size_t idx(int n) const {
@@ -123,12 +135,13 @@ public:
     return m_blendfunc;
   }
 
-  int file_index() const {
-    return m_file_index;
+  FileInfo const& file_info() const {
+    return m_file_info;
   }
 
-  void set_file_index(int v) {
-    m_file_index = v;
+  void set_file_info(int v, std::filesystem::path filename) {
+    m_file_info.index = v;
+    m_file_info.filename = std::move(filename);
   }
 
   void message(std::string const& msg) { // NOLINT
@@ -142,7 +155,7 @@ public:
 
 private:
   bool m_verbose;
-  int m_file_index = 0;
+  FileInfo m_file_info;
   surf::BlendFunc m_blendfunc;
   std::vector<std::shared_ptr<SoftwareSurface>> m_stack;
 };
@@ -455,8 +468,14 @@ Options parse_args(int argc, char** argv)
       } else if (opt == "-O" || opt == "--output-pattern") {
         std::filesystem::path output_pattern = next_arg();
         opts.commands.emplace_back([output_pattern](Context& ctx) {
-          std::string output_filename = fmt::format(std::string(output_pattern),
-                                                    fmt::arg("index", ctx.file_index()));
+          std::string output_filename = fmt::format(
+            std::string(output_pattern),
+            fmt::arg("index", ctx.file_info().index),
+            fmt::arg("dirname", ctx.file_info().filename.parent_path().string()),
+            fmt::arg("basename", ctx.file_info().filename.filename().string()),
+            fmt::arg("path", ctx.file_info().filename.string()),
+            fmt::arg("stem", ctx.file_info().filename.stem().string()),
+            fmt::arg("ext", ctx.file_info().filename.extension().string()));
           ctx.message(fmt::format("saving {}", output_filename));
           surf::save(ctx.top(), output_filename);
         });
@@ -466,9 +485,7 @@ Options parse_args(int argc, char** argv)
       }
     } else { // rest argument
       std::filesystem::path input_filename = argv[i];
-      opts.commands.emplace_back([input_filename](Context& ctx) {
-        ctx.push(SoftwareSurface::from_file(input_filename));
-      });
+      opts.commands.emplace_back(input_filename);
     }
   }
 
@@ -488,11 +505,15 @@ void run(int argc, char** argv)
   } else {
     int index = 0;
     for (auto&& foreachcmd : opts.foreach_commands) {
-      ctx.clear();
-      ctx.set_file_index(index);
-      ctx.eval(foreachcmd);
-      for (auto&& cmd : opts.commands) {
-        ctx.eval(cmd);
+      if (foreachcmd.index() != 1) {
+        throw std::runtime_error(fmt::format("invalid --foreach command: {}", foreachcmd.index()));
+      } else {
+        ctx.clear();
+        ctx.set_file_info(index, std::get<1>(foreachcmd));
+        ctx.eval(foreachcmd);
+        for (auto&& cmd : opts.commands) {
+          ctx.eval(cmd);
+        }
       }
       index += 1;
     }
