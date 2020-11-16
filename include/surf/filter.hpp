@@ -208,6 +208,27 @@ void apply_hsv(PixelView<Pixel>& src, float hue, float saturation, float value)
   }
 }
 
+namespace {
+inline int positive_mod(int i, int n) {
+    return (i % n + n) % n;
+}
+} // namespace
+
+template<typename Pixel>
+void apply_offset(PixelView<Pixel>& src, geom::ioffset const& offset)
+{
+  PixelData<Pixel> copy(src);
+
+  geom::ipoint const pos(positive_mod(offset.x(), src.get_size().width()),
+                         positive_mod(offset.y(), src.get_size().height()));
+  geom::isize const size(src.get_size());
+
+  blit(copy, src, pos + geom::ioffset(0, -size.height()));
+  blit(copy, src, pos + geom::ioffset(-size.width(), -size.height()));
+  blit(copy, src, pos + geom::ioffset(0, 0));
+  blit(copy, src, pos + geom::ioffset(-size.width(), 0));
+}
+
 SOFTWARE_SURFACE_LIFT_VOID(apply_gamma)
 SOFTWARE_SURFACE_LIFT_VOID(apply_multiply)
 SOFTWARE_SURFACE_LIFT_VOID(apply_add)
@@ -218,6 +239,7 @@ SOFTWARE_SURFACE_LIFT_VOID(apply_lut)
 SOFTWARE_SURFACE_LIFT_VOID(apply_threshold)
 SOFTWARE_SURFACE_LIFT_VOID(apply_grayscale)
 SOFTWARE_SURFACE_LIFT_VOID(apply_hsv)
+SOFTWARE_SURFACE_LIFT_VOID(apply_offset)
 
 } // namespace surf
 

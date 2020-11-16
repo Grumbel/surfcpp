@@ -422,6 +422,12 @@ Options parse_args(int argc, char** argv)
         opts.commands.emplace_back([color](Context& ctx) {
           surf::fill(ctx.top(), color);
         });
+      } else if (opt == "--offset") {
+        std::string_view arg = next_arg();
+        geom::ipoint const offset = geom::ipoint_from_string(std::string(arg));
+        opts.commands.emplace_back([offset](Context& ctx) {
+          surf::apply_offset(ctx.top(), geom::ioffset(offset));
+        });
       } else if (opt == "--split") {
         opts.commands.emplace_back([](Context& ctx) {
           auto res = surf::split_channel(ctx.pop());
