@@ -189,6 +189,7 @@ void print_usage(int argc, char** argv)
     << "  --gamma VALUE        Apply gamma correction\n"
     << "  --brightness VALUE   Adjust brightness\n"
     << "  --contrast VALUE     Adjust contrast\n"
+    << "  --halve              Scale to halve the size\n"
     << "  --scale WxH{!><}     Resize the image\n"
     << "  --crop WxH[+X+Y]     Crop the image\n"
     << "  --transform ROT      Rotate or flip the image\n"
@@ -408,6 +409,10 @@ Options parse_args(int argc, char** argv)
             size = geom::resize_to_fit(ctx.top().get_size(), desired_size);
           }
           ctx.top() = surf::scale(ctx.top(), size);
+        });
+      } else if (opt == "--halve") {
+        opts.commands.emplace_back([](Context& ctx) {
+          ctx.top() = surf::halve(ctx.top());
         });
       } else if (opt == "--crop") {
         std::string_view arg = next_arg();
