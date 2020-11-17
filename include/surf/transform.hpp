@@ -157,13 +157,22 @@ PixelData<Pixel> flip_horizontal(PixelView<Pixel> const& src)
 template<typename Pixel>
 PixelData<Pixel> halve(PixelView<Pixel> const& src)
 {
+  using type = typename Pixel::value_type;
+
   PixelData<Pixel> dst(src.get_size() / 2);
 
   for(int y = 0; y < dst.get_height(); ++y) {
     for(int x = 0; x < dst.get_width(); ++x) {
-      Pixel pixel = src.get_pixel(geom::ipoint(x * 2, y * 2));
-      // FIXME: insert blending
-      dst.put_pixel(geom::ipoint(x, y), pixel);
+      Pixel const src1 = src.get_pixel(geom::ipoint(x * 2 + 0, y * 2 + 0));
+      Pixel const src2 = src.get_pixel(geom::ipoint(x * 2 + 1, y * 2 + 0));
+      Pixel const src3 = src.get_pixel(geom::ipoint(x * 2 + 0, y * 2 + 1));
+      Pixel const src4 = src.get_pixel(geom::ipoint(x * 2 + 1, y * 2 + 1));
+
+      Pixel const dstpixel = make_pixel<Pixel>(static_cast<type>((red(src1) + red(src2) + red(src3) + red(src4)) / 4),
+                                               static_cast<type>((green(src1) + green(src2) + green(src3) + green(src4)) / 4),
+                                               static_cast<type>((blue(src1) + blue(src2) + blue(src3) + blue(src4)) / 4),
+                                               static_cast<type>((alpha(src1) + alpha(src2) + alpha(src3) + alpha(src4)) / 4));
+      dst.put_pixel(geom::ipoint(x, y), dstpixel);
     }
   }
 
