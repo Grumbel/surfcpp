@@ -34,6 +34,17 @@ void fill(SoftwareSurface& dst, Color const& color)
   fill_rect(dst, geom::irect(dst.get_size()), color);
 }
 
+void fill_checkerboard(SoftwareSurface& dst, geom::isize const& size,
+                       Color const& bg, Color const& fg)
+{
+  PIXELFORMAT_TO_TYPE(
+    dst.get_format(), dsttype,
+    fill_checkerboard(dst.as_pixelview<dsttype>(),
+                      size,
+                      convert<Color, dsttype>(bg),
+                      convert<Color, dsttype>(fg)));
+}
+
 } // namespace surf
 
 /* EOF */

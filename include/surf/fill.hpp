@@ -19,6 +19,7 @@
 
 #include <cstring>
 
+#include "unwrap.hpp"
 #include "pixel.hpp"
 #include "pixel_data.hpp"
 
@@ -122,6 +123,35 @@ void fill_rect(PixelView<Pixel>& dst, geom::irect const& rect, Pixel const& pixe
 {
   surf::detail::fill_rect__slow<Pixel>(dst, rect, pixel);
 }
+
+template<typename Pixel>
+void fill_checkerboard(PixelView<Pixel>& dst, geom::isize const& size,
+                       Pixel const& bg_pixel, Pixel const& fg_pixel,
+                       geom::irect const region)
+{
+  for (int y = region.top(); y < region.bottom(); ++y) {
+    Pixel* const row = dst.get_row(y);
+
+    int const v = (y / size.height() % 2);
+    for (int x = region.left(); x < region.right(); ++x) {
+      if ((x / size.width() % 2) == v) {
+        row[x] = bg_pixel;
+      } else {
+        row[x] = fg_pixel;
+      }
+    }
+  }
+}
+
+template<typename Pixel>
+void fill_checkerboard(PixelView<Pixel>& dst, geom::isize const& size,
+                       Pixel const& bg, Pixel const& fg)
+{
+  fill_checkerboard(dst, size, bg, fg, geom::irect(dst.get_size()));
+}
+
+void fill_checkerboard(SoftwareSurface& dst, geom::isize const& size,
+                       Color const& bg, Color const& fg);
 
 } // namespace surf
 

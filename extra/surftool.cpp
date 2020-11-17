@@ -185,6 +185,8 @@ void print_usage(int argc, char** argv)
     << "Image Commands:\n"
     << "  --create WxH COLOR   Create a new empty image\n"
     << "  --fill COLOR         Fill the image with COLOR\n"
+    << "  --checkerboard SIZE BG FG\n"
+    << "                       Fill the image with a checkerboard\n"
     << "  --invert             Invert the image\n"
     << "  --gamma VALUE        Apply gamma correction\n"
     << "  --brightness VALUE   Adjust brightness\n"
@@ -431,6 +433,18 @@ Options parse_args(int argc, char** argv)
         surf::Color const color = surf::Color::from_string(arg);
         opts.commands.emplace_back([color](Context& ctx) {
           surf::fill(ctx.top(), color);
+        });
+      } else if (opt == "--checkerboard") {
+        std::string_view size_s = next_arg();
+        std::string_view bg_s = next_arg();
+        std::string_view fg_s = next_arg();
+
+        auto size = geom::isize_from_string(std::string(size_s));
+        auto bg = surf::Color::from_string(bg_s);
+        auto fg = surf::Color::from_string(fg_s);
+
+        opts.commands.emplace_back([size, bg, fg](Context& ctx) {
+          surf::fill_checkerboard(ctx.top(), size, bg, fg);
         });
       } else if (opt == "--offset") {
         std::string_view arg = next_arg();
