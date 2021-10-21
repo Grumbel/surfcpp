@@ -175,6 +175,12 @@ SoftwareSurface::get_pixel(geom::ipoint const& position) const
   return m_pixel_data->get_pixel_color(position);
 }
 
+void
+SoftwareSurface::put_pixel(geom::ipoint const& position, Color const& color)
+{
+  m_pixel_data->put_pixel_color(position, color);
+}
+
 SoftwareSurface
 SoftwareSurface::get_view(geom::irect const& rect) const
 {

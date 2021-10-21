@@ -80,6 +80,7 @@ public:
   PixelFormat get_format() const;
 
   Color get_pixel(geom::ipoint const& position) const;
+  void put_pixel(geom::ipoint const& position, Color const& color);
 
   void* get_data();
   void* get_row_data(int y);
