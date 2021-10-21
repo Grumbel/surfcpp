@@ -1,6 +1,10 @@
 #ifndef HEADER_SURF_ALGORITHM_HPP
 #define HEADER_SURF_ALGORITHM_HPP
 
+#include <geom/rect.hpp>
+
+#include "pixel_view.hpp"
+
 namespace surf {
 
 template<typename Pixel, typename UnaryFunction>
