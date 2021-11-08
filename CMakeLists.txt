@@ -40,9 +40,13 @@ function(build_dependencies)
   #endif()
 
   set(BUILD_TESTS OFF)
+
+  find_package(geomcpp QUIET)
   if(NOT TARGET geomcpp)
     add_subdirectory(external/geomcpp/ EXCLUDE_FROM_ALL)
   endif()
+
+  find_package(logmich QUIET)
   if(NOT TARGET logmich)
     add_subdirectory(external/logmich/ EXCLUDE_FROM_ALL)
   endif()
@@ -67,8 +71,15 @@ target_link_libraries(surf PUBLIC
   logmich
   PNG::PNG
   JPEG::JPEG)
-target_include_directories(surf INTERFACE src/ include/surf/ include/)
-target_include_directories(surf PRIVATE src/ include/surf/)
+target_include_directories(surf INTERFACE
+  $<INSTALL_INTERFACE:include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+target_include_directories(surf PRIVATE
+  include
+  include/surf
+  src)
 set_target_properties(surf PROPERTIES PUBLIC_HEADER "${SURF_HEADERS}")
 
 if(MAGICKXX_FOUND)
@@ -82,6 +93,22 @@ if(EXIF_FOUND)
     PkgConfig::EXIF)
   target_compile_definitions(surf PUBLIC "HAVE_EXIF")
 endif()
+
+install(TARGETS surf
+  EXPORT surfcpp-targets
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
+# CMake integration
+configure_file(surfcpp-config.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-config.cmake" @ONLY)
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-config.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surfcpp/")
+export(TARGETS surf
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-targets.cmake")
+export(PACKAGE surf)
+install(EXPORT surfcpp-targets
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surfcpp/")
 
 if(BUILD_TESTS)
   find_package(GTest REQUIRED)
@@ -139,8 +166,5 @@ if(BUILD_EXTRA)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
   endforeach(SRC)
 endif()
-
-install(TARGETS surf
-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 
 # EOF #

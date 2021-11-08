@@ -1,0 +1,14 @@
+get_filename_component(SURFCPP_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+include(CMakeFindDependencyMacro)
+find_dependency(PkgConfig REQUIRED)
+find_dependency(JPEG REQUIRED)
+find_dependency(PNG REQUIRED)
+pkg_search_module(EXIF libexif IMPORTED_TARGET)
+pkg_search_module(MAGICKXX Magick++ GraphicsMagick++ IMPORTED_TARGET)
+
+if(NOT TARGET surfcpp)
+  include("${SURFCPP_CMAKE_DIR}/surfcpp-targets.cmake")
+endif()
+
+# EOF #
