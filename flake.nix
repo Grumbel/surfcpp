@@ -2,29 +2,25 @@
   description = "Software Surface Library";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
-    nix.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
     flake-utils.url = "github:numtide/flake-utils";
 
     tinycmmc.url = "gitlab:grumbel/cmake-modules";
-    tinycmmc.inputs.nix.follows = "nix";
     tinycmmc.inputs.nixpkgs.follows = "nixpkgs";
     tinycmmc.inputs.flake-utils.follows = "flake-utils";
 
     logmich.url = "gitlab:logmich/logmich";
-    logmich.inputs.nix.follows = "nix";
     logmich.inputs.nixpkgs.follows = "nixpkgs";
     logmich.inputs.flake-utils.follows = "flake-utils";
     logmich.inputs.tinycmmc.follows = "tinycmmc";
 
     geomcpp.url = "gitlab:grumbel/geomcpp";
-    geomcpp.inputs.nix.follows = "nix";
     geomcpp.inputs.nixpkgs.follows = "nixpkgs";
     geomcpp.inputs.flake-utils.follows = "flake-utils";
     geomcpp.inputs.tinycmmc.follows = "tinycmmc";
   };
 
-  outputs = { self, nix, nixpkgs, flake-utils, tinycmmc, geomcpp, logmich }:
+  outputs = { self, nixpkgs, flake-utils, tinycmmc, geomcpp, logmich }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
