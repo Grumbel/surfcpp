@@ -22,8 +22,8 @@
 
 #include <geom/size.hpp>
 
-#include "fwd.hpp"
-#include "pixel_data.hpp"
+#include <surf/fwd.hpp>
+#include <surf/pixel_data.hpp>
 
 namespace surf {
 namespace dds {

@@ -20,8 +20,8 @@
 #include <filesystem>
 #include <string>
 
-#include "fwd.hpp"
-#include "pixel_data.hpp"
+#include <surf/fwd.hpp>
+#include <surf/pixel_data.hpp>
 
 namespace surf {
 namespace kra {

@@ -22,9 +22,6 @@
 #include <vector>
 #include <fstream>
 #include <stdexcept>
-//#include "system.hpp"
-//#include "util.hpp"
-//#include "rgb.hpp"
 
 namespace surf {
 namespace dds {

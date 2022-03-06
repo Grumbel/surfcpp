@@ -21,7 +21,7 @@
 #include <filesystem>
 #include <string>
 
-#include "plugins/jpeg_compressor.hpp"
+#include <surf/plugins/jpeg_compressor.hpp>
 
 namespace surf {
 

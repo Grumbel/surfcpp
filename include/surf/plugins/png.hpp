@@ -23,9 +23,9 @@
 
 #include <geom/size.hpp>
 
-#include "fwd.hpp"
-#include "pixel_data.hpp"
-#include "software_surface_factory.hpp"
+#include <surf/fwd.hpp>
+#include <surf/pixel_data.hpp>
+#include <surf/software_surface_factory.hpp>
 
 namespace surf {
 namespace png {

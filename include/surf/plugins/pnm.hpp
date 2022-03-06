@@ -19,7 +19,7 @@
 
 #include <span>
 
-#include "software_surface.hpp"
+#include <surf/software_surface.hpp>
 
 namespace surf {
 namespace pnm {

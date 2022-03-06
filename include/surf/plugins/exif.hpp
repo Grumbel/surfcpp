@@ -23,8 +23,8 @@
 #include <string>
 #include <span>
 
-#include "pixel_data.hpp"
-#include "transform.hpp"
+#include <surf/pixel_data.hpp>
+#include <surf/transform.hpp>
 
 namespace surf {
 namespace exif {

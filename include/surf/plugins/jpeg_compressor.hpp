@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <jpeglib.h>
 
-#include "pixel_data.hpp"
+#include <surf/pixel_data.hpp>
 
 namespace surf {
 

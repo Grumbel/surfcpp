@@ -17,7 +17,7 @@
 #ifndef HEADER_GALAPIX_PLUGINS_MEM_JPEG_DECOMPRESSOR_HPP
 #define HEADER_GALAPIX_PLUGINS_MEM_JPEG_DECOMPRESSOR_HPP
 
-#include "plugins/jpeg_decompressor.hpp"
+#include <surf/plugins/jpeg_decompressor.hpp>
 
 #include <span>
 

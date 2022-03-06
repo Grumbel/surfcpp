@@ -20,7 +20,7 @@
 #include <vector>
 #include <stdint.h>
 
-#include "plugins/jpeg_compressor.hpp"
+#include <surf/plugins/jpeg_compressor.hpp>
 
 namespace surf {
 

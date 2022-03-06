@@ -23,7 +23,7 @@
 
 #include <geom/size.hpp>
 
-#include "pixel_data.hpp"
+#include <surf/pixel_data.hpp>
 
 namespace surf {
 
