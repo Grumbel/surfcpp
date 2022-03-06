@@ -29,6 +29,9 @@
           surfcpp = pkgs.stdenv.mkDerivation {
             pname = "surfcpp";
             version = "0.3.0";
+            meta = {
+              mainProgram = "surftool";
+            };
             src = nixpkgs.lib.cleanSource ./.;
             cmakeFlags = [ "-DBUILD_EXTRA=ON" ];
             nativeBuildInputs = [
