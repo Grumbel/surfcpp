@@ -56,9 +56,6 @@ function(build_dependencies)
 endfunction()
 build_dependencies()
 
-file(GLOB SURF_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  include/surf/*.hpp)
-
 file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/util/*.cpp
   src/plugins/*.cpp
@@ -78,12 +75,12 @@ target_include_directories(surf INTERFACE
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/surf>
   )
 target_include_directories(surf PRIVATE
   include
   include/surf
   src)
-set_target_properties(surf PROPERTIES PUBLIC_HEADER "${SURF_HEADERS}")
 
 if(MAGICKXX_FOUND)
   target_link_libraries(surf PUBLIC
@@ -100,6 +97,8 @@ endif()
 install(TARGETS surf
   EXPORT surfcpp-targets
   PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
+install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 # CMake integration
 configure_file(surfcpp-config.cmake.in
