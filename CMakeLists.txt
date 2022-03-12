@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 3.6)
-project(surf)
+project(surf VERSION 0.0.0)
 
 set(TINYCMMC_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external/cmake-modules/modules/")
 find_package(tinycmmc CONFIG)
@@ -44,13 +44,13 @@ function(build_dependencies)
 
   set(BUILD_TESTS OFF)
 
-  find_package(geomcpp QUIET)
-  if(NOT TARGET geomcpp)
+  find_package(geom QUIET)
+  if(NOT TARGET geom::geom)
     add_subdirectory(external/geomcpp/ EXCLUDE_FROM_ALL)
   endif()
 
   find_package(logmich QUIET)
-  if(NOT TARGET logmich)
+  if(NOT TARGET logmich::logmich)
     add_subdirectory(external/logmich/ EXCLUDE_FROM_ALL)
   endif()
 endfunction()
@@ -67,8 +67,8 @@ set_target_properties(surf PROPERTIES
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF)
 target_link_libraries(surf PUBLIC
-  geomcpp
-  logmich
+  geom::geom
+  logmich::logmich
   PNG::PNG
   JPEG::JPEG)
 target_include_directories(surf INTERFACE
@@ -93,24 +93,6 @@ if(EXIF_FOUND)
     PkgConfig::EXIF)
   target_compile_definitions(surf PUBLIC "HAVE_EXIF")
 endif()
-
-install(TARGETS surf
-  EXPORT surfcpp-targets
-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
-
-install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-
-# CMake integration
-configure_file(surfcpp-config.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-config.cmake" @ONLY)
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-config.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surfcpp/")
-export(TARGETS surf
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/surfcpp-targets.cmake")
-export(PACKAGE surf)
-install(EXPORT surfcpp-targets
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surfcpp/")
 
 if(BUILD_TESTS)
   find_package(GTest REQUIRED)
@@ -168,5 +150,9 @@ if(BUILD_EXTRA)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
   endforeach(SRC)
 endif()
+
+install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+include(ExportAndInstallLibrary)
 
 # EOF #
