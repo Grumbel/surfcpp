@@ -36,25 +36,23 @@
             cmakeFlags = [ "-DBUILD_EXTRA=ON" ];
             nativeBuildInputs = [
               pkgs.cmake
-              pkgs.ninja
-              pkgs.gcc
               pkgs.pkgconfig
-              tinycmmc.defaultPackage.${system}
             ];
             buildInputs = [
-              geomcpp.defaultPackage.${system}
-              logmich.defaultPackage.${system}
+              tinycmmc.defaultPackage.${system}
+
               pkgs.gtest
               pkgs.gbenchmark
-              pkgs.fmt
-              pkgs.glm
-              pkgs.imagemagick6
+              pkgs.SDL2
             ];
             propagatedBuildInputs = [
+              geomcpp.defaultPackage.${system}
+              logmich.defaultPackage.${system}
+
+              pkgs.imagemagick6
               pkgs.libexif
               pkgs.libjpeg
               pkgs.libpng
-              pkgs.SDL2
             ];
           };
         };
