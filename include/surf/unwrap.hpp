@@ -21,6 +21,13 @@
 
 #include "software_surface.hpp"
 
+#define PIXELFORMAT_TO_TYPE__CASE(type, expr, value, type_value)        \
+  case value: {                                                         \
+    using type = type_value; /* NOLINT */                               \
+    expr;                                                               \
+    break;                                                              \
+  }
+
 #define PIXELFORMAT_TO_TYPE(format, type, expr)                 \
   do {                                                          \
     switch (format)                                             \
@@ -31,127 +38,34 @@
         break;                                                  \
       }                                                         \
                                                                 \
-      case PixelFormat::RGB8: {                                 \
-        using type = RGB8Pixel; /* NOLINT */                    \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGBA8: {                                \
-        using type = RGBA8Pixel; /* NOLINT */                   \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGB16: {                                \
-        using type = RGB16Pixel; /* NOLINT */                   \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGBA16: {                               \
-        using type = RGBA16Pixel; /* NOLINT */                  \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGB32: {                                \
-        using type = RGB32Pixel; /* NOLINT */                   \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGBA32: {                               \
-        using type = RGBA32Pixel; /* NOLINT */                  \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGB32f: {                               \
-        using type = RGB32fPixel; /* NOLINT */                  \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGBA32f: {                              \
-        using type = RGBA32fPixel; /* NOLINT */                 \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGB64f: {                               \
-        using type = RGB64fPixel; /* NOLINT */                  \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::RGBA64f: {                              \
-        using type = RGBA64fPixel; /* NOLINT */                 \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::L8: {                                   \
-        using type = L8Pixel; /* NOLINT */                      \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::LA8: {                                  \
-        using type = LA8Pixel; /* NOLINT */                     \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::L16: {                                  \
-        using type = L16Pixel; /* NOLINT */                     \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::LA16: {                                 \
-        using type = LA16Pixel; /* NOLINT */                    \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::L32: {                                  \
-        using type = L32Pixel; /* NOLINT */                     \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::LA32: {                                 \
-        using type = LA32Pixel; /* NOLINT */                    \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::L32f: {                                 \
-        using type = L32fPixel; /* NOLINT */                    \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::LA32f: {                                \
-        using type = LA32fPixel; /* NOLINT */                   \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::L64f: {                                 \
-        using type = L64fPixel; /* NOLINT */                    \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-                                                                \
-      case PixelFormat::LA64f: {                                \
-        using type = LA64fPixel; /* NOLINT */                   \
-        expr;                                                   \
-        break;                                                  \
-      }                                                         \
-    }                                                           \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGB8, RGB8Pixel)              \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGBA8, RGBA8Pixel)            \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGB16, RGB16Pixel)            \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGBA16, RGBA16Pixel)          \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGB32, RGB32Pixel)            \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGBA32, RGBA32Pixel)          \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGB32f, RGB32fPixel)          \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGBA32f, RGBA32fPixel)        \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::L8, L8Pixel)                  \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::LA8, LA8Pixel)                \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::L16, L16Pixel)                \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::LA16, LA16Pixel)              \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::L32, L32Pixel)                \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::LA32, LA32Pixel)              \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::L32f, L32fPixel)              \
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::LA32f, LA32fPixel)            \
+    }                                                                                \
   } while (false)
+
+#if 0
+// Disable 64-bit floating point support, overkill in most situation.
+// Reduces library size from 4.6MB to 3.2MB
+// Reduces compile time from to 1:55m to 1:22m
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGB64f, RGB64fPixel)
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::RGBA64f, RGBA64fPixel)
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::L64f, L64fPixel)
+    PIXELFORMAT_TO_TYPE__CASE(type, expr, PixelFormat::LA64f, LA64fPixel)
+#endif
 
 #define PIXELFORMAT2_TO_TYPE(srcformat, srctype, dstformat, dsttype, expr) \
   PIXELFORMAT_TO_TYPE(                                                  \
