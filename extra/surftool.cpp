@@ -483,7 +483,7 @@ Options parse_args(int argc, char** argv)
         std::filesystem::path output_pattern = next_arg();
         opts.commands.emplace_back([output_pattern](Context& ctx) {
           std::string output_filename = fmt::format(
-            std::string(output_pattern),
+            fmt::runtime(std::string(output_pattern)),
             fmt::arg("index", ctx.file_info().index),
             fmt::arg("dirname", ctx.file_info().filename.parent_path().string()),
             fmt::arg("basename", ctx.file_info().filename.filename().string()),

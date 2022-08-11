@@ -161,7 +161,7 @@ std::ostream& operator<<(std::ostream& os, L32Pixel const& pixel)
 inline
 std::ostream& operator<<(std::ostream& os, LA32Pixel const& pixel)
 {
-  return os << fmt::format("({:08x} {:08x} {:08x} {:08x})",
+  return os << fmt::format("({:08x} {:08x})",
                            static_cast<int>(pixel.l),
                            static_cast<int>(pixel.a));
 }
