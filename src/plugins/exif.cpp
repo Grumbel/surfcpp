@@ -88,7 +88,7 @@ Transform get_orientation(std::span<uint8_t const> data)
 
 Transform get_orientation(std::filesystem::path const& filename)
 {
-  ExifData* ed = exif_data_new_from_file(filename.c_str());
+  ExifData* ed = exif_data_new_from_file(filename.string().c_str());
   Transform orientation = get_orientation_exif(ed);
   exif_data_free(ed);
   return orientation;

@@ -47,7 +47,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   // koconverter --batch --mimetype image/png sketch39.kra /dev/stdout  > /tmp/test.png
   Exec koconverter("koconverter");
   koconverter.arg("--batch").arg("--mimetype").arg("image/png");
-  koconverter.arg(filename).arg("/dev/stdout");
+  koconverter.arg(filename.string()).arg("/dev/stdout");
   koconverter.exec();
 
   return png::load_from_mem(koconverter.get_stdout());

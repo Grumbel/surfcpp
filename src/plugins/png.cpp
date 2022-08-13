@@ -137,7 +137,7 @@ bool get_size(void* data, int len, geom::isize& size)
 
 bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
-  FILE* in = fopen(filename.c_str(), "rb");
+  FILE* in = fopen(filename.string().c_str(), "rb");
   if (!in) {
     return false;
   }
@@ -168,7 +168,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
 
 bool is_png(std::filesystem::path const& filename)
 {
-  FILE* in = fopen(filename.c_str(), "rb");
+  FILE* in = fopen(filename.string().c_str(), "rb");
   if (!in) {
     return false;
   } else {
@@ -295,10 +295,10 @@ SoftwareSurface load_from_mem(std::span<uint8_t const> data)
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& filename)
 {
-  FILE* out = fopen(filename.c_str(), "wb");
+  FILE* out = fopen(filename.string().c_str(), "wb");
   if (!out)
   {
-    perror(filename.c_str());
+    perror(filename.string().c_str());
     throw std::runtime_error("PNG::save(): Couldn't save " + filename.string());
   }
   else

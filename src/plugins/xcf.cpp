@@ -139,7 +139,7 @@ std::vector<std::string> get_layers(const URL& url)
 bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
   Exec xcfinfo("xcfinfo");
-  xcfinfo.arg(filename);
+  xcfinfo.arg(filename.string());
   if (xcfinfo.exec() == 0)
   {
     auto const& stdout_lst = xcfinfo.get_stdout();
@@ -177,7 +177,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
 SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec xcf2png("xcf2png");
-  xcf2png.arg(filename);
+  xcf2png.arg(filename.string());
   if (xcf2png.exec() != 0)
   {
     throw std::runtime_error("XCF::load_from_file(): " + std::string(xcf2png.get_stderr().begin(), xcf2png.get_stderr().end()));

@@ -48,7 +48,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
   Exec rsvg("rsvg");
 
   rsvg.arg("--format").arg("png");
-  rsvg.arg(filename);
+  rsvg.arg(filename.string());
   rsvg.arg("/dev/stdout");
 
   if (rsvg.exec() != 0) {

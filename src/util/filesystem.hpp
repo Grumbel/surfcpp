@@ -28,7 +28,7 @@ class Filesystem
 public:
   static void readlines_from_file(const std::string& pathname, std::vector<std::string>& lst);
   static std::string find_exe(const std::string& name);
-  static std::string get_extension(const std::string& pathname);
+  static std::string get_extension(std::filesystem::path const& pathname);
   static std::string get_magic(std::filesystem::path const& filename);
 };
 

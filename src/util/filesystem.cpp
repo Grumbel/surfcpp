@@ -67,8 +67,9 @@ Filesystem::find_exe(const std::string& name)
 }
 
 std::string
-Filesystem::get_extension(const std::string& pathname)
+Filesystem::get_extension(std::filesystem::path const& path)
 {
+  std::string const& pathname = path.string();
   // FIXME: should take '/' into account and only check the actual
   // filename, instead of the whole pathname
   std::string::size_type p = pathname.rfind('.');

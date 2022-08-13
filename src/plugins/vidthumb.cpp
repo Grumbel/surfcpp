@@ -54,7 +54,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 
   vidthumb
     .arg("-o").arg(out.str())
-    .arg(filename);
+    .arg(filename.string());
 
   if (vidthumb.exec() == 0)
   {

@@ -48,7 +48,7 @@ SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
   Exec ufraw("ufraw-batch");
   ufraw
-    .arg(filename)
+    .arg(filename.string())
     .arg("--silent")
     .arg("--out-type=ppm8")
     .arg("--output=-");

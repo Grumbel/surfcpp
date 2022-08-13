@@ -25,7 +25,7 @@ namespace surf {
 
 FileJPEGDecompressor::FileJPEGDecompressor(std::filesystem::path const& filename) :
   m_filename(filename),
-  m_in(fopen(filename.c_str(), "rb"))
+  m_in(fopen(filename.string().c_str(), "rb"))
 {
   if (!m_in)
   {

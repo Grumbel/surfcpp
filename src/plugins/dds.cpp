@@ -31,7 +31,7 @@ namespace dds {
 
 bool get_size(std::filesystem::path const& filename, geom::isize& size)
 {
-  std::ifstream in(filename.c_str(), std::ios::binary);
+  std::ifstream in(filename, std::ios::binary);
   if (!in)
   {
     // raise_runtime_error(strerror(errno));
@@ -48,7 +48,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
 
 SoftwareSurface load_from_file(std::filesystem::path const& filename)
 {
-  std::ifstream in(filename.c_str(), std::ios::binary);
+  std::ifstream in(filename, std::ios::binary);
   if (!in)
   {
     // raise_runtime_error(strerror(errno));

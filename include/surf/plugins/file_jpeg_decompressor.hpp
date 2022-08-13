@@ -32,7 +32,7 @@ public:
   ~FileJPEGDecompressor() override;
 
 private:
-  std::string m_filename;
+  std::filesystem::path m_filename;
   FILE* m_in;
 
 private:
