@@ -22,6 +22,10 @@ find_package(tinycmmc CONFIG)
 message(STATUS "tinycmmc module path: ${TINYCMMC_MODULE_PATH}")
 list(APPEND CMAKE_MODULE_PATH ${TINYCMMC_MODULE_PATH})
 
+option(WITH_MAGICKXX "Enable ImageMagick" OFF)
+option(WITH_EXIF "Enable EXIF support" ON)
+option(WITH_EXEC "Enable plugins needing exec() support" OFF)
+
 include(GNUInstallDirs)
 include(MaximumWarnings)
 include(ClangTidy)
@@ -29,19 +33,19 @@ include(ClangTidy)
 find_package(PkgConfig REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-pkg_search_module(EXIF libexif IMPORTED_TARGET)
 
-# Not using find_package(), see:
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776832
-# find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
-pkg_search_module(MAGICKXX Magick++ GraphicsMagick++ IMPORTED_TARGET)
+if(WITH_EXIF)
+  pkg_search_module(EXIF libexif IMPORTED_TARGET)
+endif()
+
+if(WITH_MAGICKXX)
+  # Not using find_package(), see:
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776832
+  # find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+  pkg_search_module(MAGICKXX Magick++ GraphicsMagick++ IMPORTED_TARGET)
+endif()
 
 function(build_dependencies)
-  #if(BUILD_TESTS)
-  #  set(BUILD_TESTS OFF)
-  #  add_subdirectory(external/uitest/ EXCLUDE_FROM_ALL)
-  #endif()
-
   set(BUILD_TESTS OFF)
 
   find_package(geom QUIET)
@@ -56,31 +60,77 @@ function(build_dependencies)
 endfunction()
 build_dependencies()
 
+set(SURF_DEFINES)
+
 file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  src/util/*.cpp
-  src/plugins/*.cpp
-  src/*.cpp)
+  src/blend.cpp
+  src/blend_scaled.cpp
+  src/blendfunc.cpp
+  src/blit.cpp
+  src/channel.cpp
+  src/color.cpp
+  src/convert.cpp
+  src/fill.cpp
+  src/palette.cpp
+  src/pixel_data.cpp
+  src/pixel_format.cpp
+  src/plugins/dds.cpp
+  src/plugins/dds_surface.cpp
+  src/plugins/exif.cpp
+  src/plugins/file_jpeg_compressor.cpp
+  src/plugins/file_jpeg_decompressor.cpp
+  src/plugins/imagemagick.cpp
+  src/plugins/jpeg.cpp
+  src/plugins/jpeg_compressor.cpp
+  src/plugins/jpeg_decompressor.cpp
+  src/plugins/jpeg_memory_dest.cpp
+  src/plugins/jpeg_memory_src.cpp
+  src/plugins/mem_jpeg_compressor.cpp
+  src/plugins/mem_jpeg_decompressor.cpp
+  src/plugins/png.cpp
+  src/plugins/pnm.cpp
+  src/save.cpp
+  src/software_surface.cpp
+  src/software_surface_factory.cpp
+  src/transform.cpp
+  src/util/filesystem.cpp
+  )
+
+file(GLOB SURF_EXEC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  src/plugins/kra.cpp
+  src/plugins/rsvg.cpp
+  src/plugins/ufraw.cpp
+  src/plugins/vidthumb.cpp
+  src/plugins/xcf.cpp
+  src/util/exec.cpp
+  )
+
+if(WITH_EXEC)
+  list(append SURF_SOURCES ${SURF_EXEC_SOURCES})
+  list(append SURF_DEFINES "-DHAVE_EXEC")
+endif()
 
 add_library(surf STATIC ${SURF_SOURCES})
 set_target_properties(surf PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
-  CXX_EXTENSIONS OFF)
+  CXX_EXTENSIONS OFF
+  )
+target_compile_definitions(surf PRIVATE
+  ${SURF_DEFINES}
+  )
 target_link_libraries(surf PUBLIC
   geom::geom
   logmich::logmich
   PNG::PNG
-  JPEG::JPEG)
-target_include_directories(surf INTERFACE
+  JPEG::JPEG
+  )
+target_include_directories(surf PUBLIC
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/surf>
   )
-target_include_directories(surf PRIVATE
-  include
-  include/surf
-  src)
 
 if(MAGICKXX_FOUND)
   target_link_libraries(surf PUBLIC

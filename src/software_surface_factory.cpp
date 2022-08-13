@@ -26,13 +26,19 @@
 
 #include "plugins/jpeg.hpp"
 #include "plugins/dds.hpp"
-#include "plugins/imagemagick.hpp"
-#include "plugins/kra.hpp"
 #include "plugins/png.hpp"
-#include "plugins/rsvg.hpp"
-#include "plugins/ufraw.hpp"
-#include "plugins/vidthumb.hpp"
-#include "plugins/xcf.hpp"
+
+#ifdef HAVE_MAGICKXX
+#  include "plugins/imagemagick.hpp"
+#endif
+
+#ifdef HAVE_EXEC
+#  include "plugins/kra.hpp"
+#  include "plugins/rsvg.hpp"
+#  include "plugins/ufraw.hpp"
+#  include "plugins/vidthumb.hpp"
+#  include "plugins/xcf.hpp"
+#endif
 
 namespace surf {
 
@@ -45,9 +51,10 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   // order matters, first come, first serve, later registrations for
   // an already registered type will be ignored
   jpeg::register_loader(*this);
-  png::register_loader(
-    *this);
+  png::register_loader(*this);
+  dds::register_loader(*this);
 
+#ifdef HAVE_EXEC
   if (xcf::is_available()) {
     xcf::register_loader(*this);
   }
@@ -67,8 +74,7 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   if (kra::is_available()) {
     kra::register_loader(*this);
   }
-
-  dds::register_loader(*this);
+#endif
 
 #ifdef HAVE_MAGICKXX
   imagemagick::register_loader(*this);
