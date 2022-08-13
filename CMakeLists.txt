@@ -17,18 +17,11 @@
 cmake_minimum_required(VERSION 3.6)
 project(surf VERSION 0.0.0)
 
-set(TINYCMMC_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external/cmake-modules/modules/")
-find_package(tinycmmc CONFIG)
-message(STATUS "tinycmmc module path: ${TINYCMMC_MODULE_PATH}")
-list(APPEND CMAKE_MODULE_PATH ${TINYCMMC_MODULE_PATH})
+include(mk/cmake/TinyCMMC.cmake)
 
 option(WITH_MAGICKXX "Enable ImageMagick" OFF)
 option(WITH_EXIF "Enable EXIF support" ON)
 option(WITH_EXEC "Enable plugins needing exec() support" OFF)
-
-include(GNUInstallDirs)
-include(MaximumWarnings)
-include(ClangTidy)
 
 find_package(PkgConfig REQUIRED)
 find_package(JPEG REQUIRED)
@@ -155,7 +148,7 @@ if(BUILD_TESTS)
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF)
-  target_compile_options(test_surf PRIVATE ${WARNINGS_CXX_FLAGS})
+  target_compile_options(test_surf PRIVATE ${TINYCMMC_MAXIMUM_WARNINGS_CXX_FLAGS})
   target_link_libraries(test_surf
     surf
     PkgConfig::SDL2
@@ -178,7 +171,7 @@ if(BUILD_BENCHMARKS)
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF)
-  target_compile_options(benchmark_surf PRIVATE ${WARNINGS_CXX_FLAGS})
+  target_compile_options(benchmark_surf PRIVATE ${TINYCMMC_MAXIMUM_WARNINGS_CXX_FLAGS})
   target_link_libraries(benchmark_surf
     surf
     benchmark::benchmark)
@@ -194,7 +187,7 @@ if(BUILD_EXTRA)
       CXX_STANDARD 20
       CXX_STANDARD_REQUIRED ON
       CXX_EXTENSIONS OFF)
-    target_compile_options(${SRC_BASENAME} PRIVATE ${WARNINGS_CXX_FLAGS})
+    target_compile_options(${SRC_BASENAME} PRIVATE ${TINYCMMC_MAXIMUM_WARNINGS_CXX_FLAGS})
     target_link_libraries(${SRC_BASENAME} surf)
     install(TARGETS ${SRC_BASENAME}
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
@@ -203,6 +196,6 @@ endif()
 
 install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-include(ExportAndInstallLibrary)
+tinycmmc_export_and_install_library(surf)
 
 # EOF #
