@@ -18,6 +18,7 @@
 #define HEADER_SURF_FILTER_HPP
 
 #include <cmath>
+#include <numbers>
 
 #include "algorithm.hpp"
 #include "color.hpp"
@@ -113,7 +114,7 @@ void apply_contrast(PixelView<Pixel>& src, float contrast /* [-1.0, 1.0f] */)
 {
   // FIXME: Slow
   contrast = std::clamp(((contrast + 1.0f) / 2.0f), 0.0f, 1.0f);
-  float const factor = static_cast<float>(tan(static_cast<double>(contrast) * M_PI / 2.0));
+  float const factor = static_cast<float>(tan(contrast * std::numbers::pi_v<float> / 2.0f));
   for(int y = 0; y < src.get_height(); ++y) {
     for(int x = 0; x < src.get_width(); ++x) {
       Color rgba = src.get_pixel_color({x, y});
