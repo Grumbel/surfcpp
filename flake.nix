@@ -18,7 +18,7 @@
     SDL2-win32.url = "github:grumnix/SDL2-win32";
   };
 
-  outputs = { self, nixpkgs, flake-utils, tinycmmc, geomcpp, logmich, SDL2-win32 }:
+  outputs = { self, nixpkgs, tinycmmc, geomcpp, logmich, SDL2-win32 }:
     tinycmmc.lib.eachSystemWithPkgs (pkgs:
       {
         packages = rec {
