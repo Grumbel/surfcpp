@@ -18,6 +18,8 @@
 #define HEADER_SURF_COLOR_HPP
 
 #include <algorithm>
+#include <cstdint>
+#include <string_view>
 
 namespace surf {
 
