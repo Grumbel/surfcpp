@@ -17,10 +17,7 @@
 #ifndef HEADER_SURF_PIXEL_VIEW_HPP
 #define HEADER_SURF_PIXEL_VIEW_HPP
 
-//#include <stdint.h>
-//#include <string.h>
-
-//#include <memory>
+#include <vector>
 
 #include <geom/point.hpp>
 #include <geom/rect.hpp>

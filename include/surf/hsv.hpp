@@ -17,8 +17,9 @@
 #ifndef HEADER_SURF_HSV_HPP
 #define HEADER_SURF_HSV_HPP
 
-#include <cmath>
 #include <algorithm>
+#include <array>
+#include <cmath>
 
 #include "color.hpp"
 
