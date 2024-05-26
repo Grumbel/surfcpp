@@ -2,7 +2,7 @@
   description = "Software Surface Library";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
 
     tinycmmc.url = "github:grumbel/tinycmmc";
     tinycmmc.inputs.nixpkgs.follows = "nixpkgs";
@@ -25,7 +25,7 @@
           default = surfcpp;
 
           surfcpp = pkgs.callPackage ./surfcpp.nix {
-            stdenv = pkgs.gcc12Stdenv;
+            stdenv = pkgs.stdenv;
             SDL2 = if pkgs.targetPlatform.isWindows then SDL2-win32.packages.${pkgs.system}.default else pkgs.SDL2;
             libjpeg = if pkgs.targetPlatform.isWindows
                       then (pkgs.libjpeg_original.overrideAttrs (oldAttrs: { meta = {}; }))

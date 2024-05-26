@@ -10,7 +10,7 @@
 , libjpeg
 , libpng
 , logmich
-, pkgconfig
+, pkg-config
 , tinycmmc
 , withImagemagick ? false
 , withLibexif ? false
@@ -33,7 +33,7 @@ stdenv.mkDerivation {
   ++ (lib.optional withSDL2 "-DWITH_SDL2=ON");
   nativeBuildInputs = [
     cmake
-    pkgconfig
+    pkg-config
   ];
   buildInputs = [
     tinycmmc
