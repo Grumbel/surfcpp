@@ -231,7 +231,7 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename) const
     const auto* new_loader = find_loader_by_magic(magic);
     if (new_loader && new_loader != loader)
     {
-      log_warn("{}: file extension error, file is a {}", filename, new_loader->get_name());
+      log_warn("{}: file extension error, file is a {}", filename.string(), new_loader->get_name());
       return from_file(filename, *new_loader);
     }
     else

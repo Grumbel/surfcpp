@@ -103,7 +103,7 @@ bool get_size(std::filesystem::path const& filename, geom::isize& size)
   }
   catch(std::exception& err)
   {
-    log_error("Imagemagick: {}: {}", filename, err.what());
+    log_error("Imagemagick: {}: {}", filename.string(), err.what());
     return false;
   }
 }
