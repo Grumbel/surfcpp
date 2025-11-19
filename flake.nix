@@ -26,13 +26,13 @@
 
           surfcpp = pkgs.callPackage ./surfcpp.nix {
             stdenv = pkgs.stdenv;
-            SDL2 = if pkgs.targetPlatform.isWindows then SDL2-win32.packages.${pkgs.system}.default else pkgs.SDL2;
-            libjpeg = if pkgs.targetPlatform.isWindows
+            SDL2 = if pkgs.stdenv.targetPlatform.isWindows then SDL2-win32.packages.${pkgs.stdenv.hostPlatform.system}.default else pkgs.SDL2;
+            libjpeg = if pkgs.stdenv.targetPlatform.isWindows
                       then (pkgs.libjpeg_original.overrideAttrs (oldAttrs: { meta = {}; }))
                       else pkgs.libjpeg;
-            geomcpp = geomcpp.packages.${pkgs.targetPlatform.system}.default;
-            logmich = logmich.packages.${pkgs.targetPlatform.system}.default;
-            tinycmmc = tinycmmc.packages.${pkgs.targetPlatform.system}.default;
+            geomcpp = geomcpp.packages.${pkgs.stdenv.targetPlatform.system}.default;
+            logmich = logmich.packages.${pkgs.stdenv.targetPlatform.system}.default;
+            tinycmmc = tinycmmc.packages.${pkgs.stdenv.targetPlatform.system}.default;
           };
         };
       }

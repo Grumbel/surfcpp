@@ -79,11 +79,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1749679405,
-        "narHash": "sha256-M4a6P6J/PBDklpOiR81Nah0STlXFI48+mQkNqMBicKQ=",
+        "lastModified": 1763578552,
+        "narHash": "sha256-cI5Qe8JHthl/C/E7TYskEnzB/+FY/hXdsmCzmBdiv/Q=",
         "owner": "grumbel",
         "repo": "geomcpp",
-        "rev": "282e3710fbe6dacee630391e4af8ffe03181f8a9",
+        "rev": "d3a94b28cbce9da9a59129919d33ee1465e5b5a3",
         "type": "github"
       },
       "original": {
@@ -102,11 +102,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1753120025,
-        "narHash": "sha256-e8k/ZzPAfLgNF30wmXHDX5ovK/msTH6sgzxWKzZhtOY=",
+        "lastModified": 1763578800,
+        "narHash": "sha256-mnqKS+m/m/zwlOpse3+QnP54fgaXR9/8FW+FDq/MKlo=",
         "owner": "logmich",
         "repo": "logmich",
-        "rev": "c73c7b7d6cd050d1bcc42d522ce80a2eb86da5c8",
+        "rev": "f69ccb6b8963d995eeb886f60e8c30b2742d596e",
         "type": "github"
       },
       "original": {
@@ -133,11 +133,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1762977756,
-        "narHash": "sha256-4PqRErxfe+2toFJFgcRKZ0UI9NSIOJa+7RXVtBhy4KE=",
+        "lastModified": 1763421233,
+        "narHash": "sha256-Stk9ZYRkGrnnpyJ4eqt9eQtdFWRRIvMxpNRf4sIegnw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c5ae371f1a6a7fd27823bc500d9390b38c05fa55",
+        "rev": "89c2b2330e733d6cdb5eae7b899326930c2c0648",
         "type": "github"
       },
       "original": {
