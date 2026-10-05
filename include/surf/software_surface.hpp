@@ -27,7 +27,6 @@
 #include "fwd.hpp"
 #include "blendfunc.hpp"
 #include "pixel_data.hpp"
-#include "unwrap.hpp"
 
 namespace surf {
 

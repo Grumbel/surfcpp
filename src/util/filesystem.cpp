@@ -121,26 +121,6 @@ Filesystem::get_magic(std::filesystem::path const& filename)
   }
 }
 
-void
-Filesystem::readlines_from_file(const std::string& pathname, std::vector<std::string>& lst)
-{
-  std::ifstream in(pathname.c_str());
-
-  if (!in)
-  {
-    throw std::runtime_error("Filesystem::readlines_from_file(): Couldn't open file: " + pathname);
-  }
-  else
-  {
-    std::string line;
-    while(std::getline(in, line))
-    {
-      lst.push_back(line);
-    }
-    in.close();
-  }
-}
-
 } // namespace surf
 
 /* EOF */

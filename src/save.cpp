@@ -20,18 +20,20 @@
 #include "plugins/jpeg.hpp"
 #include "plugins/png.hpp"
 #include "save.hpp"
+#include "util/filesystem.hpp"
 
 namespace surf {
 
 void save(SoftwareSurface const& surface, std::filesystem::path const& path, std::string_view format)
 {
   if (format == "auto") {
-    if (path.extension() == ".jpg" || path.extension() == ".JPG") {
+    std::string const extension = Filesystem::get_extension(path);
+    if (extension == "jpg" || extension == "jpeg") {
       surf::jpeg::save(surface, path, 70);
-    } else if (path.extension() == ".png" || path.extension() == ".PNG") {
+    } else if (extension == "png") {
       surf::png::save(surface, path);
     } else {
-      throw std::invalid_argument("unknown file extension");
+      throw std::invalid_argument("unknown file extension: " + path.string());
     }
   } else if (format == "png") {
     surf::png::save(surface, path);

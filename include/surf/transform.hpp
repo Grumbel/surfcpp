@@ -21,10 +21,9 @@
 
 #include "pixel_data.hpp"
 #include "software_surface.hpp"
+#include "unwrap.hpp"
 
 namespace surf {
-
-class RGB;
 
 enum class Transform
 {
@@ -217,46 +216,6 @@ PixelData<Pixel> crop(PixelView<Pixel> const& src, geom::irect const& rect)
 
   return dst;
 }
-
-/*
-template<typename Pixel>
-RGB average_color(PixelView<Pixel> const& src)
-{
-  if (src.empty()) {
-    return {};
-  }
-
-  unsigned int total_r = 0;
-  unsigned int total_g = 0;
-  unsigned int total_b = 0;
-
-  for(int y = 0; y < src.get_height(); ++y)
-  {
-    unsigned int row_r = 0;
-    unsigned int row_g = 0;
-    unsigned int row_b = 0;
-
-    for(int x = 0; x < src.get_width(); ++x)
-    {
-      RGB rgb;
-      src.get_pixel({x, y}, rgb);
-
-      row_r += rgb.r;
-      row_g += rgb.g;
-      row_b += rgb.b;
-    }
-
-    total_r += row_r / src.get_width();
-    total_g += row_g / src.get_width();
-    total_b += row_b / src.get_width();
-  }
-
-  unsigned int num_rows = static_cast<unsigned int>(src.get_height());
-  return RGB(static_cast<uint8_t>(total_r / num_rows),
-             static_cast<uint8_t>(total_g / num_rows),
-             static_cast<uint8_t>(total_b / num_rows));
-}
-*/
 
 SOFTWARE_SURFACE_LIFT(transform)
 SOFTWARE_SURFACE_LIFT(rotate90)

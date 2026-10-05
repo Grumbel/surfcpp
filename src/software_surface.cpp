@@ -30,25 +30,32 @@
 #include "fill.hpp"
 #include "pixel.hpp"
 #include "software_surface_factory.hpp"
+#include "unwrap.hpp"
 
 namespace surf {
 
 namespace {
 
-SoftwareSurfaceFactory g_pixeldata_fatory;
+SoftwareSurfaceFactory& get_factory()
+{
+  // function local static to avoid the static initialization order
+  // problem when loading images from other static constructors
+  static SoftwareSurfaceFactory factory;
+  return factory;
+}
 
 } // namespace
 
 SoftwareSurface
 SoftwareSurface::from_file(std::filesystem::path const& filename)
 {
-  return g_pixeldata_fatory.from_file(filename);
+  return get_factory().from_file(filename);
 }
 
 SoftwareSurface
 SoftwareSurface::from_file(std::filesystem::path const& filename, std::string_view loader)
 {
-  return g_pixeldata_fatory.from_file(filename, loader);
+  return get_factory().from_file(filename, loader);
 }
 
 SoftwareSurface

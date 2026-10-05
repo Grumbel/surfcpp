@@ -183,13 +183,6 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, Softwar
   {
     return loader.from_file(filename);
   }
-#if 0
-  else if (loader.supports_from_mem())
-  {
-    Blob blob = Blob::from_file(filename);
-    return loader.from_mem(blob);
-  }
-#endif
   else
   {
     throw std::runtime_error("'" + loader.get_name() + "' loader does not support loading");
@@ -273,7 +266,7 @@ SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
   if (!loader)
   {
     std::ostringstream out;
-    out << "SoftwareSurfaceFactory::from_url(): " << filename << ": unknown file type";
+    out << "SoftwareSurfaceFactory::from_mem(): " << filename << ": unknown file type";
     throw std::runtime_error(out.str());
   }
   else
@@ -285,7 +278,7 @@ SoftwareSurfaceFactory::from_mem(std::span<uint8_t const> data,
     else
     {
       std::ostringstream out;
-      out << "SoftwareSurfaceFactory::from_url(): " << filename << ": loader doesn't support from_mem(), workaround not implemented";
+      out << "SoftwareSurfaceFactory::from_mem(): " << filename << ": loader doesn't support from_mem(), workaround not implemented";
       throw std::runtime_error(out.str());
     }
   }

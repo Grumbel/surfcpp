@@ -220,11 +220,13 @@ void apply_hsv(PixelView<Pixel>& src, float hue, float saturation, float value)
   }
 }
 
-namespace {
+namespace detail {
+
 inline int positive_mod(int i, int n) {
-    return (i % n + n) % n;
+  return (i % n + n) % n;
 }
-} // namespace
+
+} // namespace detail
 
 template<typename Pixel>
 void apply_offset(PixelView<Pixel>& src, geom::ioffset const& offset)
@@ -235,8 +237,8 @@ void apply_offset(PixelView<Pixel>& src, geom::ioffset const& offset)
 
   PixelData<Pixel> copy(src);
 
-  geom::ipoint const pos(positive_mod(offset.x(), src.get_size().width()),
-                         positive_mod(offset.y(), src.get_size().height()));
+  geom::ipoint const pos(detail::positive_mod(offset.x(), src.get_size().width()),
+                         detail::positive_mod(offset.y(), src.get_size().height()));
   geom::isize const size(src.get_size());
 
   blit(copy, src, pos + geom::ioffset(0, -size.height()));

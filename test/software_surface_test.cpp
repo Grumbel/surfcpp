@@ -147,4 +147,10 @@ TEST(SoftwareSurfaceTest, create_view__padded_pitch)
   EXPECT_EQ(surface.get_view(geom::irect(2, 1, 3, 2)).get_pixel({0, 0}), Color(1.0f, 0.0f, 0.0f));
 }
 
+TEST(SoftwareSurfaceTest, create_64f_unsupported)
+{
+  EXPECT_THROW(SoftwareSurface::create(PixelFormat::RGB64f, {1, 1}), std::invalid_argument);
+  EXPECT_THROW(SoftwareSurface::create(PixelFormat::NONE, {1, 1}), std::invalid_argument);
+}
+
 /* EOF */

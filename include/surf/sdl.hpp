@@ -20,8 +20,12 @@
 #include <SDL.h>
 #include <assert.h>
 #include <string.h>
-#include <memory>
 
+#include <format>
+#include <memory>
+#include <sstream>
+#include <stdexcept>
+#include <utility>
 
 #include "fwd.hpp"
 #include "software_surface.hpp"

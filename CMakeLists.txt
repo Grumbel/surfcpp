@@ -114,7 +114,6 @@ file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/convert.cpp
   src/fill.cpp
   src/palette.cpp
-  src/pixel_data.cpp
   src/pixel_format.cpp
   src/plugins/dds.cpp
   src/plugins/dds_surface.cpp
