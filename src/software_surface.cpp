@@ -67,7 +67,7 @@ SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void* 
     format,
     pixeltype,
     return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
-                             size, static_cast<pixeltype*>(ptr), pitch / sizeof(pixeltype))));
+                             PixelView<pixeltype>::from_pitch(size, static_cast<pixeltype*>(ptr), pitch))));
 }
 
 SoftwareSurface
@@ -77,7 +77,7 @@ SoftwareSurface::create_view(PixelFormat format, geom::isize const& size, void c
     format,
     pixeltype,
     return SoftwareSurface(std::make_unique<PixelView<pixeltype>>(
-                             size, static_cast<pixeltype const*>(ptr), pitch / sizeof(pixeltype))));
+                             PixelView<pixeltype>::from_pitch(size, static_cast<pixeltype const*>(ptr), pitch))));
 }
 
 SoftwareSurface::SoftwareSurface() :

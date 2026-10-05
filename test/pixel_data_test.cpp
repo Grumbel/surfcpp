@@ -221,4 +221,14 @@ TEST(PixelDataTest, fill_checkerboard_clipped)
   EXPECT_EQ(img.get_pixel({1, 0}), (RGB8Pixel{0, 0, 0}));
 }
 
+TEST(PixelDataTest, copy_from_subview)
+{
+  PixelData<L8Pixel> img({8, 8});
+  img.put_pixel({7, 7}, L8Pixel{42});
+  PixelData<L8Pixel> const copy(img.get_view(geom::irect(4, 4, 8, 8)));
+  EXPECT_EQ(copy.get_size(), geom::isize(4, 4));
+  EXPECT_EQ(copy.get_pitch(), 4);
+  EXPECT_EQ(copy.get_pixel({3, 3}).l, 42);
+}
+
 /* EOF */

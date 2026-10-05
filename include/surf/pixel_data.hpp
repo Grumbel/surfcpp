@@ -70,9 +70,10 @@ public:
   }
 
   PixelData(PixelView<Pixel> const& view) :
-    PixelView<Pixel>(view),
+    PixelView<Pixel>(view.get_size(), static_cast<Pixel*>(nullptr)),
     m_pixels_ownership(geom::area(this->m_size))
   {
+    // the copy is tightly packed, independent of the view's pitch
     this->m_pixels = m_pixels_ownership.data();
     for (int y = 0; y < this->m_size.height(); ++y) {
       std::copy_n(view.get_row(y), this->m_size.width(), this->get_row(y));
@@ -106,7 +107,7 @@ private:
   /** Leave a moved-from object as a valid empty PixelData */
   void reset() {
     this->m_size = geom::isize(0, 0);
-    this->m_row_length = 0;
+    this->m_pitch = 0;
     this->m_pixels = nullptr;
     m_pixels_ownership.clear();
   }

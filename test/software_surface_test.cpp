@@ -135,4 +135,16 @@ TEST(SoftwareSurfaceTest, empty_copy)
   EXPECT_THROW(empty.get_pixel_data(), std::runtime_error);
 }
 
+TEST(SoftwareSurfaceTest, create_view__padded_pitch)
+{
+  // 3x2 RGB8 with rows padded to 12 bytes
+  std::vector<uint8_t> data(24, 0);
+  data[12 + 6 + 0] = 255;
+
+  SoftwareSurface const surface = SoftwareSurface::create_view(PixelFormat::RGB8, {3, 2}, data.data(), 12);
+  EXPECT_EQ(surface.get_pitch(), 12);
+  EXPECT_EQ(surface.get_pixel({2, 1}), Color(1.0f, 0.0f, 0.0f));
+  EXPECT_EQ(surface.get_view(geom::irect(2, 1, 3, 2)).get_pixel({0, 0}), Color(1.0f, 0.0f, 0.0f));
+}
+
 /* EOF */
