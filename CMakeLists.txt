@@ -83,10 +83,6 @@ if(WARNINGS)
   endif()
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 find_package(PkgConfig REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
@@ -104,7 +100,7 @@ find_package(logmich REQUIRED)
 
 set(SURF_DEFINES)
 
-file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+set(SURF_SOURCES
   src/blend.cpp
   src/blend_scaled.cpp
   src/blendfunc.cpp
@@ -137,7 +133,7 @@ file(GLOB SURF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/util/filesystem.cpp
   )
 
-file(GLOB SURF_EXEC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+set(SURF_EXEC_SOURCES
   src/plugins/kra.cpp
   src/plugins/rsvg.cpp
   src/plugins/ufraw.cpp
@@ -148,15 +144,11 @@ file(GLOB SURF_EXEC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 if(WITH_EXEC)
   list(APPEND SURF_SOURCES ${SURF_EXEC_SOURCES})
-  list(APPEND SURF_DEFINES "-DHAVE_EXEC")
+  list(APPEND SURF_DEFINES "HAVE_EXEC")
 endif()
 
 add_library(surf STATIC ${SURF_SOURCES})
-set_target_properties(surf PROPERTIES
-  CXX_STANDARD 20
-  CXX_STANDARD_REQUIRED ON
-  CXX_EXTENSIONS OFF
-  )
+target_compile_features(surf PUBLIC cxx_std_20)
 target_compile_definitions(surf PRIVATE ${SURF_DEFINES})
 target_compile_options(surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
 target_link_libraries(surf PUBLIC
@@ -167,10 +159,16 @@ target_link_libraries(surf PUBLIC
   )
 target_include_directories(surf PUBLIC
   $<INSTALL_INTERFACE:include>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/surf>
   )
+
+# Internal headers and un-prefixed includes, users of the library
+# have to use <surf/...>, same as with the installed headers
+set(SURF_PRIVATE_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/surf
+  )
+target_include_directories(surf PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
 
 if(MAGICKXX_FOUND)
   target_link_libraries(surf PUBLIC PkgConfig::MAGICKXX)
@@ -188,10 +186,7 @@ if(BUILD_TESTS)
 
   file(GLOB TEST_SURF_SOURCES test/*_test.cpp)
   add_executable(test_surf ${TEST_SURF_SOURCES})
-  set_target_properties(test_surf PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF)
+  target_include_directories(test_surf PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
   target_compile_options(test_surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
   target_compile_definitions(test_surf PRIVATE ${SURF_DEFINES})
   target_link_libraries(test_surf
@@ -211,10 +206,7 @@ if(BUILD_BENCHMARKS)
 
   file(GLOB BENCHMARK_SURF_SOURCES benchmark/*.cpp)
   add_executable(benchmark_surf ${BENCHMARK_SURF_SOURCES})
-  set_target_properties(benchmark_surf PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF)
+  target_include_directories(benchmark_surf PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
   target_compile_options(benchmark_surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
   target_link_libraries(benchmark_surf
     surf
@@ -227,10 +219,7 @@ if(BUILD_EXTRA)
   foreach(SRC ${EXTRA_SOURCES})
     get_filename_component(SRC_BASENAME ${SRC} NAME_WE)
     add_executable(${SRC_BASENAME} ${SRC})
-    set_target_properties(${SRC_BASENAME} PROPERTIES
-      CXX_STANDARD 20
-      CXX_STANDARD_REQUIRED ON
-      CXX_EXTENSIONS OFF)
+    target_include_directories(${SRC_BASENAME} PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
     target_compile_options(${SRC_BASENAME} PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
     target_link_libraries(${SRC_BASENAME} surf)
     install(TARGETS ${SRC_BASENAME}
