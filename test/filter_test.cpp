@@ -12,7 +12,7 @@ TEST(FilterTest, apply_add)
   PixelData<RGBA8Pixel> img({1, 1}, RGBA8Pixel{100, 200, 0, 50});
 
   apply_add(img, 0.5f);
-  EXPECT_EQ(img.get_pixel({0, 0}), (RGBA8Pixel{227, 255, 127, 50}));
+  EXPECT_EQ(img.get_pixel({0, 0}), (RGBA8Pixel{228, 255, 128, 50}));
 
   apply_add(img, -1.0f);
   EXPECT_EQ(img.get_pixel({0, 0}), (RGBA8Pixel{0, 0, 0, 50}));

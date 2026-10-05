@@ -87,8 +87,8 @@ void apply_add(PixelView<Pixel>& src, float addend)
     });
   } else {
     // signed, so that a negative addend darkens the image
-    int64_t const addend_v = static_cast<int64_t>(std::clamp(addend, -1.0f, 1.0f) *
-                                                  static_cast<float>(Pixel::max()));
+    int64_t const addend_v = std::llround(static_cast<double>(std::clamp(addend, -1.0f, 1.0f)) *
+                                          static_cast<double>(Pixel::max()));
     for_each_pixel(src, [addend_v](Pixel& pixel) {
       pixel = make_pixel<Pixel>(
         clamp_pixel<Pixel>(static_cast<int64_t>(red(pixel)) + addend_v),

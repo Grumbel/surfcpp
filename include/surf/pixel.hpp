@@ -225,10 +225,10 @@ typename DstPixel::value_type f2value(float v)
     if constexpr (sizeof(dsttype) == sizeof(srctype)) {
       // special case, as uint32 -> float32 will overflow
       return static_cast<dsttype>(
-        std::min(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max())),
+        std::min(static_cast<uint64_t>(v * static_cast<srctype>(DstPixel::max()) + 0.5f),
                  static_cast<uint64_t>(DstPixel::max())));
     } else {
-      return static_cast<dsttype>(v * static_cast<srctype>(DstPixel::max()));
+      return static_cast<dsttype>(v * static_cast<srctype>(DstPixel::max()) + 0.5f);
     }
   } else {
     return static_cast<dsttype>(v * static_cast<srctype>(DstPixel::max()));

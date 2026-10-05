@@ -37,7 +37,7 @@ typename DstPixel::value_type from_unit(double v)
   if constexpr (std::is_floating_point<dsttype>::value) {
     return static_cast<dsttype>(v);
   } else {
-    return static_cast<dsttype>(std::clamp(v, 0.0, 1.0) * static_cast<double>(DstPixel::max()));
+    return static_cast<dsttype>(std::clamp(v, 0.0, 1.0) * static_cast<double>(DstPixel::max()) + 0.5);
   }
 }
 
