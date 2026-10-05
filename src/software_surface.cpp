@@ -86,14 +86,16 @@ SoftwareSurface::SoftwareSurface() :
 }
 
 SoftwareSurface::SoftwareSurface(SoftwareSurface const& other) :
-  m_pixel_data(other.m_pixel_data->copy())
+  m_pixel_data(other.m_pixel_data ? other.m_pixel_data->copy() : nullptr)
 {
 }
 
 SoftwareSurface&
 SoftwareSurface::operator=(SoftwareSurface const& other)
 {
-  m_pixel_data = other.m_pixel_data->copy();
+  if (this != &other) {
+    m_pixel_data = other.m_pixel_data ? other.m_pixel_data->copy() : nullptr;
+  }
   return *this;
 }
 
@@ -172,19 +174,38 @@ SoftwareSurface::get_row_data(int y) const
 Color
 SoftwareSurface::get_pixel(geom::ipoint const& position) const
 {
-  return m_pixel_data->get_pixel_color(position);
+  return pixel_data().get_pixel_color(position);
 }
 
 void
 SoftwareSurface::put_pixel(geom::ipoint const& position, Color const& color)
 {
-  m_pixel_data->put_pixel_color(position, color);
+  pixel_data().put_pixel_color(position, color);
 }
 
 SoftwareSurface
 SoftwareSurface::get_view(geom::irect const& rect) const
 {
+  pixel_data(); // throws when empty
   return SoftwareSurface(m_pixel_data->create_view(rect));
+}
+
+IPixelData&
+SoftwareSurface::pixel_data()
+{
+  if (!m_pixel_data) {
+    throw std::runtime_error("SoftwareSurface: surface is empty");
+  }
+  return *m_pixel_data;
+}
+
+IPixelData const&
+SoftwareSurface::pixel_data() const
+{
+  if (!m_pixel_data) {
+    throw std::runtime_error("SoftwareSurface: surface is empty");
+  }
+  return *m_pixel_data;
 }
 
 } // namespace surf

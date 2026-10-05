@@ -93,7 +93,7 @@ Color boxclamp(Color const& color)
                  color.g / color.r,
                  color.b / color.r,
                  color.a);
-  } else if (color.g >= color.r && color.r >= color.b) {
+  } else if (color.g >= color.r && color.g >= color.b) {
     return Color(color.r / color.g,
                  color.g / color.g,
                  color.b / color.g,

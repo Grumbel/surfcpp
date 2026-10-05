@@ -194,6 +194,7 @@ if(BUILD_TESTS)
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF)
   target_compile_options(test_surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
+  target_compile_definitions(test_surf PRIVATE ${SURF_DEFINES})
   target_link_libraries(test_surf
     surf
     PkgConfig::SDL2

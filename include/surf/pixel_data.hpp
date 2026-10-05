@@ -17,6 +17,9 @@
 #ifndef HEADER_SURF_PIXEL_DATA_HPP
 #define HEADER_SURF_PIXEL_DATA_HPP
 
+#include <stdexcept>
+#include <vector>
+
 #include "pixel_view.hpp"
 
 namespace surf {
@@ -52,6 +55,7 @@ public:
     m_pixels_ownership(std::move(other.m_pixels_ownership))
   {
     this->m_pixels = m_pixels_ownership.data();
+    other.reset();
   }
 
   PixelData<Pixel>& operator=(PixelData<Pixel>&& other) noexcept
@@ -60,6 +64,7 @@ public:
       PixelView<Pixel>::operator=(other);
       m_pixels_ownership = std::move(other.m_pixels_ownership);
       this->m_pixels = m_pixels_ownership.data();
+      other.reset();
     }
     return *this;
   }
@@ -82,17 +87,28 @@ public:
   }
 
   PixelData(geom::isize const& size, std::vector<Pixel> pixels) :
-    PixelView<Pixel>(size, nullptr),
+    PixelData(size, std::move(pixels), size.width())
+  {}
+
+  PixelData(geom::isize const& size, std::vector<Pixel> pixels, int row_length) :
+    PixelView<Pixel>(size, static_cast<Pixel*>(nullptr), row_length),
     m_pixels_ownership(std::move(pixels))
   {
+    if (!size.is_valid() || row_length < size.width() ||
+        (size.height() > 0 &&
+         m_pixels_ownership.size() < static_cast<size_t>(row_length) * static_cast<size_t>(size.height() - 1) + static_cast<size_t>(size.width()))) {
+      throw std::invalid_argument("PixelData: pixel vector too small for the given size");
+    }
     this->m_pixels = m_pixels_ownership.data();
   }
 
-  PixelData(geom::isize const& size, std::vector<Pixel> pixels, int row_length) :
-    PixelView<Pixel>(size, nullptr, row_length),
-    m_pixels_ownership(std::move(pixels))
-  {
-    this->m_pixels = m_pixels_ownership.data();
+private:
+  /** Leave a moved-from object as a valid empty PixelData */
+  void reset() {
+    this->m_size = geom::isize(0, 0);
+    this->m_row_length = 0;
+    this->m_pixels = nullptr;
+    m_pixels_ownership.clear();
   }
 
 private:

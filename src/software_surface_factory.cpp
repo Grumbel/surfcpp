@@ -207,7 +207,7 @@ SoftwareSurfaceFactory::from_file(std::filesystem::path const& filename, std::st
     throw std::runtime_error(std::format("non-existing loader specified: {}", loader));
   }
 
-  return (*it)->from_file(filename);
+  return from_file(filename, **it);
 }
 
 SoftwareSurface

@@ -113,7 +113,7 @@ PixelData<Pixel> rotate180(PixelView<Pixel> const& src)
 template<typename Pixel>
 PixelData<Pixel> rotate270(PixelView<Pixel> const& src)
 {
-  PixelData<Pixel> dst(src.get_size());
+  PixelData<Pixel> dst(geom::isize(src.get_size().height(), src.get_size().width()));
 
   for(int y = 0; y < src.get_size().height(); ++y) {
     for(int x = 0; x < src.get_size().width(); ++x) {
@@ -158,6 +158,7 @@ template<typename Pixel>
 PixelData<Pixel> halve(PixelView<Pixel> const& src)
 {
   using type = typename Pixel::value_type;
+  using acc = accumulate_t<type>;
 
   PixelData<Pixel> dst(src.get_size() / 2);
 
@@ -168,10 +169,10 @@ PixelData<Pixel> halve(PixelView<Pixel> const& src)
       Pixel const src3 = src.get_pixel(geom::ipoint(x * 2 + 0, y * 2 + 1));
       Pixel const src4 = src.get_pixel(geom::ipoint(x * 2 + 1, y * 2 + 1));
 
-      Pixel const dstpixel = make_pixel<Pixel>(static_cast<type>((red(src1) + red(src2) + red(src3) + red(src4)) / 4),
-                                               static_cast<type>((green(src1) + green(src2) + green(src3) + green(src4)) / 4),
-                                               static_cast<type>((blue(src1) + blue(src2) + blue(src3) + blue(src4)) / 4),
-                                               static_cast<type>((alpha(src1) + alpha(src2) + alpha(src3) + alpha(src4)) / 4));
+      Pixel const dstpixel = make_pixel<Pixel>(static_cast<type>((acc(red(src1)) + red(src2) + red(src3) + red(src4)) / 4),
+                                               static_cast<type>((acc(green(src1)) + green(src2) + green(src3) + green(src4)) / 4),
+                                               static_cast<type>((acc(blue(src1)) + blue(src2) + blue(src3) + blue(src4)) / 4),
+                                               static_cast<type>((acc(alpha(src1)) + alpha(src2) + alpha(src3) + alpha(src4)) / 4));
       dst.put_pixel(geom::ipoint(x, y), dstpixel);
     }
   }

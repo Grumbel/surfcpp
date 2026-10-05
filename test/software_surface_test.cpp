@@ -118,4 +118,21 @@ TEST(SoftwareSurfaceTest, create_view__const)
   fill(view, Color(0, 0, 0, 0));
 }
 
+TEST(SoftwareSurfaceTest, empty_copy)
+{
+  SoftwareSurface const empty;
+  SoftwareSurface copy(empty);
+  EXPECT_EQ(copy.get_format(), PixelFormat::NONE);
+  EXPECT_EQ(copy, empty);
+
+  SoftwareSurface surface = SoftwareSurface::create(PixelFormat::RGB8, {4, 4});
+  EXPECT_NE(surface, empty);
+  surface = empty;
+  EXPECT_EQ(surface.get_format(), PixelFormat::NONE);
+
+  EXPECT_THROW(empty.get_pixel({0, 0}), std::runtime_error);
+  EXPECT_THROW(empty.get_view(geom::irect(0, 0, 1, 1)), std::runtime_error);
+  EXPECT_THROW(empty.get_pixel_data(), std::runtime_error);
+}
+
 /* EOF */

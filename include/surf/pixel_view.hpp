@@ -153,10 +153,7 @@ public:
   }
 
   PixelView<Pixel> get_view(geom::irect const& rect) {
-    if (!contains(geom::irect(m_size), rect)) {
-      throw std::invalid_argument("rect not within the SoftwareSurface area");
-    }
-
+    check_view_rect(rect);
     return PixelView<Pixel>(rect.size(),
                             get_row(rect.top()) + rect.left(),
                             m_row_length);
@@ -164,6 +161,7 @@ public:
 
   std::unique_ptr<IPixelData> create_view(geom::irect const& rect) override
   {
+    check_view_rect(rect);
     return std::make_unique<PixelView<Pixel>>(rect.size(),
                                               get_row(rect.top()) + rect.left(),
                                               m_row_length);
@@ -171,6 +169,7 @@ public:
 
   std::unique_ptr<IPixelData const> create_view(geom::irect const& rect) const override
   {
+    check_view_rect(rect);
     return std::make_unique<PixelView<Pixel> const>(rect.size(),
                                                     get_row(rect.top()) + rect.left(),
                                                     m_row_length);
@@ -181,6 +180,12 @@ public:
   }
 
 protected:
+  void check_view_rect(geom::irect const& rect) const {
+    if (!contains(geom::irect(m_size), rect)) {
+      throw std::invalid_argument("rect not within the SoftwareSurface area");
+    }
+  }
+
   bool is_equal(IPixelData const& rhs) const override {
     PixelView<Pixel> const* rhs_ptr = dynamic_cast<PixelView<Pixel> const*>(&rhs);
     if (rhs_ptr == nullptr) {
