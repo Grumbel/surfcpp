@@ -35,6 +35,7 @@ include(CMakePackageConfigHelpers)
 option(WITH_MAGICKXX "Enable ImageMagick" OFF)
 option(WITH_EXIF "Enable EXIF support" ON)
 option(WITH_EXEC "Enable plugins needing exec() support" OFF)
+option(WITH_STB "Use the header-only stb_image and stb_image_write for PNG and JPEG instead of libpng and libjpeg" OFF)
 option(BUILD_TESTS "Build test cases" OFF)
 option(BUILD_BENCHMARKS "Build benchmarks" OFF)
 option(BUILD_EXTRA "Build extra stuff" OFF)
@@ -84,8 +85,20 @@ if(WARNINGS)
 endif()
 
 find_package(PkgConfig REQUIRED)
-find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
+
+if(WITH_STB)
+  # nixpkgs installs the headers to include/stb/
+  find_path(STB_INCLUDE_DIR stb_image.h PATH_SUFFIXES stb REQUIRED)
+  if(NOT EXISTS "${STB_INCLUDE_DIR}/stb_image_write.h")
+    message(FATAL_ERROR "stb_image_write.h not found next to ${STB_INCLUDE_DIR}/stb_image.h")
+  endif()
+  if(WITH_EXEC)
+    message(FATAL_ERROR "WITH_EXEC needs libpng and can't be combined with WITH_STB")
+  endif()
+else()
+  find_package(JPEG REQUIRED)
+  find_package(PNG REQUIRED)
+endif()
 
 if(WITH_EXIF)
   pkg_search_module(EXIF libexif IMPORTED_TARGET)
@@ -114,9 +127,18 @@ set(SURF_SOURCES
   src/plugins/dds.cpp
   src/plugins/dds_surface.cpp
   src/plugins/exif.cpp
+  src/plugins/imagemagick.cpp
+  src/plugins/pnm.cpp
+  src/save.cpp
+  src/software_surface.cpp
+  src/software_surface_factory.cpp
+  src/transform.cpp
+  src/util/filesystem.cpp
+  )
+
+set(SURF_LIBPNG_LIBJPEG_SOURCES
   src/plugins/file_jpeg_compressor.cpp
   src/plugins/file_jpeg_decompressor.cpp
-  src/plugins/imagemagick.cpp
   src/plugins/jpeg.cpp
   src/plugins/jpeg_compressor.cpp
   src/plugins/jpeg_decompressor.cpp
@@ -125,13 +147,14 @@ set(SURF_SOURCES
   src/plugins/mem_jpeg_compressor.cpp
   src/plugins/mem_jpeg_decompressor.cpp
   src/plugins/png.cpp
-  src/plugins/pnm.cpp
-  src/save.cpp
-  src/software_surface.cpp
-  src/software_surface_factory.cpp
-  src/transform.cpp
-  src/util/filesystem.cpp
   )
+
+if(WITH_STB)
+  list(APPEND SURF_SOURCES src/plugins/stb.cpp)
+  list(APPEND SURF_DEFINES "HAVE_STB")
+else()
+  list(APPEND SURF_SOURCES ${SURF_LIBPNG_LIBJPEG_SOURCES})
+endif()
 
 set(SURF_EXEC_SOURCES
   src/plugins/kra.cpp
@@ -154,9 +177,12 @@ target_compile_options(surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
 target_link_libraries(surf PUBLIC
   geom::geom
   logmich::logmich
-  PNG::PNG
-  JPEG::JPEG
   )
+if(WITH_STB)
+  target_include_directories(surf SYSTEM PRIVATE ${STB_INCLUDE_DIR})
+else()
+  target_link_libraries(surf PUBLIC PNG::PNG JPEG::JPEG)
+endif()
 target_include_directories(surf PUBLIC
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -185,6 +211,12 @@ if(BUILD_TESTS)
   pkg_search_module(SDL2 REQUIRED sdl2 IMPORTED_TARGET)
 
   file(GLOB TEST_SURF_SOURCES test/*_test.cpp)
+  # tests of the image backend that isn't built
+  if(WITH_STB)
+    list(FILTER TEST_SURF_SOURCES EXCLUDE REGEX "/(png|jpeg)_test\\.cpp$")
+  else()
+    list(FILTER TEST_SURF_SOURCES EXCLUDE REGEX "/stb_test\\.cpp$")
+  endif()
   add_executable(test_surf ${TEST_SURF_SOURCES})
   target_include_directories(test_surf PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
   target_compile_options(test_surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
@@ -241,9 +273,12 @@ add_library(surf::surf ALIAS surf)
 # Dependencies of the exported target, in surf-config.cmake
 set(SURF_CONFIG_DEPENDENCIES
   "find_dependency(geom)"
-  "find_dependency(logmich)"
-  "find_dependency(JPEG)"
-  "find_dependency(PNG)")
+  "find_dependency(logmich)")
+if(NOT WITH_STB)
+  list(APPEND SURF_CONFIG_DEPENDENCIES
+    "find_dependency(JPEG)"
+    "find_dependency(PNG)")
+endif()
 if(MAGICKXX_FOUND OR EXIF_FOUND)
   list(APPEND SURF_CONFIG_DEPENDENCIES "find_dependency(PkgConfig)")
 endif()

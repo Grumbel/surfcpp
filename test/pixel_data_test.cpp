@@ -11,8 +11,8 @@
 #include <surf/sdl.hpp>
 #include <surf/transform.hpp>
 #include <surf/io.hpp>
+#include <surf/save.hpp>
 
-#include "plugins/png.hpp"
 
 using namespace surf;
 
@@ -146,7 +146,7 @@ TEST(PixelDataTest, blend)
     }
   }
 
-  png::save(SoftwareSurface(std::move(dst)), "/tmp/foo2.png");
+  save(SoftwareSurface(std::move(dst)), std::filesystem::path(testing::TempDir()) / "surf.PixelDataTest.blend.png");
 }
 
 TEST(PixelDataTest, empty)

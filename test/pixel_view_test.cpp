@@ -12,8 +12,6 @@
 #include <surf/transform.hpp>
 #include <surf/io.hpp>
 
-#include "plugins/png.hpp"
-
 using namespace surf;
 
 TEST(PixelViewTest, get_view)
