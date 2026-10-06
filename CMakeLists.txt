@@ -36,6 +36,7 @@ option(WITH_MAGICKXX "Enable ImageMagick" OFF)
 option(WITH_EXIF "Enable EXIF support" ON)
 option(WITH_EXEC "Enable plugins needing exec() support" OFF)
 option(WITH_STB "Use the header-only stb_image and stb_image_write for PNG and JPEG instead of libpng and libjpeg" OFF)
+option(SURF_INSTALL "Generate install and export rules, off by default when surf is a subdirectory" ${PROJECT_IS_TOP_LEVEL})
 option(BUILD_TESTS "Build test cases" OFF)
 option(BUILD_BENCHMARKS "Build benchmarks" OFF)
 option(BUILD_EXTRA "Build extra stuff" OFF)
@@ -108,8 +109,13 @@ if(WITH_MAGICKXX)
   pkg_search_module(MAGICKXX Magick++ GraphicsMagick++ IMPORTED_TARGET)
 endif()
 
-find_package(geom REQUIRED)
-find_package(logmich REQUIRED)
+# The targets already exist when surf is a subdirectory next to them
+if(NOT TARGET geom::geom)
+  find_package(geom REQUIRED)
+endif()
+if(NOT TARGET logmich::logmich)
+  find_package(logmich REQUIRED)
+endif()
 
 set(SURF_DEFINES)
 
@@ -171,6 +177,7 @@ if(WITH_EXEC)
 endif()
 
 add_library(surf STATIC ${SURF_SOURCES})
+add_library(surf::surf ALIAS surf)
 target_compile_features(surf PUBLIC cxx_std_20)
 target_compile_definitions(surf PRIVATE ${SURF_DEFINES})
 target_compile_options(surf PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
@@ -254,60 +261,62 @@ if(BUILD_EXTRA)
     target_include_directories(${SRC_BASENAME} PRIVATE ${SURF_PRIVATE_INCLUDE_DIRS})
     target_compile_options(${SRC_BASENAME} PRIVATE ${SURF_WARNINGS_CXX_FLAGS})
     target_link_libraries(${SRC_BASENAME} surf)
-    install(TARGETS ${SRC_BASENAME}
-      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    if(SURF_INSTALL)
+      install(TARGETS ${SRC_BASENAME}
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    endif()
   endforeach(SRC)
 endif()
 
-install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+if(SURF_INSTALL)
+  install(DIRECTORY include/. DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-# Export and install library (inlined from former tinycmmc)
-install(TARGETS surf
-  EXPORT surf
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/surf")
+  # Export and install library (inlined from former tinycmmc)
+  install(TARGETS surf
+    EXPORT surf
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/surf")
 
-add_library(surf::surf ALIAS surf)
+  # Dependencies of the exported target, in surf-config.cmake
+  set(SURF_CONFIG_DEPENDENCIES
+    "find_dependency(geom)"
+    "find_dependency(logmich)")
+  if(NOT WITH_STB)
+    list(APPEND SURF_CONFIG_DEPENDENCIES
+      "find_dependency(JPEG)"
+      "find_dependency(PNG)")
+  endif()
+  if(MAGICKXX_FOUND OR EXIF_FOUND)
+    list(APPEND SURF_CONFIG_DEPENDENCIES "find_dependency(PkgConfig)")
+  endif()
+  if(MAGICKXX_FOUND)
+    list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(MAGICKXX REQUIRED Magick++ GraphicsMagick++ IMPORTED_TARGET)")
+  endif()
+  if(EXIF_FOUND)
+    list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(EXIF REQUIRED libexif IMPORTED_TARGET)")
+  endif()
+  list(JOIN SURF_CONFIG_DEPENDENCIES "\n" SURF_CONFIG_DEPENDENCIES)
 
-# Dependencies of the exported target, in surf-config.cmake
-set(SURF_CONFIG_DEPENDENCIES
-  "find_dependency(geom)"
-  "find_dependency(logmich)")
-if(NOT WITH_STB)
-  list(APPEND SURF_CONFIG_DEPENDENCIES
-    "find_dependency(JPEG)"
-    "find_dependency(PNG)")
+  configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/surf-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/surf-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/surf-config-version.cmake"
+    VERSION "${PROJECT_VERSION}"
+    COMPATIBILITY SameMinorVersion)
+  export(EXPORT surf
+    NAMESPACE surf::
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/surf-targets.cmake")
+  install(EXPORT surf
+    FILE surf-targets.cmake
+    NAMESPACE surf::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/surf-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/surf-config.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
 endif()
-if(MAGICKXX_FOUND OR EXIF_FOUND)
-  list(APPEND SURF_CONFIG_DEPENDENCIES "find_dependency(PkgConfig)")
-endif()
-if(MAGICKXX_FOUND)
-  list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(MAGICKXX REQUIRED Magick++ GraphicsMagick++ IMPORTED_TARGET)")
-endif()
-if(EXIF_FOUND)
-  list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(EXIF REQUIRED libexif IMPORTED_TARGET)")
-endif()
-list(JOIN SURF_CONFIG_DEPENDENCIES "\n" SURF_CONFIG_DEPENDENCIES)
-
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/surf-config.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/surf-config.cmake"
-  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/surf-config-version.cmake"
-  VERSION "${PROJECT_VERSION}"
-  COMPATIBILITY SameMinorVersion)
-export(EXPORT surf
-  NAMESPACE surf::
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/surf-targets.cmake")
-install(EXPORT surf
-  FILE surf-targets.cmake
-  NAMESPACE surf::
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/surf-config-version.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/surf-config.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/surf")
 
 # EOF #
