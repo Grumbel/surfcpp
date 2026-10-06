@@ -238,6 +238,23 @@ install(TARGETS surf
 
 add_library(surf::surf ALIAS surf)
 
+# Dependencies of the exported target, in surf-config.cmake
+set(SURF_CONFIG_DEPENDENCIES
+  "find_dependency(geom)"
+  "find_dependency(logmich)"
+  "find_dependency(JPEG)"
+  "find_dependency(PNG)")
+if(MAGICKXX_FOUND OR EXIF_FOUND)
+  list(APPEND SURF_CONFIG_DEPENDENCIES "find_dependency(PkgConfig)")
+endif()
+if(MAGICKXX_FOUND)
+  list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(MAGICKXX REQUIRED Magick++ GraphicsMagick++ IMPORTED_TARGET)")
+endif()
+if(EXIF_FOUND)
+  list(APPEND SURF_CONFIG_DEPENDENCIES "pkg_search_module(EXIF REQUIRED libexif IMPORTED_TARGET)")
+endif()
+list(JOIN SURF_CONFIG_DEPENDENCIES "\n" SURF_CONFIG_DEPENDENCIES)
+
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/surf-config.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/surf-config.cmake"
